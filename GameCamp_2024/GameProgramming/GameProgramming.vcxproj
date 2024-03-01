@@ -12,12 +12,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CApplication.cpp" />
-<<<<<<< HEAD
     <ClCompile Include="src\CCharacter.cpp" />
     <ClCompile Include="src\CGame.cpp" />
-=======
     <ClCompile Include="src\CRectangle.cpp" />
->>>>>>> aa64e8a553ec9f6800c8359ac4d696f128e42481
     <ClCompile Include="src\CSound.cpp" />
     <ClCompile Include="src\CTaskManager.cpp" />
     <ClCompile Include="src\CTexture.cpp" />
@@ -25,12 +22,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\CApplication.h" />
-<<<<<<< HEAD
     <ClInclude Include="src\CCharacter.h" />
     <ClInclude Include="src\CGame.h" />
-=======
     <ClInclude Include="src\CRectangle.h" />
->>>>>>> aa64e8a553ec9f6800c8359ac4d696f128e42481
     <ClInclude Include="src\CSound.h" />
     <ClInclude Include="src\CTask.h" />
     <ClInclude Include="src\CTaskManager.h" />
