@@ -30,13 +30,6 @@
     <ClCompile Include="src\CApplication.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\CCharacter.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="src\CGame.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="src\CTaskManager.cpp">
     <ClCompile Include="src\CRectangle.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -54,16 +47,6 @@
     <ClInclude Include="src\CApplication.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="src\CCharacter.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CGame.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CTask.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CTaskManager.h">
     <ClInclude Include="src\CRectangle.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
