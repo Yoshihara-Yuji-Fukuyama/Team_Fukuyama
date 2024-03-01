@@ -1,6 +1,0 @@
-﻿LINK : warning LNK4098: defaultlib 'MSVCRT' は他のライブラリの使用と競合しています。/NODEFAULTLIB:library を使用してください。
-LINK : warning LNK4098: defaultlib 'LIBCMT' は他のライブラリの使用と競合しています。/NODEFAULTLIB:library を使用してください。
-CEnemy2.obj : error LNK2019: 未解決の外部シンボル "public: void __thiscall CTaskManager::Collision(class CCharacter *)" (?Collision@CTaskManager@@QAEXPAVCCharacter@@@Z) が関数 "public: virtual void __thiscall CEnemy2::Collision(void)" (?Collision@CEnemy2@@UAEXXZ) で参照されました
-CPlayer2.obj : error LNK2001: 外部シンボル "public: void __thiscall CTaskManager::Collision(class CCharacter *)" (?Collision@CTaskManager@@QAEXPAVCCharacter@@@Z) は未解決です
-CGame.obj : error LNK2019: 未解決の外部シンボル "public: void __thiscall CTaskManager::Collision(void)" (?Collision@CTaskManager@@QAEXXZ) が関数 "public: void __thiscall CGame::Update(void)" (?Update@CGame@@QAEXXZ) で参照されました
-C:\Users\yuji\OneDrive\デスクトップ\新しいフォルダー\2DLv1_2023_00\Debug\GameProgramming.exe : fatal error LNK1120: 2 件の未解決の外部参照
