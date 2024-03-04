@@ -18,7 +18,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\CApplication.h" />
-    <ClInclude Include="src\CRectangle.h" />
     <ClInclude Include="src\CSound.h" />
     <ClInclude Include="src\CTexture.h" />
     <ClInclude Include="src\main.h" />
