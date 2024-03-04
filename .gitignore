@@ -4,3 +4,9 @@
 /Training/Nakamoto/Sample/Game/*.exp
 /Training/Nakamoto/Sample/Game/*.lib
 /Training/Nakamoto/Sample/Game/*.pdb
+/Training/Yosihara/Sample/Sample/Project/.vs
+/Training/Yosihara/Sample/Sample/Project/Debug
+/Training/Yosihara/Sample/Sample/Project/GameProject/*.user
+/Training/Yosihara/Sample/Sample/Game/GameProject.lib
+/Training/Yosihara/Sample/Sample/Game/GameProject.pdb
+/Training/Yosihara/Sample/Sample/Game/GameProject.exp
