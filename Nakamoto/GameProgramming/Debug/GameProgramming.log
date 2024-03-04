@@ -1,0 +1,8 @@
+﻿  CApplication.cpp
+C:\Users\dogpo\Team_Fukuyama\Nakamoto\GameProgramming\src\CApplication.h(4,10): fatal error C1083: include ファイルを開けません。'CCharacter.h':No such file or directory
+  CRectangle.cpp
+  CSound.cpp
+  CTexture.cpp
+  main.cpp
+C:\Users\dogpo\Team_Fukuyama\Nakamoto\GameProgramming\src\CApplication.h(4,10): fatal error C1083: include ファイルを開けません。'CCharacter.h':No such file or directory
+  コードを生成中...
