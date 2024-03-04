@@ -1,8 +1,6 @@
 ﻿  CApplication.cpp
-C:\Users\dogpo\Team_Fukuyama\Nakamoto\GameProgramming\src\CApplication.h(4,10): fatal error C1083: include ファイルを開けません。'CCharacter.h':No such file or directory
-  CRectangle.cpp
-  CSound.cpp
-  CTexture.cpp
   main.cpp
-C:\Users\dogpo\Team_Fukuyama\Nakamoto\GameProgramming\src\CApplication.h(4,10): fatal error C1083: include ファイルを開けません。'CCharacter.h':No such file or directory
   コードを生成中...
+LINK : warning LNK4098: defaultlib 'MSVCRT' は他のライブラリの使用と競合しています。/NODEFAULTLIB:library を使用してください。
+LINK : warning LNK4098: defaultlib 'LIBCMT' は他のライブラリの使用と競合しています。/NODEFAULTLIB:library を使用してください。
+  GameProgramming.vcxproj -> C:\Users\dogpo\Team_Fukuyama\Nakamoto\Debug\GameProgramming.exe

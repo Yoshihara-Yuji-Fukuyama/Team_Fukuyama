@@ -1,0 +1,35 @@
+・変数名
+
+　　　　　　　　　アッパーキャメルケース
+　　　　
+　ローカル変数　　PlayerPos 　　　 
+　メンバ変数　　　mPlayerPos 　　 
+　グローバル変数　gPlayerPos 　　 
+　ポインタ　　　　mpPlayerModel　
+
+・関数名 
+　
+　アッパーキャメルケース
+  動詞を先につける
+　GetPos、SetPos
+
+・定数名
+　#defineを使う　スネークケースを使う
+　#define MOVE_SPEED 5.0f
+
+・クラス
+　「C」を付ける
+　CPlayer、CEnemy
+
+・構造体
+　「S」を付ける
+　SCharaStatus
+
+・列挙型（enum）
+　「E」を付ける
+　enum class EType
+  {
+    Player,
+    Enemy,
+    NPC
+  };
