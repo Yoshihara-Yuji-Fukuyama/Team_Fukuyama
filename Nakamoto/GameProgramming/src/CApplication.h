@@ -1,5 +1,6 @@
 #pragma once
 #include "CRectangle.h"
+#include "CTexture.h"
 
 class CApplication
 {
@@ -8,8 +9,7 @@ public:
 	void Start();
 	void Update();
 
-	void CRectangle();
-
 private:
-
+	CRectangle mRectangle;
+	CTexture mTexture;
 };

@@ -29,6 +29,7 @@ void CRectangle::Render(float x, float y, float w, float h)
 	glVertex2f(mX + mW, mY - mH);
 	glVertex2f(mX + mW, mY + mH);
 	glVertex2f(mX - mW, mY + mH);
+	glEnd();
 }
 
 void CRectangle::Set(float x, float y, float w, float h)
@@ -39,22 +40,22 @@ void CRectangle::Set(float x, float y, float w, float h)
 	mH = h;
 }
 
-float CRectangle::X()
+float CRectangle::GetX()
 {
 	return mX;
 }
 
-float CRectangle::Y()
+float CRectangle::GetY()
 {
 	return mY;
 }
 
-float CRectangle::W()
+float CRectangle::GetW()
 {
 	return mW;
 }
 
-float CRectangle::H()
+float CRectangle::GetH()
 {
 	return mH;
 }
