@@ -1,53 +1,18 @@
+#include "CPlayer.h"
+#include "CSlime.h"
+
 //--------------------------------------------
 //グローバル変数領域
 //--------------------------------------------
 
+//プレイヤーのポインタ
+CPlayer* gpPlayer = nullptr;
+//スライムのポインタ
+CSlime* gpSlimeA = nullptr;
+CSlime* gpSlimeB = nullptr;
+CSlime* gpSlimeC = nullptr;
+
 CImage* fieldimage = nullptr;
-
-TexAnimData* playeranimdata = nullptr;
-CImage* playerimage = nullptr;
-CVector2D playerpos = CVector2D(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.75f);
-
-TexAnimData* enemyanimdata = nullptr;
-CImage* enemyimagea = nullptr;
-CVector2D enemyposa = CVector2D(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.8f);
-CImage* enemyimageb = nullptr;
-CVector2D enemyposb = CVector2D(SCREEN_WIDTH * 0.8f, SCREEN_HEIGHT * 0.6f);
-CImage* enemyimagec = nullptr;
-CVector2D enemyposc = CVector2D(SCREEN_WIDTH * 0.85f, SCREEN_HEIGHT * 0.9f);
-
-void updateplayer()
-{
-	if (HOLD(CInput::eLeft))
-	{
-		playerpos.x -= 8.0f;
-		playerimage->ChangeAnimation(1);
-		playerimage->SetFlipH(true);
-	}
-	else if (HOLD(CInput::eRight))
-	{
-		playerpos.x += 8.0f;
-		playerimage->ChangeAnimation(1);
-		playerimage->SetFlipH(false);
-	}
-	else
-	{
-		playerimage->ChangeAnimation(0);
-	}
-
-	playerimage->SetPos(playerpos);
-	playerimage->UpdateAnimation();
-}
-
-void updateenemies()
-{
-	enemyimagea->SetPos(enemyposa);
-	enemyimagea->UpdateAnimation();
-	enemyimageb->SetPos(enemyposb);
-	enemyimageb->UpdateAnimation();
-	enemyimagec->SetPos(enemyposc);
-	enemyimagec->UpdateAnimation();
-}
 
 void MainLoop(void) {
 	//--------------------------------------------------------------
@@ -55,14 +20,16 @@ void MainLoop(void) {
 	//ゲーム中はこの関数_を1秒間に60回呼び出している
 	//--------------------------------------------------------------
 
-	updateplayer();
-	updateenemies();
+	gpPlayer->Update();
+	gpSlimeA->Update();
+	gpSlimeB->Update();
+	gpSlimeC->Update();
 
 	fieldimage->Draw();
-	enemyimageb->Draw();
-	playerimage->Draw();
-	enemyimagea->Draw();
-	enemyimagec->Draw();
+	gpSlimeB->Render();
+	gpPlayer->Render();
+	gpSlimeA->Render();
+	gpSlimeC->Render();
 }
 void Init(void)
 {
@@ -100,70 +67,13 @@ void Init(void)
 
 	fieldimage = CImage::CreateImage("field.png");
 
-	// アニメーション用意
-	const int f = 6;
-	playeranimdata = new TexAnimData[2]
-	{
-		// 待機アニメーション
-		{
-			new TexAnim[6]
-			{
-				{ 0, f}, { 1, f}, { 2, f},
-				{ 3, f}, { 4, f}, { 5, f},
-			},
-			6
-		},
-		// 移動アニメーション
-		{
-			new TexAnim[6]
-			{
-				{ 6, f}, { 7, f}, { 8, f},
-				{ 9, f}, {10, f}, {11, f},
-			},
-			6
-		},
-	};
-	playerimage = CImage::CreateImage("player.png");
-	playerimage->AttachAnimationData(playeranimdata, 384.0f, 384.0f);
-	playerimage->ChangeAnimation(0);
-	playerimage->SetSize(384.0f, 384.0f);
-	playerimage->SetCenter(192.0f, 328.0f);
-	playerimage->SetPos(playerpos);
+	//プレイヤーを生成
+	gpPlayer = new CPlayer();
 
-	enemyanimdata = new TexAnimData[1]
-	{
-		{
-			new TexAnim[4]
-			{
-				{ 0, f}, { 1, f}, { 2, f}, { 3, f},
-			},
-			4
-		},
-	};
-
-	enemyimagea = CImage::CreateImage("slime_a.png");
-	enemyimagea->AttachAnimationData(enemyanimdata, 256.0f, 256.0f);
-	enemyimagea->ChangeAnimation(0);
-	enemyimagea->SetSize(256.0f, 256.0f);
-	enemyimagea->SetCenter(128.0f, 184.0f);
-	enemyimagea->SetPos(enemyposa);
-	enemyimagea->SetFlipH(true);
-
-	enemyimageb = CImage::CreateImage("slime_b.png");
-	enemyimageb->AttachAnimationData(enemyanimdata, 256.0f, 256.0f);
-	enemyimageb->ChangeAnimation(0);
-	enemyimageb->SetSize(256.0f, 256.0f);
-	enemyimageb->SetCenter(128.0f, 184.0f);
-	enemyimageb->SetPos(enemyposb);
-	enemyimageb->SetFlipH(true);
-
-	enemyimagec = CImage::CreateImage("slime_c.png");
-	enemyimagec->AttachAnimationData(enemyanimdata, 256.0f, 256.0f);
-	enemyimagec->ChangeAnimation(0);
-	enemyimagec->SetSize(256.0f, 256.0f);
-	enemyimagec->SetCenter(128.0f, 184.0f);
-	enemyimagec->SetPos(enemyposc);
-	enemyimagec->SetFlipH(true);
+	//スライムを生成
+	gpSlimeA = new CSlime(0, CVector2D(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.8f));
+	gpSlimeB = new CSlime(1, CVector2D(SCREEN_WIDTH * 0.8f, SCREEN_HEIGHT * 0.6f));
+	gpSlimeC = new CSlime(2, CVector2D(SCREEN_WIDTH * 0.85f, SCREEN_HEIGHT * 0.9f));
 }
 
 

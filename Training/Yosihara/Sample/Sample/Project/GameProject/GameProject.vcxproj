@@ -11,9 +11,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CPlayer.cpp" />
+    <ClCompile Include="CSlime.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CPlayer.h" />
+    <ClInclude Include="CSlime.h" />
     <ClInclude Include="Global.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
