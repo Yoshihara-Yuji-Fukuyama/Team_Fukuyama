@@ -13,8 +13,8 @@ public:
 	/// <param name="y">YÀ•W</param>
 	/// <param name="w">•</param>
 	/// <param name="h">‚‚³</param>
-	CEnemy(float x, float y, float w, float h,CTexture* pt);
+	CEnemy(float x, float y, float w, float h);
 
 private:
-
+	CTexture* mpTexture;
 };

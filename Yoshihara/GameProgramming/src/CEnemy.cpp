@@ -7,11 +7,14 @@
 
 
 //敵のコンストラクタ
-CEnemy::CEnemy(float x, float y, float w, float h,CTexture* pt)
+CEnemy::CEnemy(float x, float y, float w, float h)
 {
 	Set(x, y, w, h);
 
-	Texture(pt, TEX_COORD_ENEMY);
+	mpTexture->Load(TEXTURE_ENEMY);
+
+	Texture(mpTexture, TEX_COORD_ENEMY);
+
 
 	//mpTexture->Load(TEXTURE_ENEMY);
 
