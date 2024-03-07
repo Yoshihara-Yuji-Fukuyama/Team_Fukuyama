@@ -2,12 +2,10 @@
 
 //コンストラクタ
 CPlayer::CPlayer()
-	:mPos(CVector2D(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.75f))
+	:CCharacterBase(CVector2D(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.75f),200)
 	, mpAnimData(nullptr)
 	, mpImage(nullptr)
-	, mHp(100)
 {
-
 	//プレイヤーのアニメーションデータを生成
 	int frame = 6;
 	mpAnimData = new TexAnimData[2]
@@ -57,17 +55,15 @@ CPlayer::~CPlayer()
 	delete[] mpImage;
 }
 
-//プレイヤーの座標を取得
-const CVector2D& CPlayer::GetPos() const
+void CPlayer::Death()
 {
-	return mPos;
+	//基底クラスの死亡処理も呼び出す
+	CCharacterBase::Death();
+	//死亡アニメーションを再生して、
+	//死亡アニメーションが終わったら、
+	//ゲームオーバー画面を表示する
 }
 
-//プレイヤーの座標を設定
-void CPlayer::SetPos(const CVector2D& pos)
-{
-	mPos = pos;
-}
 
 //更新処理
 void CPlayer::Update()
