@@ -1,14 +1,10 @@
 #include "CPlayer.h"
 #include "CSlime.h"
+#include "CTaskManager.h"
 
 //--------------------------------------------
 //グローバル変数領域
 //--------------------------------------------
-
-CPlayer* mpPlayer = nullptr;
-CSlime* mpSlimeA = nullptr;
-CSlime* mpSlimeB = nullptr;
-CSlime* mpSlimeC = nullptr;
 
 CImage* fieldimage = nullptr;
 
@@ -18,17 +14,12 @@ void MainLoop(void) {
 	//ゲーム中はこの関数_を1秒間に60回呼び出している
 	//--------------------------------------------------------------
 
-	mpPlayer->Update();
-	mpSlimeA->Update();
-	mpSlimeB->Update();
-	mpSlimeC->Update();
+	//全タスクの更新処理を呼び出す
+	CTaskManager::Update();
 
 	fieldimage->Draw();
-	mpSlimeB->Render();
-	mpPlayer->Render();
-	mpSlimeA->Render();
-	mpSlimeC->Render();
-	
+	//全タスクの描画処理を呼び出す
+	CTaskManager::Render();
 }
 void Init(void)
 {
@@ -67,18 +58,21 @@ void Init(void)
 	fieldimage = CImage::CreateImage("field.png");
 
 	//プレイヤーを生成
-	mpPlayer = new CPlayer();
+	new CPlayer();
 
 	//スライムを生成
-	mpSlimeA = new CSlime(0, CVector2D(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.8f));
-	mpSlimeB = new CSlime(1, CVector2D(SCREEN_WIDTH * 0.8f, SCREEN_HEIGHT * 0.6f));
-	mpSlimeC = new CSlime(2, CVector2D(SCREEN_WIDTH * 0.85f, SCREEN_HEIGHT * 0.9f));
+	new CSlime(0, CVector2D(SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.8f));
+	new CSlime(1, CVector2D(SCREEN_WIDTH * 0.8f, SCREEN_HEIGHT * 0.6f));
+	new CSlime(2, CVector2D(SCREEN_WIDTH * 0.85f, SCREEN_HEIGHT * 0.9f));
 	
 }
 
 
 void Release()
 {
+	//全タスクを削除する
+	CTaskManager::DeleteAll();
+
 	CLoadThread::ClearInstance();
 	CSound::ClearInstance();
 	CResourceManager::ClearInstance();

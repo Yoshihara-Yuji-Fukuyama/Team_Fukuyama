@@ -2,7 +2,8 @@
 
 //コンストラクタ
 ObjectBase::ObjectBase(const CVector2D& pos)
-	:mPos(pos)
+	:CTask((int)CTaskPrio::Object)
+	,mPos(pos)
 {
 
 }
@@ -23,14 +24,4 @@ void ObjectBase::SetPos(const CVector2D& pos)
 const CVector2D& ObjectBase::GetPos()const
 {
 	return mPos;
-}
-
-void ObjectBase::Update()
-{
-
-}
-
-void ObjectBase::Render()
-{
-
 }

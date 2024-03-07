@@ -6,6 +6,8 @@
     <ClCompile Include="CSlime.cpp" />
     <ClCompile Include="ObjectBase.cpp" />
     <ClCompile Include="CharaBase.cpp" />
+    <ClCompile Include="CTask.cpp" />
+    <ClCompile Include="CTaskManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -13,5 +15,7 @@
     <ClInclude Include="CSlime.h" />
     <ClInclude Include="ObjectBase.h" />
     <ClInclude Include="CharaBase.h" />
+    <ClInclude Include="CTask.h" />
+    <ClInclude Include="CTaskManager.h" />
   </ItemGroup>
 </Project>

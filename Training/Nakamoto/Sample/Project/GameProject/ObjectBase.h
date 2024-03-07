@@ -1,7 +1,8 @@
 #pragma once
+#include "CTask.h"
 
 //ゲーム中のオブジェクトのベースクラス
-class ObjectBase
+class ObjectBase : public CTask
 {
 public:
 	//コンストラクタ
@@ -20,9 +21,6 @@ public:
 	/// </summary>
 	/// <returns>オブジェクトの座標</returns>
 	const CVector2D& GetPos() const;
-
-	virtual void Update();
-	virtual void Render();
 
 protected:
 	CVector2D mPos;	//オブジェクトの座標
