@@ -4,10 +4,14 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="CPlayer.cpp" />
     <ClCompile Include="CSlime.cpp" />
+    <ClCompile Include="CObjectBase.cpp" />
+    <ClCompile Include="CCharacterBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
     <ClInclude Include="CPlayer.h" />
     <ClInclude Include="CSlime.h" />
+    <ClInclude Include="CObjectBase.h" />
+    <ClInclude Include="CCharacterBase.h" />
   </ItemGroup>
 </Project>

@@ -2,10 +2,9 @@
 
 //コンストラクタ
 CSlime::CSlime(int type, const CVector2D& pos)
-	: mPos(pos)
+	: CCharacterBase(pos,50)
 	, mpAnimData(nullptr)
 	, mpImage(nullptr)
-	, mHp(100)
 	, mType(type)
 {
 
@@ -42,7 +41,7 @@ CSlime::CSlime(int type, const CVector2D& pos)
 CSlime::~CSlime()
 {
 	//アニメーションのデータの配列を削除
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		delete[] mpAnimData[i].pData;
 	}
@@ -51,17 +50,6 @@ CSlime::~CSlime()
 	delete[] mpImage;
 }
 
-//座標を取得
-const CVector2D& CSlime::GetPos() const
-{
-	return mPos;
-}
-
-//座標を設定
-void CSlime::SetPos(const CVector2D& pos)
-{
-	mPos = pos;
-}
 
 //更新処理
 void CSlime::Update()

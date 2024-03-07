@@ -1,0 +1,47 @@
+	//タスク名の保存用
+	std::string TaskName1;
+	std::string TaskName2;
+	std::string TaskName3;
+	std::string TaskName4;
+
+	CVector2D PlayerPos = gpPlayer->GetPos();
+	CVector2D SlimePosA = gpSlimeA->GetPos();
+	CVector2D SlimePosB = gpSlimeB->GetPos();
+	CVector2D SlimePosC = gpSlimeC->GetPos();
+
+	//優先度の保存用
+	float PlayerPriority = 1, SlimePriorityA = 1, SlimePriorityB = 1, SlimePriorityC = 1;
+	//プレイヤー優先度決定
+	if (PlayerPos.y > SlimePosA.y) { PlayerPriority++; }
+	if (PlayerPos.y > SlimePosB.y) { PlayerPriority++; }
+	if (PlayerPos.y > SlimePosC.y) { PlayerPriority++; }
+	//スライムA優先度決定
+	if (SlimePosA.y > PlayerPos.y) { SlimePriorityA++; }
+	if (SlimePosA.y > SlimePosB.y) { SlimePriorityA++; }
+	if (SlimePosA.y > SlimePosC.y) { SlimePriorityA++; }
+	//スライムB優先度決定
+	if (SlimePosB.y > SlimePosA.y) { SlimePriorityB++; }
+	if (SlimePosB.y > PlayerPos.y) { SlimePriorityB++; }
+	if (SlimePosB.y > SlimePosC.y) { SlimePriorityB++; }
+	//スライムC優先度決定
+	if (SlimePosC.y > SlimePosA.y) { SlimePriorityC++; }
+	if (SlimePosC.y > SlimePosB.y) { SlimePriorityC++; }
+	if (SlimePosC.y > PlayerPos.y) { SlimePriorityC++; }
+
+	//プレイヤーの優先度
+	if (PlayerPriority = 1) { gpPlayer->Render(); }
+	else if (SlimePriorityA = 1) { gpSlimeA->Render(); }
+	else if (SlimePriorityB = 1) { gpSlimeB->Render(); }
+	else if (SlimePriorityC = 1) { gpSlimeC->Render(); }
+	if (PlayerPriority = 2) { gpPlayer->Render(); }
+	else if (SlimePriorityA = 2) { gpSlimeA->Render(); }
+	else if (SlimePriorityB = 2) { gpSlimeB->Render(); }
+	else if (SlimePriorityC = 2) { gpSlimeC->Render(); }
+	if (PlayerPriority = 3) { gpPlayer->Render(); }
+	else if (SlimePriorityA = 3) { gpSlimeA->Render(); }
+	else if (SlimePriorityB = 3) { gpSlimeB->Render(); }
+	else if (SlimePriorityC = 3) { gpSlimeC->Render(); }
+	if (PlayerPriority = 4) { gpPlayer->Render(); }
+	else if (SlimePriorityA = 4) { gpSlimeA->Render(); }
+	else if (SlimePriorityB = 4) { gpSlimeB->Render(); }
+	else if (SlimePriorityC = 4) { gpSlimeC->Render(); }

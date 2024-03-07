@@ -19,17 +19,21 @@ void MainLoop(void) {
 	//ƒQ[ƒ€’†‚Ì“®‚«‚Í‚±‚±‚É‘‚­
 	//ƒQ[ƒ€’†‚Í‚±‚ÌŠÖ”_‚ð1•bŠÔ‚É60‰ñŒÄ‚Ño‚µ‚Ä‚¢‚é
 	//--------------------------------------------------------------
+	CObjectBase* player = gpPlayer;
+	player->Update();
 
-	gpPlayer->Update();
+	//gpPlayer->Update();
 	gpSlimeA->Update();
 	gpSlimeB->Update();
 	gpSlimeC->Update();
 
 	fieldimage->Draw();
+
 	gpSlimeB->Render();
 	gpPlayer->Render();
 	gpSlimeA->Render();
 	gpSlimeC->Render();
+	
 }
 void Init(void)
 {
