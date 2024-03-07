@@ -108,6 +108,13 @@ void CTaskManager::DeleteAll()
 	}
 }
 
+//オブジェクトリストを取得
+const std::list<CTask*>& CTaskManager::GetObjectList()
+{
+	return mObjectList;
+}
+
+
 //タスク内の全タスクの更新処理を呼び出す
 void CTaskManager::Update()
 {
@@ -128,19 +135,19 @@ void CTaskManager::Update()
 		{
 			itr++;
 		}
-	}
 
-	//全てのタスクを更新
-	itr = mTaskList.begin();
-	end = mTaskList.end();
-	while (itr != end)
-	{
-		CTask* task = *itr;
-		if (task->mIsEnable)
+		//全てのタスクを更新
+		itr = mTaskList.begin();
+		end = mTaskList.end();
+		while (itr != end)
 		{
-			task->Update();
+			CTask* task = *itr;
+			if (task->mIsEnable)
+			{
+				task->Update();
+			}
+			itr++;
 		}
-		itr++;
 	}
 }
 

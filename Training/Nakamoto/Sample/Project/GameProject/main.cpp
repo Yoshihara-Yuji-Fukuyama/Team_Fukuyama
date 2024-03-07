@@ -1,6 +1,7 @@
 #include "CPlayer.h"
 #include "CSlime.h"
 #include "CTaskManager.h"
+#include "CSadowManager.h"
 
 //--------------------------------------------
 //グローバル変数領域
@@ -56,6 +57,8 @@ void Init(void)
 	//-----------------------------------------------------
 
 	fieldimage = CImage::CreateImage("field.png");
+
+	new CShadowManager();
 
 	//プレイヤーを生成
 	new CPlayer();
