@@ -25,7 +25,6 @@ CSlime::CSlime(int type, const CVector2D& pos)
 	if (mType == 0)ImagePath = "slime_a.png";
 	else if (mType == 1)ImagePath = "slime_b.png";
 	else if (mType == 2)ImagePath = "slime_c.png";
-
 	mpImage = CImage::CreateImage
 	(
 		ImagePath.c_str(),	//画像ファイルのパス

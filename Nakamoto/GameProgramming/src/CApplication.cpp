@@ -2,19 +2,17 @@
 
 void CApplication::Start()
 {
-	mRectangle.Set(400.0f, 300.0f, 200.0f, 100.0f);
-	mTexture.Load("ge-mu.pig");
+	mTexture.Load(ENEMY_TEXTURE);
+	mPlayer.Set(100.0f, 150.0f, 100.0f, 50.0f);
+
+	mPlayer.Texture(&mTexture, 400, 0, 1080, 815);
+	
 }
 
 
 void CApplication::Update()
 {
-	//mRectangle.Render();
-	mTexture.DrawImage(mRectangle.GetX() - mRectangle.GetW(),
-		mRectangle.GetX() + mRectangle.GetW(),
-		mRectangle.GetY() - mRectangle.GetH(),
-		mRectangle.GetY() + mRectangle.GetH(),
-		0, 570, 1010, 430
-	);
+	mPlayer.Render();
+	mPlayer.Update();
 }
 
