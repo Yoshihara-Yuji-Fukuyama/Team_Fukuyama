@@ -1,11 +1,25 @@
 #pragma once
 
+class CTaskManager;
+
+enum class CTaskPriority
+{
+	Field,     //フィールド
+	Object,    //ゲーム中のオブジェクト
+
+	UI,        //UI
+};
+
 //タスククラス
 class CTask
 {
+	friend CTaskManager;
 public:
-	//コンストラクタ
-	CTask();
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="priority">優先度</param>
+	CTask(int priority);
 	//デストラクタ
 	virtual ~CTask();
 
@@ -21,10 +35,21 @@ public:
 	int GetPriority() const;
 
 	/// <summary>
+	/// 処理順番を設定
+	/// </summary>
+	/// <param name="order">設定する処理順番</param>
+	void SetSortOrder(int order);
+	/// <summary>
+	/// 処理順番を取得
+	/// </summary>
+	/// <returns></returns>
+	int GetSortOrder() const;
+
+	/// <summary>
 	/// 有効かどうかを設定
 	/// </summary>
 	/// <param name="enable">trueならば有効</param>
-	void SetEneble(bool enable);
+	void SetEnable(bool enable);
 	/// <summary>
 	/// 有効かどうか取得
 	/// </summary>
@@ -48,12 +73,13 @@ public:
 	bool IsKill() const;
 
 	//更新
-	void Update();
+	virtual void Update();
 	//描画
-	void Render();
+	virtual void Render();
 
 private:
 	int mPriority;//タスクの優先度
+	int mSortOrder;//処理順番
 	bool mIsEnable;//タスクが有効かどうか
 	bool mIsShow;//タスクを描画するかどうか
 	bool mIsKill;//タスクの削除フラグ
