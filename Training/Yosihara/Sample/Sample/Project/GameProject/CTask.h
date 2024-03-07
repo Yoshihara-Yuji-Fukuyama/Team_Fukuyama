@@ -5,6 +5,7 @@ class CTaskManager;
 enum class CTaskPriority
 {
 	Field,     //フィールド
+	Shadow,    //オブジェクトの影
 	Object,    //ゲーム中のオブジェクト
 
 	UI,        //UI

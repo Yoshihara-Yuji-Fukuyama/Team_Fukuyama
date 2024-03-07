@@ -87,6 +87,7 @@ void CTaskManager::Delete(CTask* del)
 	mTaskList.remove(del);
 	delete del;
 }
+
 //リスト内のタスクをすべて削除
 void CTaskManager::DeleteAll()
 {
@@ -103,6 +104,12 @@ void CTaskManager::DeleteAll()
 		delete del;
 	}
 }
+
+const std::list<CTask*>& CTaskManager::GetObjectList()
+{
+	return mObjectList;
+}
+
 //リスト内の全タスクの更新処理を呼び出す
 void CTaskManager::Update()
 {

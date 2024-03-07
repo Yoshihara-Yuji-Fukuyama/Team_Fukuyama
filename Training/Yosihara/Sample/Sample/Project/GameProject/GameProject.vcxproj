@@ -18,6 +18,7 @@
     <ClCompile Include="CObjectBase.cpp" />
     <ClCompile Include="CTask.cpp" />
     <ClCompile Include="CTaskManager.cpp" />
+    <ClCompile Include="CShadowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCharacterBase.h" />
@@ -27,6 +28,7 @@
     <ClInclude Include="CObjectBase.h" />
     <ClInclude Include="CTask.h" />
     <ClInclude Include="CTaskManager.h" />
+    <ClInclude Include="CShadowManager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FE2CE3B1-49BF-46A5-9DB1-9BD5B52FE1A0}</ProjectGuid>

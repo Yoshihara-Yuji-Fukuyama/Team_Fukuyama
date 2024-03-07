@@ -8,6 +8,7 @@
     <ClCompile Include="CCharacterBase.cpp" />
     <ClCompile Include="CTaskManager.cpp" />
     <ClCompile Include="CTask.cpp" />
+    <ClCompile Include="CShadowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -17,5 +18,6 @@
     <ClInclude Include="CCharacterBase.h" />
     <ClInclude Include="CTaskManager.h" />
     <ClInclude Include="CTask.h" />
+    <ClInclude Include="CShadowManager.h" />
   </ItemGroup>
 </Project>
