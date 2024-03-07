@@ -1,6 +1,7 @@
 #pragma once
+#include "CharaBase.h"
 
-class CSlime
+class CSlime :public CharaBase
 {
 	//アクセス修飾子
 //自分以外の外部からアクセスし放題
@@ -12,32 +13,18 @@ public:
 	/// <param name="pos">初期位置</param>
 	CSlime(int type ,const CVector2D &pos);
 	//デストラクタ
-	~CSlime();
-
-	/// <summary>
-	/// 座標を取得
-	/// </summary>
-	/// <returns>座標</returns>
-	const CVector2D &GetPos() const;
-
-	/// <summary>
-	/// 座標を設定
-	/// </summary>
-	/// <param name="pos">座標</param>
-	void SetPos(const CVector2D &pos);
+	~CSlime() ;
 
 	//更新処理
-	void Update();
+	void Update() override;
 	//描画処理
-	void Render();
+	void Render() override;
 
 	//自分自身のクラスしかアクセスできない
 	//メンバ変数は基本private
 private:
-	CVector2D mPos;		//座標
 	TexAnimData* mpAnimData;	//アニメーションのデータ
 	CImage* mpImage;	//画像
-	int mHp;			//HP
 	int mType;			//スライムの種類
 
 };

@@ -1,6 +1,7 @@
 #pragma once
+#include "CharaBase.h"
 
-class CPlayer
+class CPlayer : public CharaBase
 {
 //アクセス修飾子
 //自分以外の外部からアクセスし放題
@@ -10,30 +11,19 @@ public:
 	//デストラクタ
 	~CPlayer();
 
-	/// <summary>
-	/// プレイヤーの座標を取得
-	/// </summary>
-	/// <returns>プレイヤーの座標</returns>
-	const CVector2D &GetPos() const;
-
-	/// <summary>
-	/// プレイヤーの座標を設定
-	/// </summary>
-	/// <param name="pos">プレイヤーの座標</param>
-	void SetPos(const CVector2D &pos);
+	//死亡したときの処理
+	void Death() override;
 
 	//更新処理
-	void Update();
+	void Update() override;
 	//描画処理
-	void Render();
+	void Render() override;
 
 //自分自身のクラスしかアクセスできない
 //メンバ変数は基本private
 private:
-	CVector2D mPos;		//プレイヤーの座標
 	TexAnimData* mpAnimData;	//アニメーションのデータ
 	CImage* mpImage;	//プレイヤーの画像
-	int mHp;			//プレイヤーのHP
 
 //自分と自クラスを継承したクラスでアクセスできる
 protected:

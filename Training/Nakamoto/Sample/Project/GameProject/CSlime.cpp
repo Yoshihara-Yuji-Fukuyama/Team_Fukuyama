@@ -2,8 +2,9 @@
 
 //コンストラクタ
 CSlime::CSlime(int type, const CVector2D& pos)
-	: mPos(pos)
-	, mHp(100)
+	: CharaBase(pos)
+	,mpAnimData(nullptr)
+	,mpImage(nullptr)
 	,mType(type)
 {
 	//プレイヤーのアニメーションデータを生成
@@ -40,7 +41,7 @@ CSlime::CSlime(int type, const CVector2D& pos)
 CSlime::~CSlime()
 {
 	//アニメーションの配列を削除
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		delete[] mpAnimData[i].pData;
 	}
@@ -48,18 +49,6 @@ CSlime::~CSlime()
 
 	//画像データを削除
 	delete mpImage;
-}
-
-//プレイヤーの座標を取得
-const CVector2D &CSlime::GetPos() const
-{
-	return mPos;
-}
-
-//プレイヤーの座標を設定
-void CSlime::SetPos(const CVector2D &pos)
-{
-	mPos = pos;
 }
 
 //更新処理

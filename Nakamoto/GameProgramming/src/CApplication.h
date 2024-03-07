@@ -2,6 +2,8 @@
 #include "CRectangle.h"
 #include "CTexture.h"
 #include "CPlayer.h"
+//タスクリスト
+//#include "CTaskManager.h"
 
 class CApplication
 {
@@ -14,5 +16,5 @@ public:
 private:
 	CRectangle mRectangle;
 	CTexture mTexture;
-	CPlayer mPlayer;
+	CPlayer* mpPlayer;
 };

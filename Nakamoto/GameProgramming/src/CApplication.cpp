@@ -2,17 +2,18 @@
 
 void CApplication::Start()
 {
+	mpPlayer = new CPlayer();
 	mTexture.Load(ENEMY_TEXTURE);
-	mPlayer.Set(100.0f, 150.0f, 100.0f, 50.0f);
+	mpPlayer->Set(100.0f, 150.0f, 100.0f, 50.0f);
 
-	mPlayer.Texture(&mTexture, 400, 0, 1080, 815);
+	mpPlayer->Texture(&mTexture, 400, 0, 1080, 815);
 	
 }
 
 
 void CApplication::Update()
 {
-	mPlayer.Render();
-	mPlayer.Update();
+	mpPlayer->Render();
+	mpPlayer->Update();
 }
 

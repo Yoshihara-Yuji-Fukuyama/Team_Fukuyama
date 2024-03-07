@@ -1,10 +1,16 @@
 #include "CPlayer.h"
 
+//基底クラス・・・
+//派生クラス・・・
+
 //コンストラクタ
 CPlayer::CPlayer()
-	: mPos(CVector2D(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.75f))
-	,mHp(100)
+	:CharaBase(CVector2D(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.75f))
+	,mpAnimData(nullptr)
+	,mpImage(nullptr)
 {
+	mHp = 200;
+
 	//プレイヤーのアニメーションデータを生成
 	int frame = 6;
 	//配列の中身を設定
@@ -54,16 +60,15 @@ CPlayer::~CPlayer()
 	delete mpImage;
 }
 
-//プレイヤーの座標を取得
-const CVector2D &CPlayer::GetPos() const
+//死亡したときの処理
+void CPlayer::Death()
 {
-	return mPos;
-}
+	//基底クラスの死亡処理も呼び出す
+	CharaBase::Death();
 
-//プレイヤーの座標を設定
-void CPlayer::SetPos(const CVector2D &pos)
-{
-	mPos = pos;
+	//死亡アニメーションを再生して、
+	//死亡アニメーションが終わったら、
+	//ゲームオーバー画面を表示
 }
 
 //更新処理
