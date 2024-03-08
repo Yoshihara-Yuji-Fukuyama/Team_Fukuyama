@@ -15,7 +15,7 @@ CRectangle::~CRectangle()
 
 void CRectangle::Render()
 {
-	//éläpå`ÇÃï`é 
+	//éläpå`Ç≈ï`é 
 	glBegin(GL_QUADS);
 	glVertex2f(mX - mW, mY - mH);
 	glVertex2f(mX + mW, mY - mH);

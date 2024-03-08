@@ -1,12 +1,14 @@
 #include "CApplication.h"
 
+#define PLAYER_TEXTURE "‹SQƒZƒbƒg.png"
+#define ONI_TEXCOORD 600 ,0 ,1200 ,600	//‹S‘Ò‹@‚P
+
 void CApplication::Start()
 {
-	mTexture.Load(ENEMY_TEXTURE);
+	mTexture.Load(PLAYER_TEXTURE);
 	mpPlayer = new CPlayer();
-	mpPlayer->Set(100.0f, 150.0f, 100.0f, 50.0f);
-	mpPlayer->Texture(&mTexture, 400, 0, 1080, 815);
-	
+	mpPlayer->Set(100.0f, 300.0f, 300.0f, 300.0f);
+	mpPlayer->Texture(&mTexture, ONI_TEXCOORD);
 }
 
 

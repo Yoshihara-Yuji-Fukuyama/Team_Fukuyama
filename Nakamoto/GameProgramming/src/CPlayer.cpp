@@ -1,52 +1,90 @@
 #include "CPlayer.h"
 #include "CApplication.h"
 
-//左
-#define LEFT_TEXCOORD 0 ,400 ,1080 ,815 //スライム待機１の座標
-//右
-#define RIGHT_TEXCOORD 400 ,0 ,1080 ,815 //スライム待機１の座標
-
 #define VELOCITY_PLAYER 3.0f	//プレイヤーの移動速度
+#define JUMPV0 (30 / 1.4f)		//ジャンプの初速度
+#define GRAVITY (30 / 30)		//重力加速度
 
 CPlayer::CPlayer()
 {
 	
 }
 
-CPlayer::CPlayer(float x, float y, float w, float h, CTexture* pt)
+CPlayer::~CPlayer()
 {
-	Set(x, y, w, h);
-	Texture(pt, RIGHT_TEXCOORD);
+
 }
 
 void CPlayer::Update()
 {
+	//左に移動
 	if (mInput.Key('A'))
 	{
-		float x = GetX() - VELOCITY_PLAYER;
-		SetX(x);
+		SetX(GetX() - VELOCITY_PLAYER);
 	}
-
+	//右に移動
 	if (mInput.Key('D'))
 	{
-		float x = GetX() + VELOCITY_PLAYER;
-		SetX(x);
+		SetX(GetX() + VELOCITY_PLAYER);
 	}
-
+	//上に移動
 	if (mInput.Key('W'))
 	{
-		float y = GetY() + VELOCITY_PLAYER;
-		SetY(y);
+		if (GetY() - GetH() < 500)
+		{
+			SetY(GetY() + VELOCITY_PLAYER);
+			if (mState == EState::EJUMP)
+			{
+				//ジャンプ距離加算
+				mJump += VELOCITY_PLAYER;
+			}
+		}
 	}
-
+	//下に移動
 	if (mInput.Key('S'))
 	{
-		float y = GetY() - VELOCITY_PLAYER;
-		SetY(y);
+		if (GetY() - GetH() > 0)
+		{
+			SetY(GetY() - VELOCITY_PLAYER);
+			if (mState == EState::EJUMP)
+			{
+				//ジャンプ距離減算
+				mJump -= VELOCITY_PLAYER;
+			}
+		}
 	}
-
+	//ジャンプ
 	if (mInput.Key(VK_SPACE))
 	{
+		if (mState != EState::EJUMP)
+		{
+			//ジャンプの開始時のY座標を取得
+			mJump = (GetY() - GetH());
+			//ジャンプの初速度を設定
+			mVy = JUMPV0;
+			//状態をジャンプに変更
+			mState = EState::EJUMP;
+		}
+	}
+	//ジャンプ処理
+	if (mState == EState::EJUMP)
+	{
+		//Y座標にY軸速度を加える
+		SetY(GetY() + mVy);
+		//Y軸速度に重力を減算する
+		mVy -= GRAVITY;
 
+		//ジャンプ距離以下にY座標がなったら
+		if (GetY() - GetH() < mJump)
+		{
+			//状態を移動に変更
+			mState = EState::EMOVE;
+		}
+
+		if (GetY() - GetH() < 0)
+		{
+			//状態を移動に変更
+			mState = EState::EMOVE;
+		}
 	}
 }
