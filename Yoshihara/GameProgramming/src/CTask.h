@@ -2,6 +2,13 @@
 
 class CTaskManager;
 
+enum class CTaskPriority
+{
+	UI,
+	Object,
+	Field,
+};
+
 class CTask
 {
 	friend CTaskManager;
@@ -10,6 +17,8 @@ public:
 	CTask()
 		:mpNext(nullptr), mpPrev(nullptr), mPriority(0), mEnabled(true) {}
 	//デストラクタ
+	virtual ~CTask() {}
+	//更新
 	virtual void Update() {}
 	//描画
 	virtual void Render() {}

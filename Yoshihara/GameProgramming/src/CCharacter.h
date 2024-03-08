@@ -8,6 +8,11 @@ class CCharacter :public CRectangle,public CTask//親クラス名
 public:
 	//デフォルトコンストラクタ
 	CCharacter();
+	/// <summary>
+	/// 背景のコンストラクタ
+	/// </summary>
+	/// <param name="priority">優先度</param>
+	CCharacter(int priority);
 	//デストラクタ
 	~CCharacter();
 	//mpTextureを返す
@@ -25,13 +30,10 @@ public:
 	/// <param name="top">テクスチャの上座標</param>
 	void Texture(CTexture* pTexture,int left, int right, int bottom, int top);
 
-	virtual void Render();//描画
-
-	virtual void Update() = 0;//更新
+	void Render();//描画
 
 protected:
 	bool mEnabled;//有効フラグ
-
 
 private:
 	CTexture* mpTexture;//テクスチャ

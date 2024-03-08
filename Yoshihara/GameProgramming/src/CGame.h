@@ -1,5 +1,4 @@
 #pragma once
-#include "CTexture.h"
 #include "CEnemy.h"
 #include "CBackground.h"
 
@@ -13,12 +12,14 @@ CGameクラス
 class CGame
 {
 public:
+	//更新
 	void Update();
-
+	//初期処理
 	void Start();
 
+	//デフォルトコンストラクタ
 	CGame();
-
+	//デストラクタ
 	~CGame();
 
 private:

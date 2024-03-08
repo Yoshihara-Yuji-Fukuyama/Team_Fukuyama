@@ -2,7 +2,6 @@
 #include "CRectangle.h"
 #include "CTexture.h"
 #include "CCharacter.h"
-#include "CEnemy.h"
 #include "CTaskManager.h"
 #include "CGame.h"
 
@@ -17,18 +16,7 @@ public:
 
 	void Update();
 
-	//staticƒƒ\ƒbƒh‚ÌéŒ¾
-	static CTexture* GetTexture();
-
-	static CTaskManager* GetTaskManager();
-
 private:
-	CEnemy* mpEnemy;
-
 	CGame* mpGame;
 
-	//static•Ï”‚ÌéŒ¾
-	static CTexture mTexture;
-
-	static CTaskManager mTaskManager;
 };

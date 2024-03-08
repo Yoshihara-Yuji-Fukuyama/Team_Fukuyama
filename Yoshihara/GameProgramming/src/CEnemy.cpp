@@ -1,24 +1,33 @@
 #include "CEnemy.h"
-#include "CApplication.h"
 
 //定数の定義
-#define TEX_COORD_ENEMY 450,860,392,121//テクスチャマッピング
+#define TEX_COORD_ENEMY 0,600,1800,1200//左、右、下、上　テクスチャマッピング
 #define TEXTURE_ENEMY "Slime.png"
 
+//static変数の定義
+CTexture CEnemy::mTexture;
+
+//メソッドの定義
+CTexture* CEnemy::GetTexture()
+{
+	return &mTexture;
+}
+
+//敵のデフォルトコンストラクタ
+CEnemy::CEnemy()
+	:CCharacter((int)CTaskPriority::Object)
+{
+}
 
 //敵のコンストラクタ
 CEnemy::CEnemy(float x, float y, float w, float h)
+	:CEnemy()
 {
 	Set(x, y, w, h);
 
-	mpTexture->Load(TEXTURE_ENEMY);
+	GetTexture()->Load(TEXTURE_ENEMY);
 
-	Texture(mpTexture, TEX_COORD_ENEMY);
-
-
-	//mpTexture->Load(TEXTURE_ENEMY);
-
-	//Texture(GetTexture(), TEX_COORD_ENEMY);
+	Texture(GetTexture(), TEX_COORD_ENEMY);
 }
 
 void CEnemy::Update()

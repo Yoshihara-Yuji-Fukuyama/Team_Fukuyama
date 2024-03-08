@@ -3,22 +3,22 @@
 
 #define TEXTURE_ENEMY "Slime.png"
 #define TEXTURE_BACKGROUND "Background.png"
-#define ENEMY_STARTSET 1800,100,60,40//x,y,w,h ‰¡:c=1.5:1
-#define BACKGROUND_SET 400,300,400,300//x,y,w,h
+#define ENEMY_STARTSET 1700,300,300,300//x,y,w,h
+#define BACKGROUND_SET 960,540,960,540//x,y,w,h
 
 CGame::CGame()
 {	
-	mpEnemy = new CEnemy(ENEMY_STARTSET);
-	//mpBackground = new CBackground(BACKGROUND_SET, CApplication::GetTexture());
-
+	new CBackground(BACKGROUND_SET);
+	new CEnemy(ENEMY_STARTSET);
 }
 
 
 
 void CGame::Update()
-{
-	//mpBackground->Render();
-	mpEnemy->Render();
+{	
+	CTaskManager::GetInstance()->Delete();
+	CTaskManager::GetInstance()->Update();
+	CTaskManager::GetInstance()->Render();
 }
 
 
@@ -32,7 +32,7 @@ void CGame::Start()
 
 CGame::~CGame()
 {
-
+	CTaskManager::GetInstance()->AllDelete();
 }
 
 
