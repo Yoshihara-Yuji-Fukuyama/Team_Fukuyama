@@ -1,8 +1,8 @@
 #include "CEnemy.h"
 
 //定数の定義
-#define TEX_COORD_ENEMY 0,600,1800,1200//左、右、下、上　テクスチャマッピング
-#define TEXTURE_ENEMY "Slime.png"
+#define TEX_COORD_ENEMY 0,600,1800,1200//左、右、下、上　敵テクスチャマッピング
+#define TEXTURE_ENEMY "Slime.png"//スライム画像
 
 //static変数の定義
 CTexture CEnemy::mTexture;
@@ -28,6 +28,12 @@ CEnemy::CEnemy(float x, float y, float w, float h)
 	GetTexture()->Load(TEXTURE_ENEMY);
 
 	Texture(GetTexture(), TEX_COORD_ENEMY);
+}
+
+//デストラクタ
+CEnemy::~CEnemy()
+{
+
 }
 
 void CEnemy::Update()

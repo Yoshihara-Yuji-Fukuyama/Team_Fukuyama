@@ -5,9 +5,6 @@
 #include "CTaskManager.h"
 #include "CGame.h"
 
-//’è”‚Ì’è‹`
-#define TEXTURE "ge-mu.png"
-
 class CApplication
 {
 

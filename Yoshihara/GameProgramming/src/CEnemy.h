@@ -4,6 +4,7 @@
 class CEnemy :public CCharacter
 {
 public:
+	//更新処理
 	void Update() override;
 
 	//デフォルトコンストラクタ
@@ -16,6 +17,8 @@ public:
 	/// <param name="w">幅</param>
 	/// <param name="h">高さ</param>
 	CEnemy(float x, float y, float w, float h);
+	//デストラクタ
+	~CEnemy();
 
 	//staticメソッドの宣言
 	static CTexture* GetTexture();

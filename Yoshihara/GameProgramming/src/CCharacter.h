@@ -6,6 +6,11 @@
 class CCharacter :public CRectangle,public CTask//親クラス名
 {
 public:
+	enum class EState//状態
+	{
+		EMOVE,    //移動
+		EJUMP,    //ジャンプ
+	};
 	//デフォルトコンストラクタ
 	CCharacter();
 	/// <summary>
@@ -34,6 +39,7 @@ public:
 
 protected:
 	bool mEnabled;//有効フラグ
+	EState mState;//状態
 
 private:
 	CTexture* mpTexture;//テクスチャ

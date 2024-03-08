@@ -1,6 +1,7 @@
 #pragma once
 #include "CEnemy.h"
 #include "CBackground.h"
+#include "CPlayer.h"
 
 /*
 CGameƒNƒ‰ƒX
@@ -23,8 +24,6 @@ public:
 	~CGame();
 
 private:
-	CEnemy* mpEnemy;
 
-	CBackground* mpBackground;
 
 };

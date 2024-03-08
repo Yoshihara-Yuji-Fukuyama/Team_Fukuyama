@@ -58,3 +58,13 @@ float CRectangle::GetH()
 {
 	return mH;
 }
+
+void CRectangle::SetY(float y)
+{
+	mY = y;
+}
+
+void CRectangle::SetX(float x)
+{
+	mX = x;
+}
