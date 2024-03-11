@@ -1,15 +1,26 @@
 #pragma once
 
 class CTaskManager;
+class CCollisionManager;
+
+enum class CTaskPriority
+{
+	UI,
+	Object,
+	Field,
+};
 
 class CTask
 {
 	friend CTaskManager;
+	friend CCollisionManager;
 public:
 	//デフォルトコンストラクタ
 	CTask()
 		:mpNext(nullptr), mpPrev(nullptr), mPriority(0), mEnabled(true) {}
 	//デストラクタ
+	virtual ~CTask() {}
+	//更新
 	virtual void Update() {}
 	//描画
 	virtual void Render() {}

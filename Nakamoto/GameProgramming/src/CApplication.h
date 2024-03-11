@@ -2,6 +2,11 @@
 #include "CRectangle.h"
 #include "CTexture.h"
 #include "CPlayer.h"
+#include "CTexture.h"
+#include "CCharacter.h"
+#include "CTaskManager.h"
+#include "CGame.h"
+
 //タスクリスト
 //#include "CTaskManager.h"
 
@@ -14,7 +19,5 @@ public:
 	//1秒間に60回呼ばれる
 	void Update();
 private:
-	CRectangle mRectangle;
-	CTexture mTexture;
-	CPlayer* mpPlayer;
+	CGame* mpGame;
 };

@@ -12,8 +12,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CApplication.cpp" />
+    <ClCompile Include="src\CBackground.cpp" />
     <ClCompile Include="src\CCharacter.cpp" />
+    <ClCompile Include="src\CCollider.cpp" />
+    <ClCompile Include="src\CCollisionManager.cpp" />
     <ClCompile Include="src\CEnemy.cpp" />
+    <ClCompile Include="src\CGame.cpp" />
     <ClCompile Include="src\CInput.cpp" />
     <ClCompile Include="src\CPlayer.cpp" />
     <ClCompile Include="src\CRectangle.cpp" />
@@ -24,8 +28,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\CApplication.h" />
+    <ClInclude Include="src\CBackground.h" />
     <ClInclude Include="src\CCharacter.h" />
+    <ClInclude Include="src\CCollider.h" />
+    <ClInclude Include="src\CCollisionManager.h" />
     <ClInclude Include="src\CEnemy.h" />
+    <ClInclude Include="src\CGame.h" />
     <ClInclude Include="src\CInput.h" />
     <ClInclude Include="src\CPlayer.h" />
     <ClInclude Include="src\CRectangle.h" />

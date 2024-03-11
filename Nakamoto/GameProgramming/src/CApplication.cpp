@@ -1,20 +1,23 @@
+#include "CRectangle.h"
 #include "CApplication.h"
-
-#define PLAYER_TEXTURE "鬼＿セット.png"
-#define ONI_TEXCOORD 600 ,0 ,1200 ,600	//鬼待機１
+#include "CCollisionManager.h"
 
 void CApplication::Start()
 {
-	mTexture.Load(PLAYER_TEXTURE);
-	mpPlayer = new CPlayer();
-	mpPlayer->Set(100.0f, 300.0f, 300.0f, 300.0f);
-	mpPlayer->Texture(&mTexture, ONI_TEXCOORD);
+	mpGame = new CGame();
 }
+
 
 
 void CApplication::Update()
 {
-	mpPlayer->Render();
-	mpPlayer->Update();
-}
+	mpGame->Update();
+	
+	//コリジョンマネージャの衝突処理
+	CCollisionManager::Instance()->Collision();
 
+	//コライダの表示(確認用)
+	CCollisionManager::Instance()->Render();
+
+
+}

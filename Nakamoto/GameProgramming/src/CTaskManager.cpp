@@ -8,13 +8,24 @@ CTaskManager::CTaskManager()
 }
 
 //デストラクタ
-CTaskManager::~CTaskManager() {}
+CTaskManager::~CTaskManager()
+{
+
+}
 
 //リストに追加
 void CTaskManager::Add(CTask* addTask)
 {
-	//mTailの前に追加
-	CTask* task = &mTail;
+	//mHeadの次から検索
+	CTask* task = mHead.mpNext;
+
+	//優先度の大きい順に挿入
+	//優先度が小さければ次のタスクへ
+	//優先度が同じか大きくなったら前に挿入
+	while (addTask->mPriority < task->mPriority)
+	{
+		task = task->mpNext;
+	}
 	//addTaskの次をtask
 	addTask->mpNext = task;
 	//addTaskの前をtaskの前に
@@ -23,6 +34,7 @@ void CTaskManager::Add(CTask* addTask)
 	addTask->mpPrev->mpNext = addTask;
 	//taskの前をaddTaskに
 	task->mpPrev = addTask;
+
 }
 
 //リストから削除
@@ -93,4 +105,19 @@ void CTaskManager::Render()
 		//次へ
 		task = task->mpNext;
 	}
+}
+
+//タスクマネージャのインスタンス
+CTaskManager* CTaskManager::mpInstance = nullptr;
+
+//インスタンスの取得
+CTaskManager* CTaskManager::GetInstance()
+{
+	//インスタンスがなければ
+	if (mpInstance == nullptr)
+	{
+		//インスタンスを生成
+		mpInstance = new CTaskManager();
+	}
+	return mpInstance;
 }

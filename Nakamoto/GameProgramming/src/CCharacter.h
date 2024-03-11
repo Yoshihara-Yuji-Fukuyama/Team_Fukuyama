@@ -3,6 +3,9 @@
 #include "CRectangle.h"
 #include "CTask.h"
 
+//コライダクラスの宣言
+class CCollider;
+
 class CCharacter :public CRectangle, public CTask//親クラス名
 {
 public:
@@ -12,14 +15,21 @@ public:
 		EJUMP,		//ジャンプ
 	};
 
-	//有効フラグを返す
-	bool GetEnabled();
 	//デフォルトコンストラクタ
 	CCharacter();
 	//デストラクタ
 	~CCharacter();
 	//mpTextureを返す
 	CTexture* GetTexture();
+	
+	//有効フラグを返す
+	bool GetEnabled();
+
+	/// <summary>
+	/// 背景のコンストラクタ
+	/// </summary>
+	/// <param name="priority">優先度</param>
+	CCharacter(int priority);
 
 	/// <summary>
 	/// テクスチャの設定
@@ -32,12 +42,14 @@ public:
 	void Texture(CTexture* pTexture, int left, int right, int bottom, int top);
 
 	virtual void Render();//描画
-
-	virtual void Update() = 0;//描画
+	//衝突処理
+	virtual void Collision(CCollider* m, CCollider* o) {}
 
 protected:
 	bool mEnabled;//有効フラグ
 	EState mState;	//状態
+
+	float mVx, mVy;		//速度
 private:
 	CTexture* mpTexture;//テクスチャ
 

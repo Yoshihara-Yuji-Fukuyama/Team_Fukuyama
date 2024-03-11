@@ -6,8 +6,8 @@
 class CTaskManager
 {
 public:
-	//デフォルトコンストラクタ
-	CTaskManager();
+	//インスタンスの取得
+	static CTaskManager* GetInstance();
 	//デストラクタ
 	virtual ~CTaskManager();
 	//リストに追加
@@ -25,4 +25,9 @@ public:
 protected:
 	CTask mHead;//先頭タスク
 	CTask mTail;//最終タスク
+	//デフォルトコンストラクタ
+	CTaskManager();
+private:
+	//タスクマネージャーのインスタンス
+	static CTaskManager* mpInstance;
 };
