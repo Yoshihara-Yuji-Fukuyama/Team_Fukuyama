@@ -16,6 +16,9 @@ public:
 	//更新処理
 	void Update() override;
 
+	//死亡処理
+	void Death();
+
 	//staticメソッドの宣言
 	static CTexture* GetTexture();
 

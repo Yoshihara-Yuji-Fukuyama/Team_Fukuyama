@@ -19,11 +19,24 @@ public:
 	/// <param name="priority">優先度</param>
 	CCharacter(int priority);
 	//デストラクタ
-	~CCharacter();
+	virtual ~CCharacter();
 	//mpTextureを返す
 	CTexture* GetTexture();
+	/// <summary>
+	/// 有効フラグを設定
+	/// </summary>
+	/// <param name="isEnabled"></param>
+	void SetEnabled(bool isEnabled);
 	//有効フラグを返す
 	bool GetEnabled();
+
+	/// <summary>
+	/// 処理順番を設定
+	/// </summary>
+	/// <param name="order">処理順番</param>
+	void SetSortOrder(float order);
+	//処理順番を取得
+	float GetSortOrder();
 
 	/// <summary>
 	/// テクスチャの設定
@@ -38,7 +51,6 @@ public:
 	void Render();//描画
 
 protected:
-	bool mEnabled;//有効フラグ
 	EState mState;//状態
 
 private:

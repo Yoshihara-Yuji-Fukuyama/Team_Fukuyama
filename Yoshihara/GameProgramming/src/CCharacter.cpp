@@ -32,8 +32,6 @@ CCharacter::CCharacter()
 	: mpTexture(nullptr)
 
 	, mLeft(0.0f), mRight(0.0f), mBottom(0.0f), mTop(0.0f)
-
-	, mEnabled(true)
 {
 	CTaskManager::GetInstance()->Add(this);
 }
@@ -43,8 +41,6 @@ CCharacter::CCharacter(int priority)
 	: mpTexture(nullptr)
 
 	, mLeft(0.0f), mRight(0.0f), mBottom(0.0f), mTop(0.0f)
-
-	, mEnabled(true)
 {
 	mPriority = priority;
 	
@@ -64,8 +60,26 @@ CTexture* CCharacter::GetTexture()
 	return mpTexture;
 }
 
+//有効フラグを設定
+void CCharacter::SetEnabled(bool isEnabled)
+{
+	mEnabled = isEnabled;
+}
 //有効フラグを返す
 bool CCharacter::GetEnabled()
 {
 	return mEnabled;
+}
+
+//処理順番を設定
+void CCharacter::SetSortOrder(float order)
+{
+	mSortOrder = order;
+	CTaskManager::GetInstance()->Remove(this, true);
+	CTaskManager::GetInstance()->Add(this, true);
+}
+//処理順番を取得
+float CCharacter::GetSortOrder()
+{
+	return mSortOrder;
 }

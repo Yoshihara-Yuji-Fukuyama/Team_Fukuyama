@@ -1,5 +1,6 @@
 #pragma once
 #include "CCharacter.h"
+#include "CInput.h"
 
 class CEnemy :public CCharacter
 {
@@ -20,10 +21,14 @@ public:
 	//デストラクタ
 	~CEnemy();
 
+	//死亡処理
+	void Death();
+
 	//staticメソッドの宣言
 	static CTexture* GetTexture();
 
 private:
+	CInput mInput;
 	//static変数の宣言
 	static CTexture mTexture;
 

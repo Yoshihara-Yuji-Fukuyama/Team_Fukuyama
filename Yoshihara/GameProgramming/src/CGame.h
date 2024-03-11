@@ -24,6 +24,8 @@ public:
 	~CGame();
 
 private:
+	CPlayer* mpPlayer;//プレイヤーのポインタ
 
+	void SetCamera();//カメラを設定
 
 };

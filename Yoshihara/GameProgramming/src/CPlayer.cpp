@@ -1,11 +1,12 @@
 #include "CPlayer.h"
 #include "CApplication.h"
 
-#define PLAYER_TEXTURE "鬼＿セット.png"     //プレイヤー画像
-#define PLAYER_TEXCOORD 600 ,0 ,1200 ,600	//プレイヤーテクスチャマッピング
+#define PLAYER_TEXTURE "Player.png"         //プレイヤー画像
+#define PLAYER_TEXCOORD 0 ,600 ,3000 ,2400	//プレイヤーテクスチャマッピング
 #define VELOCITY_PLAYER 3.0f	            //プレイヤーの移動速度
 #define JUMPV0 (30 / 1.4f)		            //ジャンプの初速度
 #define GRAVITY (30 / 30)		            //重力加速度
+#define PLAYER_BOTTOM 270                   //プレイヤー足元計算用
 
 //static変数の定義
 CTexture CPlayer::mTexture;
@@ -39,6 +40,15 @@ CPlayer::~CPlayer()
 
 void CPlayer::Update()
 {
+	//状態がジャンプじゃないなら処理順番を更新
+	if (mState == EState::EJUMP)
+	{
+		SetSortOrder(mJump);
+	}
+	else
+	{
+		SetSortOrder(GetY() - PLAYER_BOTTOM);
+	}
 	//左に移動
 	if (mInput.Key('A'))
 	{
@@ -52,7 +62,7 @@ void CPlayer::Update()
 	//上に移動
 	if (mInput.Key('W'))
 	{
-		if (GetY() - GetH() < 500)
+		if (GetY() - PLAYER_BOTTOM < 500)
 		{
 			SetY(GetY() + VELOCITY_PLAYER);
 			if (mState == EState::EJUMP)
@@ -65,7 +75,7 @@ void CPlayer::Update()
 	//下に移動
 	if (mInput.Key('S'))
 	{
-		if (GetY() - GetH() > 0)
+		if (GetY() - PLAYER_BOTTOM > 0)
 		{
 			SetY(GetY() - VELOCITY_PLAYER);
 			if (mState == EState::EJUMP)
@@ -81,7 +91,7 @@ void CPlayer::Update()
 		if (mState != EState::EJUMP)
 		{
 			//ジャンプの開始時のY座標を取得
-			mJump = (GetY() - GetH());
+			mJump = (GetY() - PLAYER_BOTTOM);
 			//ジャンプの初速度を設定
 			mVy = JUMPV0;
 			//状態をジャンプに変更
@@ -97,16 +107,22 @@ void CPlayer::Update()
 		mVy -= GRAVITY;
 
 		//ジャンプ距離以下にY座標がなったら
-		if (GetY() - GetH() < mJump)
+		if (GetY() - PLAYER_BOTTOM < mJump)
 		{
 			//状態を移動に変更
 			mState = EState::EMOVE;
 		}
 
-		if (GetY() - GetH() < 0)
+		if (GetY() - PLAYER_BOTTOM < 0)
 		{
 			//状態を移動に変更
 			mState = EState::EMOVE;
 		}
 	}
+}
+
+void CPlayer::Death()
+{
+	//タスクリストから削除
+	SetEnabled(false);
 }
