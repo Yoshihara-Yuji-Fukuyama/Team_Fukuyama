@@ -51,7 +51,6 @@ CEnemy::CEnemy(float x, float y, float w, float h)
 
 	mVx = -VELOCITY_SLIME;
 
-	//Time = 0;
 }
 
 //デストラクタ
@@ -221,10 +220,10 @@ void CEnemy::WaitAnimation()
 {
 	//画像を切り替える速度
 	const int PITCH = 64;
+	mFps = 2;
+	int frame = mFrame++ / mFps;
 
-	mTime++;
-
-	if (mTime % PITCH < PITCH / 4)
+	if (frame % PITCH < PITCH / 4)
 	{
 		//左向き待機
 		if (mVx < 0.0f)
@@ -237,7 +236,7 @@ void CEnemy::WaitAnimation()
 			Texture(GetTexture(), TEX_RIGHTWAIT1);
 		}
 	}
-	else if (mTime % PITCH < PITCH * 2 / 4)
+	else if (frame % PITCH < PITCH * 2 / 4)
 	{
 		//左向き待機
 		if (mVx < 0.0f)
@@ -250,7 +249,7 @@ void CEnemy::WaitAnimation()
 			Texture(GetTexture(), TEX_RIGHTWAIT2);
 		}
 	}
-	else if (mTime % PITCH < PITCH * 3 / 4)
+	else if (frame % PITCH < PITCH * 3 / 4)
 	{
 		//左向き待機
 		if (mVx < 0.0f)

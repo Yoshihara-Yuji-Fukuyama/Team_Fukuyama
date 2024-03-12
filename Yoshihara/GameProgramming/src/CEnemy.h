@@ -35,8 +35,10 @@ public:
 	static CTexture* GetTexture();
 
 private:
-	//待機モーションの経過時間
-	int mTime;
+	//フレームカウンタ
+	int mFrame;
+	//1コマのフレーム数
+	int mFps;
 	//static変数の宣言
 	static CTexture mTexture;
 
