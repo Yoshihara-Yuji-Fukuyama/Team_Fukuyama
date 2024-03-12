@@ -16,7 +16,15 @@
 #define TEX_RIGHTMOVE4 1800, 2400, 2400, 1800
 #define TEX_RIGHTMOVE5 2400, 3000, 2400, 1800
 #define TEX_RIGHTMOVE6 3000, 3600, 2400, 1800
-
+//ジャンプ
+#define TEX_LEFTJUMP1 600,0,3600,3000
+#define TEX_LEFTJUMP2 1200,600,3600,3000
+#define TEX_LEFTJUMP3 1800,1200,3600,3000
+#define TEX_LEFTJUMP4 2400,1800,3600,3000
+#define TEX_RIGHTJUMP1 0,600,3600,3000
+#define TEX_RIGHTJUMP2 600,1200,3600,3000
+#define TEX_RIGHTJUMP3 1200,1800,3600,3000
+#define TEX_RIGHTJUMP4 1800,2400,3600,3000
 
 
 
@@ -113,6 +121,8 @@ void CPlayer::Update()
 
 		//移動入力
 		Move();
+		//ジャンプアニメーション
+		JumpAnimation();
 
 		//Y座標にY軸速度を加える
 		SetY(GetY() + mVy);
@@ -141,6 +151,8 @@ void CPlayer::Update()
 void CPlayer::Move()
 {
 	isMove = false;
+	isMoveX = false;
+	isMoveY = false;
 	//左に移動
 	if (mInput.Key('A'))
 	{
@@ -150,6 +162,7 @@ void CPlayer::Move()
 		}
 		SetX(GetX() + mVx);
 		isMove = true;
+		isMoveX = true;
 	}
 	//右に移動
 	if (mInput.Key('D'))
@@ -160,6 +173,7 @@ void CPlayer::Move()
 		}
 		SetX(GetX() + mVx);
 		isMove = true;
+		isMoveX = true;
 	}
 	//上に移動
 	if (mInput.Key('W'))
@@ -171,6 +185,7 @@ void CPlayer::Move()
 			{
 				SetY(GetY() + VELOCITY_PLAYER);
 				isMove = true;
+				isMoveY = true;
 			}
 		}
 		//ステータスがジャンプかつジャンプ開始時の座標が250以下の時
@@ -191,6 +206,7 @@ void CPlayer::Move()
 			{
 				SetY(GetY() - VELOCITY_PLAYER);
 				isMove = true;
+				isMoveY = true;
 			}
 		}
 		//ステータスがジャンプかつジャンプ開始時の座標が0より大きい時
@@ -229,14 +245,19 @@ void CPlayer::MoveAnimation()
 {
 	//画像を切り替える速度
 	const int PITCH = 64;
-	//X座標を保存
-	int PosX = (int)GetX();
-
-
-	//X座標が0以上の時
-	if ((int)GetX() >= 0)
+	//座標を保存
+	int Pos = (int)GetX();
+	//Y座標だけ移動しているならY座標を入れる
+	if (isMoveX == false && isMoveY == true)
 	{
-		if (PosX % PITCH < PITCH / 6)
+		Pos = (int)GetY();
+	}
+
+
+	//座標が0以上の時
+	if (Pos >= 0)
+	{
+		if (Pos % PITCH < PITCH / 6)
 		{
 			//左移動
 			if (mVx < 0.0f)
@@ -249,7 +270,7 @@ void CPlayer::MoveAnimation()
 				Texture(GetTexture(), TEX_RIGHTMOVE1);
 			}
 		}
-		else if (PosX % PITCH < PITCH * 2 / 6)
+		else if (Pos % PITCH < PITCH * 2 / 6)
 		{
 			//左移動
 			if (mVx < 0.0f)
@@ -262,7 +283,7 @@ void CPlayer::MoveAnimation()
 				Texture(GetTexture(), TEX_RIGHTMOVE2);
 			}
 		}
-		else if (PosX % PITCH < PITCH * 3 / 6)
+		else if (Pos % PITCH < PITCH * 3 / 6)
 		{
 			//左移動
 			if (mVx < 0.0f)
@@ -275,7 +296,7 @@ void CPlayer::MoveAnimation()
 				Texture(GetTexture(), TEX_RIGHTMOVE3);
 			}
 		}
-		else if (PosX % PITCH < PITCH * 4 / 6)
+		else if (Pos % PITCH < PITCH * 4 / 6)
 		{
 			//左移動
 			if (mVx < 0.0f)
@@ -288,7 +309,7 @@ void CPlayer::MoveAnimation()
 				Texture(GetTexture(), TEX_RIGHTMOVE4);
 			}
 		}
-		else if (PosX % PITCH < PITCH * 5 / 6)
+		else if (Pos % PITCH < PITCH * 5 / 6)
 		{
 			//左移動
 			if (mVx < 0.0f)
@@ -315,13 +336,13 @@ void CPlayer::MoveAnimation()
 			}
 		}
 	}
-	//X座標が0未満の時
+	//座標が0未満の時
 	else
 	{
 		//正数にする
-		PosX = -PosX;
+		Pos = -Pos;
 
-		if (PosX % PITCH < PITCH / 6)
+		if (Pos % PITCH < PITCH / 6)
 		{
 			//左移動
 			if (mVx < 0.0f)
@@ -334,7 +355,7 @@ void CPlayer::MoveAnimation()
 				Texture(GetTexture(), TEX_RIGHTMOVE6);
 			}
 		}
-		else if (PosX % PITCH < PITCH * 2 / 6)
+		else if (Pos % PITCH < PITCH * 2 / 6)
 		{
 			//左移動
 			if (mVx < 0.0f)
@@ -347,7 +368,7 @@ void CPlayer::MoveAnimation()
 				Texture(GetTexture(), TEX_RIGHTMOVE5);
 			}
 		}
-		else if (PosX % PITCH < PITCH * 3 / 6)
+		else if (Pos % PITCH < PITCH * 3 / 6)
 		{
 			//左移動
 			if (mVx < 0.0f)
@@ -360,7 +381,7 @@ void CPlayer::MoveAnimation()
 				Texture(GetTexture(), TEX_RIGHTMOVE4);
 			}
 		}
-		else if (PosX % PITCH < PITCH * 4 / 6)
+		else if (Pos % PITCH < PITCH * 4 / 6)
 		{
 			//左移動
 			if (mVx < 0.0f)
@@ -373,7 +394,7 @@ void CPlayer::MoveAnimation()
 				Texture(GetTexture(), TEX_RIGHTMOVE3);
 			}
 		}
-		else if (PosX % PITCH < PITCH * 5 / 6)
+		else if (Pos % PITCH < PITCH * 5 / 6)
 		{
 			//左移動
 			if (mVx < 0.0f)
@@ -401,4 +422,67 @@ void CPlayer::MoveAnimation()
 		}
 	}
 
+}
+
+void CPlayer::JumpAnimation()
+{
+	//画像を切り替える速度
+	const int PITCH = 256;
+	//ジャンプ前とジャンプ中の座標の差を求める
+	int JumpPos = GetY() - mJump;
+
+
+	if (JumpPos % PITCH < PITCH / 4)
+	{
+		//左向き
+		if (mVx < 0.0f)
+		{
+			Texture(GetTexture(), TEX_LEFTJUMP1);
+		}
+		//右向き
+		else
+		{
+			Texture(GetTexture(), TEX_RIGHTJUMP1);
+		}
+	}
+	else if (JumpPos % PITCH < PITCH * 2 / 4)
+	{
+		//左向き
+
+		if (mVx < 0.0f)
+		{
+			Texture(GetTexture(), TEX_LEFTJUMP2);
+		}
+		//右向き
+		else
+		{
+			Texture(GetTexture(), TEX_RIGHTJUMP2);
+		}
+	}
+	else if (JumpPos % PITCH < PITCH * 3 / 4)
+	{
+		//左向き
+		if (mVx < 0.0f)
+		{
+			Texture(GetTexture(), TEX_LEFTJUMP3);
+		}
+		//右向き
+		else
+		{
+			Texture(GetTexture(), TEX_RIGHTJUMP3);
+		}
+	}
+	else
+	{
+		//左向き
+		if (mVx < 0.0f)
+		{
+			Texture(GetTexture(), TEX_LEFTJUMP4);
+		}
+		//右向き
+		else
+		{
+			Texture(GetTexture(), TEX_RIGHTJUMP4);
+		}
+	}
 }

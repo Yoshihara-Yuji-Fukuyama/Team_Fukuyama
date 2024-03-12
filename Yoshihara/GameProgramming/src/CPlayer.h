@@ -24,6 +24,8 @@ public:
 
 	//移動アニメーション
 	void MoveAnimation();
+	//ジャンプアニメーション
+	void JumpAnimation();
 
 	//staticメソッドの宣言
 	static CPlayer* GetInstance();
@@ -34,6 +36,8 @@ private:
 	CInput mInput;
 	float mJump;		//ジャンプ距離
 	bool isMove;        //移動しているか
+	bool isMoveX;       //X軸移動しているか
+	bool isMoveY;       //Y軸移動しているか
 
 	//static変数の宣言
 	static CPlayer* mpInstance;//プレイヤーのインスタンス
