@@ -2,6 +2,7 @@
 
 #include "CTask.h"
 #include "CCharacter.h"
+#include <vector>
 
 class CTaskManager
 {
@@ -22,12 +23,14 @@ public:
 	void Update();
 	//描画
 	void Render();
+
 protected:
 	CTask mHead;//先頭タスク
 	CTask mTail;//最終タスク
 	//デフォルトコンストラクタ
 	CTaskManager();
 private:
+
 	//タスクマネージャーのインスタンス
 	static CTaskManager* mpInstance;
 };

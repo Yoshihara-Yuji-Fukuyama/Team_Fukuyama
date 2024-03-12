@@ -25,6 +25,8 @@ public:
 	//有効フラグを返す
 	bool GetEnabled();
 
+	void SetEnabled(bool isEnabled);
+
 	/// <summary>
 	/// 背景のコンストラクタ
 	/// </summary>
@@ -42,7 +44,17 @@ public:
 	void Texture(CTexture* pTexture, int left, int right, int bottom, int top);
 
 	virtual void Render();//描画
-	//衝突処理
+
+	//衝突処理2
+	virtual void Collision() {};
+	//衝突処理4
+	virtual void Collision(CCharacter* m, CCharacter* o) {};
+
+	/// <summary>
+	/// 衝突処理
+	/// </summary>
+	/// <param name="m">コライダ1</param>
+	/// <param name="o">コライダ2</param>
 	virtual void Collision(CCollider* m, CCollider* o) {}
 
 protected:
@@ -54,6 +66,5 @@ private:
 	CTexture* mpTexture;//テクスチャ
 
 	int mLeft, mRight, mBottom, mTop;//左、右、下、上
-
 };
 

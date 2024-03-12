@@ -1,6 +1,5 @@
 #include "CPlayer.h"
 #include "CApplication.h"
-#include "CCollisionManager.h"
 
 #define PLAYER_TEXTURE "Player.png"     //プレイヤー画像
 #define PLAYER_TEXCOORD 0 ,600 ,3000 ,2400	//プレイヤーテクスチャマッピング
@@ -20,8 +19,8 @@ CTexture* CPlayer::GetTexture()
 
 CPlayer::CPlayer()
 	:CCharacter((int)CTaskPriority::Object)
+	, mCollider(this, &mX, &mY, 100, 100)
 	,mJump(0)
-	,mCollider(this, mX, mY, 100, 100)
 {
 	mState = EState::EMOVE;
 }
@@ -98,25 +97,14 @@ void CPlayer::Update()
 	//ジャンプ処理
 	if (mState == EState::EJUMP)
 	{
-		if (GetY() - GetH() < 250)
-		{
-			//Y座標にY軸速度を加える
-			SetY(GetY() + mVy);
-			//Y軸速度に重力を減算する
-			mVy -= GRAVITY;
-		}
+		//Y座標にY軸速度を加える
+		SetY(GetY() + mVy);
+		//Y軸速度に重力を減算する
+		mVy -= GRAVITY;
+		
 		//ジャンプ距離以下にY座標がなったら
 		if (GetY() - GetH() < mJump)
 		{
-			//状態を移動に変更
-			mState = EState::EMOVE;
-		}
-		else if (GetY() - GetH() >= 250)
-		{
-			//Y座標にY軸速度を加える
-			SetY(GetY() + mVy);
-			//Y軸速度に重力を減算する
-			mVy -= GRAVITY;
 			//状態を移動に変更
 			mState = EState::EMOVE;
 		}
@@ -128,17 +116,4 @@ void CPlayer::Update()
 		}
 
 	}
-}
-
-//衝突処理
-void CPlayer::Collision(CCollider* m, CCollider* o)
-{
-	float x , y;
-	//コライダ1とコライダ2が衝突しているか判定
-	if (CCollider::Collision(m, o, &x, &y))
-	{
-		SetX(GetX() + x);
-		SetY(GetY() + y);
-	}
-
 }

@@ -5,19 +5,14 @@
 void CApplication::Start()
 {
 	mpGame = new CGame();
+
 }
-
-
 
 void CApplication::Update()
 {
 	mpGame->Update();
+
+	CCollisionManager::GetInstance()->Collision();
 	
-	//コリジョンマネージャの衝突処理
-	CCollisionManager::Instance()->Collision();
-
-	//コライダの表示(確認用)
-	CCollisionManager::Instance()->Render();
-
-
+	CCollisionManager::GetInstance()->Render();
 }

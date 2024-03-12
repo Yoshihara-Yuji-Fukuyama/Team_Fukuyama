@@ -6,6 +6,7 @@
 #include "CCharacter.h"
 #include "CTaskManager.h"
 #include "CGame.h"
+#include "CCharacterManager.h"
 
 //タスクリスト
 //#include "CTaskManager.h"
@@ -20,4 +21,6 @@ public:
 	void Update();
 private:
 	CGame* mpGame;
+
+	CCharacterManager mCharacterManager;
 };

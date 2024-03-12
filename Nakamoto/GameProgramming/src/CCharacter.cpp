@@ -1,5 +1,6 @@
 #include "CCharacter.h"
 #include "CTaskManager.h"
+#include "CCollisionManager.h"
 
 //テクスチャの設定
 void CCharacter::Texture(CTexture* pTexture, int left, int right, int bottom, int top)
@@ -48,7 +49,7 @@ CCharacter::CCharacter(int priority)
 {
 	mPriority = priority;
 
-	CTaskManager::GetInstance()->Add(this);
+	CTaskManager::GetInstance()->Add(this);	
 }
 
 //デストラクタ
@@ -69,4 +70,9 @@ CTexture* CCharacter::GetTexture()
 bool CCharacter::GetEnabled()
 {
 	return mEnabled;
+}
+
+void CCharacter::SetEnabled(bool isEnabled)
+{
+	mEnabled = isEnabled;
 }

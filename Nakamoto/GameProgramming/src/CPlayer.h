@@ -15,15 +15,6 @@ public:
 	~CPlayer();
 	//更新処理
 	void Update();
-	
-	/// <summary>
-	/// 衝突処理
-	/// </summary>
-	/// <param name="m">コライダ1</param>
-	/// <param name="o">コライダ2</param>
-	void Collision(CCollider* m,CCollider* o);
-	//優先度の変更
-	void ChengePriority();
 
 	//staticメソッドの宣言
 	static CTexture* GetTexture();
@@ -32,7 +23,8 @@ private:
 	CInput mInput;
 	float mJump;		//ジャンプ距離
 
-	CCollider mCollider;	//コライダー
+	//コライダ
+	CCollider mCollider;
 
 	//static変数の宣言
 	static CTexture mTexture;

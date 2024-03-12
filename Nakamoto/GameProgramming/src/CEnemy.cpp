@@ -1,4 +1,5 @@
 #include "CEnemy.h"
+#include <stdio.h>	//文字で確認する用
 
 //定数の定義
 #define TEX_COORD_ENEMY 0,600,1800,1200//左、右、下、上　テクスチャマッピング
@@ -18,7 +19,7 @@ CTexture* CEnemy::GetTexture()
 //敵のデフォルトコンストラクタ
 CEnemy::CEnemy()
 	:CCharacter((int)CTaskPriority::Object)
-	, mCollider1(this, mX, mY, 100, 100)
+	, mColider(this, &mX, &mY, 50, 50)
 {
 }
 
@@ -37,7 +38,13 @@ CEnemy::CEnemy(float x, float y, float w, float h)
 
 void CEnemy::Collision(CCollider* m, CCollider* o)
 {
-
+	//コライダのmとoが衝突しているか判定しているか判定
+	if (CCollider::Collision(m, o))
+	{
+		//衝突しているときは無効にする
+		mEnabled = false;
+		printf("mEnabledがfalseになりました\n");
+	}
 }
 
 void CEnemy::Update()
@@ -49,4 +56,3 @@ void CEnemy::Update()
 	}
 
 }
-
