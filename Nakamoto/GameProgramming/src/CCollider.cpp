@@ -38,41 +38,40 @@ void CCollider::Render()
 }
 
 //Õ“Ë”»’è
-bool CCollider::Collision(CCollider* m, CCollider* o)
+bool CCollider::Collision(CCollider* m, CCollider* o, float *ax, float *ay)
 {
-	float x, y;
-	if (m->mpX < o->mpX)
-		x = o->mpX - m->mpX - m->mW - o->mW;
+	if (*m->mpX < *o->mpX)
+		*ax = *o->mpX - *m->mpX - m->mW - o->mW;
 	else
-		x = m->mpX - o->mpX - m->mW - o->mW;
+		*ax = *m->mpX - *o->mpX - m->mW - o->mW;
 	//0ˆÈã‚ÍÕ“Ë‚µ‚È‚¢
-	if (x >= 0.0f)
+	if (*ax >= 0.0f)
 		return false;
 
-	if (m->mpY < o->mpY)
-		y = o->mpY - m->mpY - m->mH - o->mH;
+	if (*m->mpY < *o->mpY)
+		*ay = *o->mpY - *m->mpY - m->mH - o->mH;
 	else
-		y = m->mpY - o->mpY - m->mH - o->mH;
+		*ay = *m->mpY - *o->mpY - m->mH - o->mH;
 	//0ˆÈã‚ÍÕ“Ë‚µ‚È‚¢
-	if (y >= 0.0f)
+	if (*ay >= 0.0f)
 		return false;
 
 	//Y‚ª’Z‚¢‚©”»’è
-	if (x < y)
+	if (*ax < *ay)
 	{
 		//YC³AX‚Í0
-		x = 0.0f;
+		*ax = 0.0f;
 		//ã‚ÌŽž
-		if (m->mpY > o->mpY)
-			y = -y;
+		if (*m->mpY > *o->mpY)
+			*ay = -*ay;
 	}
 	else
 	{
 		//XC³AY‚Í0
-		y = 0.0f;
+		*ay = 0.0f;
 		//ã‚ÌŽž
-		if (m->mpX > o->mpX)
-			x = -x;
+		if (*m->mpX > *o->mpX)
+			*ax = -*ax;
 	}
 	return true;
 }

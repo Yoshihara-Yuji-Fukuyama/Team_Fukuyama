@@ -14,5 +14,6 @@ void CApplication::Update()
 
 	CCollisionManager::GetInstance()->Collision();
 	
+	//コライダの表示(確認用)
 	CCollisionManager::GetInstance()->Render();
 }

@@ -19,7 +19,7 @@ CTexture* CEnemy::GetTexture()
 //敵のデフォルトコンストラクタ
 CEnemy::CEnemy()
 	:CCharacter((int)CTaskPriority::Object)
-	, mColider(this, &mX, &mY, 50, 50)
+	, mColider(this, &mX, &mY, 140, 90)
 {
 }
 
@@ -38,12 +38,18 @@ CEnemy::CEnemy(float x, float y, float w, float h)
 
 void CEnemy::Collision(CCollider* m, CCollider* o)
 {
+	float ax, ay;
 	//コライダのmとoが衝突しているか判定しているか判定
-	if (CCollider::Collision(m, o))
+	if (CCollider::Collision(m, o,&ax,&ay))
 	{
+		//プレイヤーとの衝突判定を実行(めり込まない処理)
+		SetX(GetX() + ax);
+		SetY(GetY() + ay);
+
 		//衝突しているときは無効にする
 		mEnabled = false;
 		printf("mEnabledがfalseになりました\n");
+
 	}
 }
 
