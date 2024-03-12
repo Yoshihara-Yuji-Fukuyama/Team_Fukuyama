@@ -1,6 +1,5 @@
 #pragma once
 #include "CCharacter.h"
-#include "CInput.h"
 
 class CEnemy :public CCharacter
 {
@@ -10,6 +9,7 @@ public:
 
 	//デフォルトコンストラクタ
 	CEnemy();
+
 	/// <summary>
 	/// 敵のコンストラクタ
 	/// </summary>
@@ -18,8 +18,15 @@ public:
 	/// <param name="w">幅</param>
 	/// <param name="h">高さ</param>
 	CEnemy(float x, float y, float w, float h);
+
 	//デストラクタ
 	~CEnemy();
+
+	//移動アニメーション
+	void MoveAnimation();
+
+	//待機アニメーション
+	void WaitAnimation();
 
 	//死亡処理
 	void Death();
@@ -28,7 +35,8 @@ public:
 	static CTexture* GetTexture();
 
 private:
-	CInput mInput;
+	//待機モーションの経過時間
+	int mTime;
 	//static変数の宣言
 	static CTexture mTexture;
 

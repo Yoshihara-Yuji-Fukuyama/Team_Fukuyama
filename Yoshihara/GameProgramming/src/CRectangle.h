@@ -47,9 +47,12 @@ public:
 	/// </summary>
 	/// <param name="x">X座標の変更値</param>
 	void SetX(float x);
-private:
+
+protected:
 	float mX; //X座標
 	float mY; //Y座標
+
+private:
 	float mW; //幅
 	float mH; //高さ
 

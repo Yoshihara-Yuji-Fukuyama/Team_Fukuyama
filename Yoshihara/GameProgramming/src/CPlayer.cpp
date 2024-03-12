@@ -1,7 +1,7 @@
 #include "CPlayer.h"
 #include "CApplication.h"
 
-#define PLAYER_TEXTURE "Player.png"         //プレイヤー画像
+#define PLAYER_STARTSET 100.0f,300.0f,300.0f,300.0f//x,y,w,h プレイヤーの初期位置
 #define PLAYER_TEXCOORD 0 ,600 ,3000 ,2400	//プレイヤーテクスチャマッピング
 #define VELOCITY_PLAYER 3.0f	            //プレイヤーの移動速度
 #define JUMPV0 (30 / 1.4f)		            //ジャンプの初速度
@@ -11,24 +11,36 @@
 //static変数の定義
 CTexture CPlayer::mTexture;
 
+CPlayer* CPlayer::mpInstance;
+
 //メソッドの定義
 CTexture* CPlayer::GetTexture()
 {
 	return &mTexture;
 }
 
+//インスタンスの取得
+CPlayer* CPlayer::GetInstance()
+{
+	if (mpInstance == nullptr)
+	{
+		mpInstance= new CPlayer(PLAYER_STARTSET);
+	}
+	return mpInstance;
+}
+
 CPlayer::CPlayer()
 	:CCharacter((int)CTaskPriority::Object)
+	, mJump(0)
 {
-	
+	mpInstance = this;
+	mState = EState::EMOVE;
 }
 
 CPlayer::CPlayer(float x, float y, float w, float h)
 	: CPlayer()
 {
 	Set(x, y, w, h);
-
-	GetTexture()->Load(PLAYER_TEXTURE);
 
 	Texture(GetTexture(), PLAYER_TEXCOORD);
 }
@@ -43,6 +55,7 @@ void CPlayer::Update()
 	//状態がジャンプじゃないなら処理順番を更新
 	if (mState == EState::EJUMP)
 	{
+		//ジャンプ開始時の座標
 		SetSortOrder(mJump);
 	}
 	else
@@ -62,27 +75,33 @@ void CPlayer::Update()
 	//上に移動
 	if (mInput.Key('W'))
 	{
-		if (GetY() - PLAYER_BOTTOM < 500)
+		//ステータスが移動かつ足元の座標が250未満の時
+		if (mState == EState::EMOVE && GetY() - PLAYER_BOTTOM < 250)
 		{
 			SetY(GetY() + VELOCITY_PLAYER);
-			if (mState == EState::EJUMP)
-			{
-				//ジャンプ距離加算
-				mJump += VELOCITY_PLAYER;
-			}
+		}
+		//ステータスがジャンプかつジャンプ開始時の座標が250以下の時
+		if (mState == EState::EJUMP && mJump < 250)
+		{
+			//ジャンプ距離加算
+			mJump += VELOCITY_PLAYER;
+			SetY(GetY() + VELOCITY_PLAYER);
 		}
 	}
 	//下に移動
 	if (mInput.Key('S'))
 	{
-		if (GetY() - PLAYER_BOTTOM > 0)
+		//ステータスが移動かつ足元の座標が0より大きい時
+		if (mState == EState::EMOVE && GetY() - PLAYER_BOTTOM > 0)
 		{
 			SetY(GetY() - VELOCITY_PLAYER);
-			if (mState == EState::EJUMP)
-			{
-				//ジャンプ距離減算
-				mJump -= VELOCITY_PLAYER;
-			}
+		}
+		//ステータスがジャンプかつジャンプ開始時の座標が0より大きい時
+		if (mState == EState::EJUMP && mJump > 0)
+		{
+			//ジャンプ距離減算
+			mJump -= VELOCITY_PLAYER;
+			SetY(GetY() - VELOCITY_PLAYER);
 		}
 	}
 	//ジャンプ
@@ -112,7 +131,7 @@ void CPlayer::Update()
 			//状態を移動に変更
 			mState = EState::EMOVE;
 		}
-
+		//ジャンプ中に画面下より下に行かないようにする
 		if (GetY() - PLAYER_BOTTOM < 0)
 		{
 			//状態を移動に変更
@@ -121,6 +140,7 @@ void CPlayer::Update()
 	}
 }
 
+//死亡処理
 void CPlayer::Death()
 {
 	//タスクリストから削除

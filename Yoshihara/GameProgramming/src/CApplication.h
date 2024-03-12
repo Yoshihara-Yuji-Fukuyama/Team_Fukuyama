@@ -9,8 +9,9 @@ class CApplication
 {
 
 public:
+	//ˆê“x‚¾‚¯ŒÄ‚Î‚ê‚é
 	void Start();
-
+	//1•bŠÔ‚É60‰ñŒÄ‚Î‚ê‚é
 	void Update();
 
 private:

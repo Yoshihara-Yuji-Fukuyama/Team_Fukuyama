@@ -1,5 +1,6 @@
 #pragma once
 #include "CCharacter.h"
+#include "CPlayer.h"
 
 class CBackground :public CCharacter
 {
@@ -16,12 +17,31 @@ public:
 	/// <param name="y">Y座標</param>
 	/// <param name="w">幅</param>
 	/// <param name="h">高さ</param>
-	CBackground(float x, float y, float w, float h);
+	/// <param name="next">次の次の背景のポインタ</param>
+	/// <param name="prev">前の前の背景のポインタ</param>
+	CBackground(float x, float y, float w, float h,
+		CBackground* next2, CBackground* prev2);
+
+	/// <summary>
+	/// 背景生成
+	/// </summary>
+	/// <param name="background">背景のポインタ</param>
+	/// <param name="player">プレイヤーのポインタ</param>
+	void CreateBackground(CBackground* background, CPlayer* player);
+	/// <summary>
+	/// 背景削除
+	/// </summary>
+	/// <param name="background">背景のポインタ</param>
+	/// <param name="player">プレイヤーのポインタ</param>
+	void DeleteBackground(CBackground* background, CPlayer* player);
 
 	//staticメソッドの宣言
 	static CTexture* GetTexture();
 
 private:
+	CBackground* Next2Background;//次の次の背景のポインタ
+	CBackground* Prev2Background;//前の前の背景のポインタ
+
 	//static変数の宣言
 	static CTexture mTexture;
 };

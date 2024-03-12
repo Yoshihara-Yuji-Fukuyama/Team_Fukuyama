@@ -20,13 +20,16 @@ public:
 	void Death();
 
 	//staticメソッドの宣言
+	static CPlayer* GetInstance();
+
 	static CTexture* GetTexture();
 
 private:
 	CInput mInput;
 	float mJump;		//ジャンプ距離
-	float mVx, mVy;
 
 	//static変数の宣言
+	static CPlayer* mpInstance;//プレイヤーのインスタンス
+
 	static CTexture mTexture;
 };

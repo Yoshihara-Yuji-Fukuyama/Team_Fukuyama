@@ -1,6 +1,7 @@
 #pragma once
 
 class CTaskManager;
+class CCollisionManager;
 
 enum class CTaskPriority
 {
@@ -12,6 +13,7 @@ enum class CTaskPriority
 class CTask
 {
 	friend CTaskManager;
+	friend CCollisionManager;
 public:
 	//デフォルトコンストラクタ
 	CTask()
