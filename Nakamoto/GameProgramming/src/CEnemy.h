@@ -20,10 +20,27 @@ public:
 
 	void Collision(CCollider* m, CCollider* o);
 
+	//デストラクタ
+	~CEnemy();
+
+	//移動アニメーション
+	void MoveAnimation();
+
+	//待機アニメーション
+	void WaitAnimation();
+
+	//死亡処理
+	void Death();
+
 	//staticメソッドの宣言
 	static CTexture* GetTexture();
 
 private:
+	//フレームカウンタ
+	int mFrame;
+	//1コマのフレーム数
+	int mFps;
+
 	//コライダ
 	CCollider mColider;
 	//static変数の宣言

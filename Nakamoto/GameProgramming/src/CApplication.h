@@ -6,7 +6,7 @@
 #include "CCharacter.h"
 #include "CTaskManager.h"
 #include "CGame.h"
-#include "CCharacterManager.h"
+#include "CCollisionManager.h"
 
 //タスクリスト
 //#include "CTaskManager.h"
@@ -22,5 +22,4 @@ public:
 private:
 	CGame* mpGame;
 
-	CCharacterManager mCharacterManager;
 };

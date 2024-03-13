@@ -5,6 +5,9 @@ CTaskManager::CTaskManager()
 {
 	mHead.mpNext = &mTail;
 	mTail.mpPrev = &mHead;
+
+	mHeadObj.mpNextObj = &mTailObj;
+	mTailObj.mpPrevObj = &mHeadObj;
 }
 
 //デストラクタ
@@ -14,8 +17,25 @@ CTaskManager::~CTaskManager()
 }
 
 //リストに追加
-void CTaskManager::Add(CTask* addTask)
+void CTaskManager::Add(CTask* addTask, bool isSort)
 {
+	if (!isSort)
+	{
+		//addTaskの優先度がオブジェクト用ならオブジェクトのリストに追加
+		if (addTask->mPriority == (int)CTaskPriority::Object)
+		{
+			CTask* taskObj = mHeadObj.mpNextObj;
+			//addTaskの次をtaskObj
+			addTask->mpNextObj = taskObj;
+			//addTaskの前をtaskObjの前に
+			addTask->mpPrevObj = taskObj->mpPrevObj;
+			//addTaskの前の次をaddTaskに
+			addTask->mpPrevObj->mpNextObj = addTask;
+			//taskObjの前をaddTaskに
+			taskObj->mpPrevObj = addTask;
+		}
+	}
+
 	//mHeadの次から検索
 	CTask* task = mHead.mpNext;
 
@@ -38,12 +58,23 @@ void CTaskManager::Add(CTask* addTask)
 }
 
 //リストから削除
-void CTaskManager::Remove(CTask* task)
+void CTaskManager::Remove(CTask* removeTask, bool isSort)
 {
+	if (!isSort)
+	{
+		//優先度がオブジェクト用であれば、オブジェクトのリストからも取り除く
+		if (removeTask->mPriority == (int)CTaskPriority::Object)
+		{
+			//removeTaskの前の次を、removeTaskの次にする
+			removeTask->mpPrevObj->mpNextObj = removeTask->mpNextObj;
+			//removeTaskの次の前を、removeTaskの前にする
+			removeTask->mpNextObj->mpPrevObj = removeTask->mpPrevObj;
+		}
+	}
 	//タスクの前の次を、タスクの次にする
-	task->mpPrev->mpNext = task->mpNext;
+	removeTask->mpPrev->mpNext = removeTask->mpNext;
 	//タスクの次の前を、タスクの前にする
-	task->mpNext->mpPrev = task->mpPrev;
+	removeTask->mpNext->mpPrev = removeTask->mpPrev;
 }
 
 //タスクの削除

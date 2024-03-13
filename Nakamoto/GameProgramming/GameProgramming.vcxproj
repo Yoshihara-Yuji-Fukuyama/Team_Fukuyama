@@ -13,8 +13,8 @@
   <ItemGroup>
     <ClCompile Include="src\CApplication.cpp" />
     <ClCompile Include="src\CBackground.cpp" />
+    <ClCompile Include="src\CCamera.cpp" />
     <ClCompile Include="src\CCharacter.cpp" />
-    <ClCompile Include="src\CCharacterManager.cpp" />
     <ClCompile Include="src\CCollider.cpp" />
     <ClCompile Include="src\CCollisionManager.cpp" />
     <ClCompile Include="src\CEnemy.cpp" />
@@ -30,8 +30,8 @@
   <ItemGroup>
     <ClInclude Include="src\CApplication.h" />
     <ClInclude Include="src\CBackground.h" />
+    <ClInclude Include="src\CCamera.h" />
     <ClInclude Include="src\CCharacter.h" />
-    <ClInclude Include="src\CCharacterManager.h" />
     <ClInclude Include="src\CCollider.h" />
     <ClInclude Include="src\CCollisionManager.h" />
     <ClInclude Include="src\CEnemy.h" />

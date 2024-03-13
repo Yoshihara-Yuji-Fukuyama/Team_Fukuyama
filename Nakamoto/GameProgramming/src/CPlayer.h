@@ -17,14 +17,21 @@ public:
 	void Update();
 
 	//staticメソッドの宣言
+	static CPlayer* GetInstance();
+
+	//staticメソッドの宣言
 	static CTexture* GetTexture();
 
 private:
 	CInput mInput;
 	float mJump;		//ジャンプ距離
+	bool isMove;        //移動しているか
 
 	//コライダ
 	CCollider mCollider;
+
+	//static変数の宣言
+	static CPlayer* mpInstance;//プレイヤーのインスタンス
 
 	//static変数の宣言
 	static CTexture mTexture;

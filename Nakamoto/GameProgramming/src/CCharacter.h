@@ -11,27 +11,41 @@ class CCharacter :public CRectangle, public CTask//親クラス名
 public:
 	enum class EState //状態
 	{
+		EWAIT,    //待機
 		EMOVE,		//移動
 		EJUMP,		//ジャンプ
 	};
 
 	//デフォルトコンストラクタ
 	CCharacter();
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="priority">優先度</param>
+	CCharacter(int priority);
 	//デストラクタ
-	~CCharacter();
+	virtual ~CCharacter();
+
 	//mpTextureを返す
 	CTexture* GetTexture();
+
+	/// <summary>
+	/// 有効フラグを設定
+	/// </summary>
+	/// <param name="isEnabled"></param>
+	void SetEnabled(bool isEnabled);
 	
 	//有効フラグを返す
 	bool GetEnabled();
 
-	void SetEnabled(bool isEnabled);
-
 	/// <summary>
-	/// 背景のコンストラクタ
+	/// 処理順番を設定
 	/// </summary>
-	/// <param name="priority">優先度</param>
-	CCharacter(int priority);
+	/// <param name="order">処理順番</param>
+	void SetSortOrder(float order);
+
+	//処理順番を取得
+	float GetSortOrder();
 
 	/// <summary>
 	/// テクスチャの設定

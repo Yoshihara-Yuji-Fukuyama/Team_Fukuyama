@@ -3,6 +3,7 @@
 #include "CPlayer.h"
 #include "CBackground.h"
 
+
 /*
 CGameクラス
 ゲームクラス
@@ -24,5 +25,5 @@ public:
 	~CGame();
 
 private:
-
+	void SetCamera();//カメラを設定
 };

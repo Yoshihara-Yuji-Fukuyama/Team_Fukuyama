@@ -4,6 +4,9 @@
 #define PLAYER_TEXTURE "Player.png"     //プレイヤー画像
 #define PLAYER_TEXCOORD 0 ,600 ,3000 ,2400	//プレイヤーテクスチャマッピング
 
+#define PLAYER_STARTSET 100.0f,300.0f,300.0f,300.0f//x,y,w,h プレイヤーの初期位置
+
+
 #define VELOCITY_PLAYER 3.0f	//プレイヤーの移動速度
 #define JUMPV0 (30 / 1.4f)		//ジャンプの初速度
 #define GRAVITY (30 / 30)		//重力加速度
@@ -11,10 +14,22 @@
 //static変数の定義
 CTexture CPlayer::mTexture;
 
+CPlayer* CPlayer::mpInstance;
+
 //メソッドの定義
 CTexture* CPlayer::GetTexture()
 {
 	return &mTexture;
+}
+
+//インスタンスの取得
+CPlayer* CPlayer::GetInstance()
+{
+	if (mpInstance == nullptr)
+	{
+		mpInstance = new CPlayer(PLAYER_STARTSET);
+	}
+	return mpInstance;
 }
 
 CPlayer::CPlayer()
@@ -22,6 +37,7 @@ CPlayer::CPlayer()
 	, mCollider(this, &mX, &mY, 100, 100)
 	,mJump(0)
 {
+	mpInstance = this;
 	mState = EState::EMOVE;
 }
 
