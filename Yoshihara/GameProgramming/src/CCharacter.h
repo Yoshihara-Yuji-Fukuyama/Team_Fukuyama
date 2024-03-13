@@ -60,11 +60,31 @@ public:
 
 	void Render();//描画
 
-	//衝突処理
+		//衝突処理2
+	virtual void Collision() {};
+	//衝突処理4
+	virtual void Collision(CCharacter* m, CCharacter* o) {};
+
+	/// <summary>
+	/// 衝突処理
+	/// </summary>
+	/// <param name="m">コライダ1</param>
+	/// <param name="o">コライダ2</param>
 	virtual void Collision(CCollider* m, CCollider* o) {}
 
 protected:
 	EState mState;      //状態
+	bool isMove;        //移動しているか
+	bool isMoveX;       //X軸移動しているか
+	bool isMoveY;       //Y軸移動しているか
+	//アニメーション設定用
+	int AnimSetNum;
+	//アニメーションごとの枚数
+	int MoveNum;
+	int AttackNum;
+	int WaitNum;
+	int JumpNum;
+	int HitNum;
 
 	float mVx, mVy;		//速度
 private:

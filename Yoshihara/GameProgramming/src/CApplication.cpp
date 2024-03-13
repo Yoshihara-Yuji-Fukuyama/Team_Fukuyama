@@ -1,5 +1,6 @@
 #include "CRectangle.h"
 #include "CApplication.h"
+#include "CCollisionManager.h"
 
 void CApplication::Start()
 {
@@ -11,4 +12,9 @@ void CApplication::Start()
 void CApplication::Update()
 {
 	mpGame->Update();
+
+	CCollisionManager::GetInstance()->Collision();
+
+	//コライダの表示(確認用)
+	//CCollisionManager::GetInstance()->Render();
 }

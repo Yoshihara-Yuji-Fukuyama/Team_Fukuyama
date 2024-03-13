@@ -62,8 +62,8 @@ void CGame::SetCamera()
 {
 	float x = CPlayer::GetInstance()->GetX();
 
-	CCamera::SetCamera(x - WINDOW_WIDTH / 2
-		, x + WINDOW_WIDTH / 2
+	CCamera::SetCamera(x - (float)WINDOW_WIDTH / 2
+		, x + (float)WINDOW_WIDTH / 2
 		, 0
 		, WINDOW_HEIGHT);
 }

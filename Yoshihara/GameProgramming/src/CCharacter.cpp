@@ -30,20 +30,17 @@ void CCharacter::Render()
 //デフォルトコンストラクタ
 CCharacter::CCharacter()
 	: mpTexture(nullptr)
-
 	, mLeft(0.0f), mRight(0.0f), mBottom(0.0f), mTop(0.0f)
 {
-	CTaskManager::GetInstance()->Add(this);
+	//CTaskManager::GetInstance()->Add(this);
 }
 
 //コンストラクタ
 CCharacter::CCharacter(int priority)
 	: mpTexture(nullptr)
-
 	, mLeft(0.0f), mRight(0.0f), mBottom(0.0f), mTop(0.0f)
 {
 	mPriority = priority;
-	
 	CTaskManager::GetInstance()->Add(this);
 }
 
@@ -51,7 +48,7 @@ CCharacter::CCharacter(int priority)
 //削除されたらリストからも削除する
 CCharacter::~CCharacter()
 {
-	CTaskManager::GetInstance()->Remove(this);
+		CTaskManager::GetInstance()->Remove(this);
 }
 
 //mpTextureを返す

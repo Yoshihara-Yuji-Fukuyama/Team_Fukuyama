@@ -2,8 +2,10 @@
 
 #include "CCharacter.h"
 #include "CInput.h"
+#include "CCollider.h"
+#include "CAnimation.h"
 
-class CPlayer : public CCharacter
+class CPlayer : public CCharacter, public CAnimation
 {
 public:
 
@@ -22,8 +24,8 @@ public:
 	//死亡処理
 	void Death();
 
-	//移動アニメーション
-	void MoveAnimation();
+	//アニメーションを設定
+	void SetAnimation();
 	//ジャンプアニメーション
 	void JumpAnimation();
 
@@ -35,9 +37,9 @@ public:
 private:
 	CInput mInput;
 	float mJump;		//ジャンプ距離
-	bool isMove;        //移動しているか
-	bool isMoveX;       //X軸移動しているか
-	bool isMoveY;       //Y軸移動しているか
+
+	//コライダ
+	CCollider mCollider;
 
 	//static変数の宣言
 	static CPlayer* mpInstance;//プレイヤーのインスタンス

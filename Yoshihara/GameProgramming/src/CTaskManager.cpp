@@ -44,8 +44,8 @@ void CTaskManager::Add(CTask* addTask, bool isSort)
 	{
 		task = task->mpNext;
 	}
-	//優先度が同じなら処理順番が大きい順に入れる
-	while (addTask->mPriority == task->mPriority)
+	//優先度が同じかつ優先度がオブジェクト用なら処理順番が大きい順に入れる
+	while (addTask->mPriority == task->mPriority && addTask->mPriority == (int)CTaskPriority::Object)
 	{
 		if (addTask->mSortOrder > task->mSortOrder)
 		{

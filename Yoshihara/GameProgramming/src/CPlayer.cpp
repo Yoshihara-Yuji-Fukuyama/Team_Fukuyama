@@ -3,6 +3,15 @@
 
 //定数の定義
 //左、右、下、上　敵テクスチャマッピング
+//待機
+#define TEX_LEFTWAIT1 600,0,3000,2400
+#define TEX_LEFTWAIT2 1200,600,3000,2400
+#define TEX_LEFTWAIT3 1800,1200,3000,2400
+#define TEX_LEFTWAIT4 2400,1800,3000,2400
+#define TEX_RIGHTWAIT1 0,600,3000,2400
+#define TEX_RIGHTWAIT2 600,1200,3000,2400
+#define TEX_RIGHTWAIT3 1200,1800,3000,2400
+#define TEX_RIGHTWAIT4 1800,2400,3000,2400
 //移動
 #define TEX_LEFTMOVE1 600,0,2400,1800
 #define TEX_LEFTMOVE2 1200,600,2400,1800
@@ -61,10 +70,12 @@ CPlayer* CPlayer::GetInstance()
 
 CPlayer::CPlayer()
 	:CCharacter((int)CTaskPriority::Object)
-	, mJump(0)
+	, mCollider(this, &mX, &mY, 100, 100)
 {
-	mpInstance = this;
 	mState = EState::EWAIT;
+	WaitNum = 4;//待機アニメーション数
+	MoveNum = 6;//移動アニメーション数
+	JumpNum = 4;//ジャンプアニメーション数
 }
 
 CPlayer::CPlayer(float x, float y, float w, float h)
@@ -92,6 +103,9 @@ void CPlayer::Update()
 
 		//移動入力
 		Move();
+		AnimSetNum = WaitAnimation(WaitNum);
+		//アニメーションを設定
+		SetAnimation();
 
 		if (isMove == true)
 		{
@@ -106,7 +120,9 @@ void CPlayer::Update()
 		//移動入力
 		Move();
 		//移動アニメーション
-		MoveAnimation();
+		AnimSetNum = MoveAnimation(GetX(), GetY(), isMoveX, isMoveY, mVx, MoveNum);
+		//アニメーションを設定
+		SetAnimation();
 
 		if (isMove == false)
 		{
@@ -239,189 +255,55 @@ void CPlayer::Death()
 	SetEnabled(false);
 }
 
-
-//移動アニメーション
-void CPlayer::MoveAnimation()
+//アニメーションを設定
+void CPlayer::SetAnimation()
 {
-	//画像を切り替える速度
-	const int PITCH = 64;
-	//座標を保存
-	int Pos = (int)GetX();
-	//Y座標だけ移動しているならY座標を入れる
-	if (isMoveX == false && isMoveY == true)
+	switch (mState)
 	{
-		Pos = (int)GetY();
-	}
-
-
-	//座標が0以上の時
-	if (Pos >= 0)
-	{
-		if (Pos % PITCH < PITCH / 6)
+	case EState::EWAIT:
+		//左向き
+		if (mVx < 0.0f)
 		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE6);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE1);
-			}
+			if (AnimSetNum == 1)     Texture(GetTexture(), TEX_LEFTWAIT1);
+			else if (AnimSetNum == 2)Texture(GetTexture(), TEX_LEFTWAIT2);
+			else if (AnimSetNum == 3)Texture(GetTexture(), TEX_LEFTWAIT3);
+			else                     Texture(GetTexture(), TEX_LEFTWAIT4);
 		}
-		else if (Pos % PITCH < PITCH * 2 / 6)
-		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE5);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE2);
-			}
-		}
-		else if (Pos % PITCH < PITCH * 3 / 6)
-		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE4);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE3);
-			}
-		}
-		else if (Pos % PITCH < PITCH * 4 / 6)
-		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE3);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE4);
-			}
-		}
-		else if (Pos % PITCH < PITCH * 5 / 6)
-		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE2);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE5);
-			}
-		}
+		//右向き
 		else
 		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE1);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE6);
-			}
+			if (AnimSetNum == 1)     Texture(GetTexture(), TEX_RIGHTWAIT1);
+			else if (AnimSetNum == 2)Texture(GetTexture(), TEX_RIGHTWAIT2);
+			else if (AnimSetNum == 3)Texture(GetTexture(), TEX_RIGHTWAIT3);
+			else                     Texture(GetTexture(), TEX_RIGHTWAIT4);
 		}
-	}
-	//座標が0未満の時
-	else
-	{
-		//正数にする
-		Pos = -Pos;
-
-		if (Pos % PITCH < PITCH / 6)
+		break;
+	case EState::EMOVE:
+		//左移動
+		if (mVx < 0.0f)
 		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE1);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE6);
-			}
+			if (AnimSetNum == 1)     Texture(GetTexture(), TEX_LEFTMOVE1);
+			else if (AnimSetNum == 2)Texture(GetTexture(), TEX_LEFTMOVE2);
+			else if (AnimSetNum == 3)Texture(GetTexture(), TEX_LEFTMOVE3);
+			else if (AnimSetNum == 4)Texture(GetTexture(), TEX_LEFTMOVE4);
+			else if (AnimSetNum == 5)Texture(GetTexture(), TEX_LEFTMOVE5);
+			else                     Texture(GetTexture(), TEX_LEFTMOVE6);
 		}
-		else if (Pos % PITCH < PITCH * 2 / 6)
-		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE2);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE5);
-			}
-		}
-		else if (Pos % PITCH < PITCH * 3 / 6)
-		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE3);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE4);
-			}
-		}
-		else if (Pos % PITCH < PITCH * 4 / 6)
-		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE4);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE3);
-			}
-		}
-		else if (Pos % PITCH < PITCH * 5 / 6)
-		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE5);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE2);
-			}
-		}
+		//右移動
 		else
 		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE6);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE1);
-			}
+			if (AnimSetNum == 1)     Texture(GetTexture(), TEX_RIGHTMOVE1);
+			else if (AnimSetNum == 2)Texture(GetTexture(), TEX_RIGHTMOVE2);
+			else if (AnimSetNum == 3)Texture(GetTexture(), TEX_RIGHTMOVE3);
+			else if (AnimSetNum == 4)Texture(GetTexture(), TEX_RIGHTMOVE4);
+			else if (AnimSetNum == 5)Texture(GetTexture(), TEX_RIGHTMOVE5);
+			else                     Texture(GetTexture(), TEX_RIGHTMOVE6);
 		}
-	}
 
+		break;
+	case EState::EJUMP:
+		break;
+	}
 }
 
 void CPlayer::JumpAnimation()
