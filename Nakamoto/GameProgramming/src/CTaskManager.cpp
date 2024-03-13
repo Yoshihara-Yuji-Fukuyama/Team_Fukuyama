@@ -7,6 +7,8 @@ CTaskManager::CTaskManager()
 	mTail.mpPrev = &mHead;
 	mHeadObj.mpNextObj = &mTailObj;
 	mTailObj.mpPrevObj = &mHeadObj;
+	mHeadCollider.mpNextCollider = &mTailCollider;
+	mTailCollider.mpPrevCollider = &mHeadCollider;
 }
 
 //デストラクタ
@@ -31,7 +33,6 @@ void CTaskManager::Add(CTask* addTask, bool isSort)
 			addTask->mpPrevObj->mpNextObj = addTask;
 			//taskObjの前をaddTaskに
 			taskObj->mpPrevObj = addTask;
-
 		}
 	}
 	//mHeadの次から検索
@@ -85,6 +86,7 @@ void CTaskManager::Remove(CTask* removeTask, bool isSort)
 			//removeTaskの次の前を、removeTaskの前にする
 			removeTask->mpNextObj->mpPrevObj = removeTask->mpPrevObj;
 		}
+
 	}
 	//タスクの前の次を、タスクの次にする
 	removeTask->mpPrev->mpNext = removeTask->mpNext;

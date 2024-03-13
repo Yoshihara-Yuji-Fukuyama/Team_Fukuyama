@@ -21,13 +21,14 @@ public:
 	//移動入力
 	void Move();
 
+	//攻撃処理
+	void Attack();
+
 	//死亡処理
 	void Death();
 
 	//アニメーションを設定
 	void SetAnimation();
-	//ジャンプアニメーション
-	void JumpAnimation();
 
 	//staticメソッドの宣言
 	static CPlayer* GetInstance();
@@ -36,7 +37,6 @@ public:
 
 private:
 	CInput mInput;
-	float mJump;		//ジャンプ距離
 
 	//コライダ
 	CCollider mCollider;

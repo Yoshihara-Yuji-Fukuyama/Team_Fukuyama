@@ -24,6 +24,11 @@ public:
 	//デストラクタ
 	~CGame();
 
+	//敵生成
+	void CreateEnemy();
+
 private:
 	void SetCamera();//カメラを設定
+
+	int mFrame;//フレームカウンタ
 };

@@ -61,7 +61,7 @@ public:
 
 	void Render();//描画
 
-		//衝突処理2
+	//衝突処理2
 	virtual void Collision() {};
 	//衝突処理4
 	virtual void Collision(CCharacter* m, CCharacter* o) {};
@@ -73,11 +73,21 @@ public:
 	/// <param name="o">コライダ2</param>
 	virtual void Collision(CCollider* m, CCollider* o) {}
 
+	//足元の座標を取得
+	float GetUnderPosY();
+
 protected:
 	EState mState;      //状態
 	bool isMove;        //移動しているか
 	bool isMoveX;       //X軸移動しているか
 	bool isMoveY;       //Y軸移動しているか
+	bool isAttack;      //攻撃しているか
+	//足元計算用
+	float mLeg;
+	//足元の座標
+	float mUnderPosY;
+	//ジャンプ距離
+	float mJump;
 	//アニメーション設定用
 	int AnimSetNum;
 	//アニメーションごとの枚数

@@ -38,6 +38,8 @@ protected:
 	CTask mTail;//最終タスク
 	CTask mHeadObj;//オブジェの先頭タスク
 	CTask mTailObj;//最終タスク
+	CTask mHeadCollider;//コライダの先頭タスク
+	CTask mTailCollider;//最終タスク
 
 	//デフォルトコンストラクタ
 	CTaskManager();

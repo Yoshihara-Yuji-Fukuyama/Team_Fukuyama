@@ -40,4 +40,6 @@ private:
 	CTask* mpPrev;//前のポインタ
 	CTask* mpNextObj;//オブジェの次のポインタ
 	CTask* mpPrevObj;//オブジェの前のポインタ
+	CTask* mpNextCollider;//コライダの次のポインタ
+	CTask* mpPrevCollider;//コライダの前のポインタ
 };

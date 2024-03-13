@@ -80,3 +80,17 @@ float CCharacter::GetSortOrder()
 {
 	return mSortOrder;
 }
+
+//‘«Œ³‚ÌÀ•W‚ğæ“¾
+float CCharacter::GetUnderPosY()
+{
+	if (mState != EState::EJUMP)
+	{
+		mUnderPosY = GetY() - mLeg;
+	}
+	else
+	{
+		mUnderPosY = mJump;
+	}
+	return mUnderPosY;
+}

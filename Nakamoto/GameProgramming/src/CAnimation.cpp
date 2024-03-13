@@ -7,10 +7,10 @@ CAnimation::CAnimation()
 }
 
 //移動アニメーション
-int CAnimation::MoveAnimation(int x, int y, bool moveX, bool moveY, float speed,int limit)
+void CAnimation::MoveAnimation(int x, int y, bool moveX, bool moveY, float direction, int limit)
 {
 	//画像を切り替える速度
-	const int PITCH = 64;
+	const int PITCH = 96;
 	//座標を保存
 	int Pos = x;
 	//Y座標だけ移動しているならY座標を入れる
@@ -25,85 +25,92 @@ int CAnimation::MoveAnimation(int x, int y, bool moveX, bool moveY, float speed,
 		if (Pos % PITCH < PITCH / limit)
 		{
 			//左移動
-			if (speed < 0.0f)
+			if (direction < 0.0f)
 			{
-				//限界が6なら6からスタート
-				if (limit == 6) AnimationNum = (int)CAnimationNumber::Move6;
-				else AnimationNum = (int)CAnimationNumber::Move4;
+				//限界が6なら6から
+				if (limit == 6) mAnimationNum = CAnimationNumber::Move6;
+				//限界が5なら5から
+				else if (limit == 5)mAnimationNum = CAnimationNumber::Move5;
+				else mAnimationNum = CAnimationNumber::Move4;
 			}
 			//右移動
 			else
 			{
-				AnimationNum = (int)CAnimationNumber::Move1;
+				mAnimationNum = CAnimationNumber::Move1;
 			}
 		}
 		else if (Pos % PITCH < PITCH * 2 / limit)
 		{
 			//左移動
-			if (speed < 0.0f)
+			if (direction < 0.0f)
 			{
-				if (limit == 6) AnimationNum = (int)CAnimationNumber::Move5;
-				else AnimationNum = (int)CAnimationNumber::Move3;
+				if (limit == 6) mAnimationNum = CAnimationNumber::Move5;
+				else if (limit == 5)mAnimationNum = CAnimationNumber::Move4;
+				else mAnimationNum = CAnimationNumber::Move3;
 			}
 			//右移動
 			else
 			{
-				AnimationNum = (int)CAnimationNumber::Move2;
+				mAnimationNum = CAnimationNumber::Move2;
 			}
 		}
 		else if (Pos % PITCH < PITCH * 3 / limit)
 		{
 			//左移動
-			if (speed < 0.0f)
+			if (direction < 0.0f)
 			{
-				if (limit == 6) AnimationNum = (int)CAnimationNumber::Move4;
-				else AnimationNum = (int)CAnimationNumber::Move2;
+				if (limit == 6) mAnimationNum = CAnimationNumber::Move4;
+				else if (limit == 5)mAnimationNum = CAnimationNumber::Move3;
+				else mAnimationNum = CAnimationNumber::Move2;
 			}
 			//右移動
 			else
 			{
-				AnimationNum = (int)CAnimationNumber::Move3;
+				mAnimationNum = CAnimationNumber::Move3;
 			}
 		}
 		else if (Pos % PITCH < PITCH * 4 / limit)
 		{
 			//左移動
-			if (speed < 0.0f)
+			if (direction < 0.0f)
 			{
-				if (limit == 6) AnimationNum = (int)CAnimationNumber::Move3;
-				else AnimationNum = (int)CAnimationNumber::Move1;
+				if (limit == 6) mAnimationNum = CAnimationNumber::Move3;
+				else if (limit == 5)mAnimationNum = CAnimationNumber::Move2;
+				else mAnimationNum = CAnimationNumber::Move1;
 			}
 			//右移動
 			else
 			{
-				AnimationNum = (int)CAnimationNumber::Move4;
+				mAnimationNum = CAnimationNumber::Move4;
 			}
 		}
-		//限界が6なら最後まで
-		else if (Pos % PITCH < PITCH * 5 / limit && limit == 6)
+		//限界が5以上なら続ける
+		else if (Pos % PITCH < PITCH * 5 / limit && limit >= 5)
 		{
 			//左移動
-			if (speed < 0.0f)
+			if (direction < 0.0f)
 			{
-				AnimationNum = (int)CAnimationNumber::Move2;
+				if (limit == 6)mAnimationNum = CAnimationNumber::Move2;
+				else mAnimationNum = CAnimationNumber::Move1;
 			}
 			//右移動
 			else
 			{
-				AnimationNum = (int)CAnimationNumber::Move5;
+				mAnimationNum = CAnimationNumber::Move5;
 			}
 		}
-		else
+		//限界が6以上なら続ける
+		else if (limit >= 6)
 		{
 			//左移動
-			if (speed < 0.0f)
+			if (direction < 0.0f)
 			{
-				AnimationNum = (int)CAnimationNumber::Move1;
+				mAnimationNum = CAnimationNumber::Move1;
 			}
 			//右移動
 			else
 			{
-				AnimationNum = (int)CAnimationNumber::Move6;
+				mAnimationNum = CAnimationNumber::Move6;
 			}
 		}
 	}
@@ -116,93 +123,99 @@ int CAnimation::MoveAnimation(int x, int y, bool moveX, bool moveY, float speed,
 		if (Pos % PITCH < PITCH / limit)
 		{
 			//左移動
-			if (speed < 0.0f)
+			if (direction < 0.0f)
 			{
-				AnimationNum = (int)CAnimationNumber::Move1;
+				mAnimationNum = CAnimationNumber::Move1;
 			}
 			//右移動
 			else
 			{
 				//限界が6なら6からスタート
-				if (limit == 6) AnimationNum = (int)CAnimationNumber::Move6;
-				else AnimationNum = (int)CAnimationNumber::Move4;
+				if (limit == 6) mAnimationNum = CAnimationNumber::Move6;
+				//限界が5なら5から
+				else if (limit == 5)mAnimationNum = CAnimationNumber::Move5;
+				else mAnimationNum = CAnimationNumber::Move4;
 			}
 		}
 		else if (Pos % PITCH < PITCH * 2 / limit)
 		{
 			//左移動
-			if (speed < 0.0f)
+			if (direction < 0.0f)
 			{
-				AnimationNum = (int)CAnimationNumber::Move2;
+				mAnimationNum = CAnimationNumber::Move2;
 			}
 			//右移動
 			else
 			{
-				if (limit == 6) AnimationNum = (int)CAnimationNumber::Move5;
-				else AnimationNum = (int)CAnimationNumber::Move3;
+				if (limit == 6) mAnimationNum = CAnimationNumber::Move5;
+				else if (limit == 5)mAnimationNum = CAnimationNumber::Move4;
+				else mAnimationNum = CAnimationNumber::Move3;
 			}
 		}
 		else if (Pos % PITCH < PITCH * 3 / limit)
 		{
 			//左移動
-			if (speed < 0.0f)
+			if (direction < 0.0f)
 			{
-				AnimationNum = (int)CAnimationNumber::Move3;
+				mAnimationNum = CAnimationNumber::Move3;
 			}
 			//右移動
 			else
 			{
-				if (limit == 6) AnimationNum = (int)CAnimationNumber::Move4;
-				else AnimationNum = (int)CAnimationNumber::Move2;
+				if (limit == 6) mAnimationNum = CAnimationNumber::Move4;
+				else if (limit == 5)mAnimationNum = CAnimationNumber::Move3;
+				else mAnimationNum = CAnimationNumber::Move2;
 			}
 		}
 		else if (Pos % PITCH < PITCH * 4 / limit)
 		{
 			//左移動
-			if (speed < 0.0f)
+			if (direction < 0.0f)
 			{
-				AnimationNum = (int)CAnimationNumber::Move4;
+				mAnimationNum = CAnimationNumber::Move4;
 			}
 			//右移動
 			else
 			{
-				if (limit == 6) AnimationNum = (int)CAnimationNumber::Move3;
-				else AnimationNum = (int)CAnimationNumber::Move1;
+				if (limit == 6) mAnimationNum = CAnimationNumber::Move3;
+				else if (limit == 5)mAnimationNum = CAnimationNumber::Move2;
+				else mAnimationNum = CAnimationNumber::Move1;
 			}
 		}
-		//限界が6なら最後まで
-		else if (Pos % PITCH < PITCH * 5 / limit && limit == 6)
+		//限界が5以上なら続ける
+		else if (Pos % PITCH < PITCH * 5 / limit && limit >= 5)
 		{
 			//左移動
-			if (speed < 0.0f)
+			if (direction < 0.0f)
 			{
-				AnimationNum = (int)CAnimationNumber::Move5;
+				mAnimationNum = CAnimationNumber::Move5;
 			}
 			//右移動
 			else
 			{
-				AnimationNum = (int)CAnimationNumber::Move2;
+				if (limit == 6)mAnimationNum = CAnimationNumber::Move2;
+				else if (limit == 5)mAnimationNum = CAnimationNumber::Move1;
 			}
 		}
-		else
+		//限界が6以上なら続ける
+		else if (limit >= 6)
 		{
 			//左移動
-			if (speed < 0.0f)
+			if (direction < 0.0f)
 			{
-				AnimationNum = (int)CAnimationNumber::Move6;
+				mAnimationNum = CAnimationNumber::Move6;
 			}
 			//右移動
 			else
 			{
-				AnimationNum = (int)CAnimationNumber::Move1;
+				mAnimationNum = CAnimationNumber::Move1;
 			}
 		}
 	}
-	return AnimationNum;
 }
 
 //待機アニメーション
-int CAnimation::WaitAnimation(int limit)
+void CAnimation::WaitAnimation(int limit)
 {
 	//画像を切り替える速度
 	const int PITCH = 48;
@@ -210,19 +223,79 @@ int CAnimation::WaitAnimation(int limit)
 
 	if (frame % PITCH < PITCH / limit)
 	{
-		AnimationNum = (int)CAnimationNumber::Move1;
+		mAnimationNum = CAnimationNumber::Move1;
 	}
 	else if (frame % PITCH < PITCH * 2 / limit)
 	{
-		AnimationNum = (int)CAnimationNumber::Move2;
+		mAnimationNum = CAnimationNumber::Move2;
 	}
 	else if (frame % PITCH < PITCH * 3 / limit)
 	{
-		AnimationNum = (int)CAnimationNumber::Move3;
+		mAnimationNum = CAnimationNumber::Move3;
 	}
 	else
 	{
-		AnimationNum = (int)CAnimationNumber::Move4;
+		mAnimationNum = CAnimationNumber::Move4;
 	}
-	return AnimationNum;
+}
+
+//ジャンプアニメーション
+void CAnimation::JumpAnimation(int y, float jump, int limit)
+{
+	//画像を切り替える速度
+	const int PITCH = 270;
+	//ジャンプ前とジャンプ中の座標の差を求める
+	int JumpPos = y - jump;
+
+
+	if (JumpPos % PITCH < PITCH / 4)
+	{
+		mAnimationNum = CAnimationNumber::Move1;
+	}
+	else if (JumpPos % PITCH < PITCH * 2 / 4)
+	{
+		mAnimationNum = CAnimationNumber::Move2;
+	}
+	else if (JumpPos % PITCH < PITCH * 3 / 4)
+	{
+		mAnimationNum = CAnimationNumber::Move3;
+	}
+	else
+	{
+		mAnimationNum = CAnimationNumber::Move4;
+	}
+}
+
+//攻撃アニメーション
+void CAnimation::AttackAnimation(int limit)
+{
+	//画像を切り替える速度
+	const int PITCH = 72;
+	int frame = mFrame++;
+
+	if (frame % PITCH < PITCH / limit)
+	{
+		mAnimationNum = CAnimationNumber::Move1;
+	}
+	else if (frame % PITCH < PITCH * 2 / limit)
+	{
+		mAnimationNum = CAnimationNumber::Move2;
+	}
+	else if (frame % PITCH < PITCH * 3 / limit)
+	{
+		mAnimationNum = CAnimationNumber::Move3;
+	}
+	else if (frame % PITCH < PITCH * 4 / limit)
+	{
+		mAnimationNum = CAnimationNumber::Move4;
+	}
+	else if (frame % PITCH < PITCH * 5 / limit)
+	{
+		mAnimationNum = CAnimationNumber::Move5;
+	}
+	else
+	{
+		mAnimationNum = CAnimationNumber::Move6;
+	}
+		
 }

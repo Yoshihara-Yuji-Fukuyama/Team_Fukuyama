@@ -1,5 +1,10 @@
 #include "CCollider.h"
 #include "CCollisionManager.h"
+#include <stdio.h>
+
+CCollider::CCollider()
+{
+}
 
 CCollider::~CCollider()
 {
@@ -9,9 +14,11 @@ CCollider::~CCollider()
 
 CCollider::CCollider(CCharacter* parent,
 	float* px, float* py, float w, float h)
+	:CCollider()
 {
 	//コリジョンマネージャに追加
 	CCollisionManager::GetInstance()->Add(this);
+	printf("コライダー生成");
 
 	//親の設定
 	mpParent = parent;
@@ -35,6 +42,12 @@ void CCollider::Render()
 	glVertex2f(*mpX + mW, *mpY + mH);
 	glVertex2f(*mpX - mW, *mpY + mH);
 	glEnd();
+}
+
+void CCollider::AttackCollider(CCharacter* parent, float x, float y, float w, float h)
+{	
+	//コリジョンマネージャに追加
+	CCollisionManager::GetInstance()->Add(this,true);
 }
 
 //衝突判定
