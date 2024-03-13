@@ -2,10 +2,8 @@
 #include "CGame.h"
 
 //定数の定義
-#define TEX_COORD_BACKGROUND 0,1920,1080,0//テクスチャマッピング
+#define TEX_COORD_BACKGROUND 0,1920,1080,0   //テクスチャマッピング
 #define BACKGROUND_POSX 3840.0f              //次の次の背景が生成される座標の加減算用数値
-
-#define TEXTURE_BACKGROUND "Background.png"
 
 //static変数の定義
 CTexture CBackground::mTexture;
@@ -20,7 +18,6 @@ CTexture* CBackground::GetTexture()
 CBackground::CBackground()
 	:CCharacter((int)CTaskPriority::Field)
 {
-
 }
 //背景のコンストラクタ
 CBackground::CBackground(float x, float y, float w, float h,

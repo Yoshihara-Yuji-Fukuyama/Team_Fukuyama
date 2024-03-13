@@ -1,13 +1,4 @@
 #include "CEnemy.h"
-#include <stdio.h>	//文字で確認する用
-
-//定数の定義
-#define TEX_COORD_ENEMY 0,600,1800,1200//左、右、下、上　テクスチャマッピング
-#define TEXTURE_ENEMY "Slime.png"
-
-#define VELOCITY_SLIME 2.0f
-
-#include "CEnemy.h"
 
 //定数の定義
 //左、右、下、上　敵テクスチャマッピング
@@ -47,11 +38,14 @@ CEnemy::CEnemy()
 	:CCharacter((int)CTaskPriority::Object)
 	, mColider(this, &mX, &mY, 140, 90)
 {
+	WaitNum = 4;//待機アニメーション数
+	MoveNum = 4;//移動アニメーション数
+	AttackNum = 4;//攻撃アニメーション数
 }
 
 //敵のコンストラクタ
 CEnemy::CEnemy(float x, float y, float w, float h)
-	: CEnemy()
+	:CEnemy()
 {
 	Set(x, y, w, h);
 
@@ -61,6 +55,20 @@ CEnemy::CEnemy(float x, float y, float w, float h)
 
 	mVx = -VELOCITY_SLIME;
 
+}
+
+
+void CEnemy::Collision(CCollider* m, CCollider* o)
+{
+	float ax, ay;
+	//コライダのmとoが衝突しているか判定しているか判定
+
+	if (CCollider::Collision(m, o, &ax, &ay))
+	{
+		//プレイヤーとの衝突判定を実行(めり込まない処理)
+		SetX(GetX() + ax);
+		SetY(GetY() + ay);
+	}
 }
 
 //デストラクタ
@@ -83,7 +91,10 @@ void CEnemy::Update()
 	{
 	case EState::EWAIT://待機
 
-		WaitAnimation();
+		//待機アニメーション
+		AnimSetNum = WaitAnimation(WaitNum);
+		//アニメーションを設定
+		SetAnimation();
 
 		break;
 
@@ -91,217 +102,62 @@ void CEnemy::Update()
 
 		//スライムの速度分移動
 		SetX(GetX() + mVx);
+		isMoveX = true;
 
-		MoveAnimation();
+		//移動アニメーション
+		AnimSetNum = MoveAnimation(GetX(), GetY(), isMoveX, isMoveY, mVx, MoveNum);
+		//アニメーションを設定
+		SetAnimation();
 
 		break;
 	}
 
 }
 
-//移動アニメーション
-void CEnemy::MoveAnimation()
+//アニメーションを設定
+void CEnemy::SetAnimation()
 {
-	//画像を切り替える速度
-	const int PITCH = 64;
-	//X座標を保存
-	int PosX = (int)GetX();
-
-
-	//X座標が0以上の時
-	if ((int)GetX() >= 0)
+	switch (mState)
 	{
-		if (PosX % PITCH < PITCH / 4)
+	case EState::EWAIT:
+		//左向き
+		if (mVx < 0.0f)
 		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE4);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE1);
-			}
+			if (AnimSetNum == 1)     Texture(GetTexture(), TEX_LEFTWAIT1);
+			else if (AnimSetNum == 2)Texture(GetTexture(), TEX_LEFTWAIT2);
+			else if (AnimSetNum == 3)Texture(GetTexture(), TEX_LEFTWAIT3);
+			else                     Texture(GetTexture(), TEX_LEFTWAIT4);
 		}
-		else if (PosX % PITCH < PITCH * 2 / 4)
-		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE3);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE2);
-			}
-		}
-		else if (PosX % PITCH < PITCH * 3 / 4)
-		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE2);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE3);
-			}
-		}
+		//右向き
 		else
 		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE1);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE4);
-			}
+			if (AnimSetNum == 1)     Texture(GetTexture(), TEX_RIGHTWAIT1);
+			else if (AnimSetNum == 2)Texture(GetTexture(), TEX_RIGHTWAIT2);
+			else if (AnimSetNum == 3)Texture(GetTexture(), TEX_RIGHTWAIT3);
+			else                     Texture(GetTexture(), TEX_RIGHTWAIT4);
 		}
-	}
-	//X座標が0未満の時
-	else
-	{
-		//正数にする
-		PosX = -PosX;
 
-		if (PosX % PITCH < PITCH / 4)
+		break;
+	case EState::EMOVE:
+		//左移動
+		if (mVx < 0.0f)
 		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE1);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE4);
-			}
+			if (AnimSetNum == 1)     Texture(GetTexture(), TEX_LEFTMOVE1);
+			else if (AnimSetNum == 2)Texture(GetTexture(), TEX_LEFTMOVE2);
+			else if (AnimSetNum == 3)Texture(GetTexture(), TEX_LEFTMOVE3);
+			else                     Texture(GetTexture(), TEX_LEFTMOVE4);
 		}
-		else if (PosX % PITCH < PITCH * 2 / 4)
-		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE2);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE3);
-			}
-		}
-		else if (PosX % PITCH < PITCH * 3 / 4)
-		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE3);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE2);
-			}
-		}
+		//右移動
 		else
 		{
-			//左移動
-			if (mVx < 0.0f)
-			{
-				Texture(GetTexture(), TEX_LEFTMOVE4);
-			}
-			//右移動
-			else
-			{
-				Texture(GetTexture(), TEX_RIGHTMOVE1);
-			}
+			if (AnimSetNum == 1)     Texture(GetTexture(), TEX_RIGHTMOVE1);
+			else if (AnimSetNum == 2)Texture(GetTexture(), TEX_RIGHTMOVE2);
+			else if (AnimSetNum == 3)Texture(GetTexture(), TEX_RIGHTMOVE3);
+			else                     Texture(GetTexture(), TEX_RIGHTMOVE4);
 		}
-	}
 
-}
-
-void CEnemy::Collision(CCollider* m, CCollider* o)
-{
-	float ax, ay;
-	//コライダのmとoが衝突しているか判定しているか判定
-	if (CCollider::Collision(m, o, &ax, &ay))
-	{
-		//プレイヤーとの衝突判定を実行(めり込まない処理)
-		SetX(GetX() + ax);
-		SetY(GetY() + ay);
-
-		//衝突しているときは無効にする
-		mEnabled = false;
-		printf("mEnabledがfalseになりました\n");
-
+		break;
 	}
 }
 
-
-void CEnemy::WaitAnimation()
-{
-	//画像を切り替える速度
-	const int PITCH = 64;
-	mFps = 2;
-	int frame = mFrame++ / mFps;
-
-	if (frame % PITCH < PITCH / 4)
-	{
-		//左向き待機
-		if (mVx < 0.0f)
-		{
-			Texture(GetTexture(), TEX_LEFTWAIT1);
-		}
-		//右向き待機
-		else
-		{
-			Texture(GetTexture(), TEX_RIGHTWAIT1);
-		}
-	}
-	else if (frame % PITCH < PITCH * 2 / 4)
-	{
-		//左向き待機
-		if (mVx < 0.0f)
-		{
-			Texture(GetTexture(), TEX_LEFTWAIT2);
-		}
-		//右向き待機
-		else
-		{
-			Texture(GetTexture(), TEX_RIGHTWAIT2);
-		}
-	}
-	else if (frame % PITCH < PITCH * 3 / 4)
-	{
-		//左向き待機
-		if (mVx < 0.0f)
-		{
-			Texture(GetTexture(), TEX_LEFTWAIT3);
-		}
-		//右向き待機
-		else
-		{
-			Texture(GetTexture(), TEX_RIGHTWAIT3);
-		}
-	}
-	else
-	{
-		//左向き待機
-		if (mVx < 0.0f)
-		{
-			Texture(GetTexture(), TEX_LEFTWAIT4);
-		}
-		//右向き待機
-		else
-		{
-			Texture(GetTexture(), TEX_RIGHTWAIT4);
-		}
-	}
-}
 

@@ -8,4 +8,5 @@ public:
 	//false:文字のキーが押されていない
 	//bool Key(入力キー)
 	bool Key(char key);
+
 };

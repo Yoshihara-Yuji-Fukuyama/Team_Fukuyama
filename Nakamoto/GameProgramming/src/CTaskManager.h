@@ -3,13 +3,10 @@
 #include "CTask.h"
 #include "CCharacter.h"
 
+
 class CTaskManager
 {
 public:
-	//インスタンスの取得
-	static CTaskManager* GetInstance();
-	//デストラクタ
-	virtual ~CTaskManager();
 
 	/// <summary>
 	/// タスクをリストに追加
@@ -24,6 +21,10 @@ public:
 	/// <param name="isSort">ソート時の呼び出しかどうか</param>
 	void Remove(CTask* removeTask, bool isSort = false);
 
+	//インスタンスの取得
+	static CTaskManager* GetInstance();
+	//デストラクタ
+	virtual ~CTaskManager();
 	//タスクの削除
 	void Delete();
 	//タスクの全削除
@@ -32,7 +33,6 @@ public:
 	void Update();
 	//描画
 	void Render();
-
 protected:
 	CTask mHead;//先頭タスク
 	CTask mTail;//最終タスク
@@ -42,7 +42,6 @@ protected:
 	//デフォルトコンストラクタ
 	CTaskManager();
 private:
-
 	//タスクマネージャーのインスタンス
 	static CTaskManager* mpInstance;
 };

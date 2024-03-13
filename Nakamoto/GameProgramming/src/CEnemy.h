@@ -1,14 +1,17 @@
 #pragma once
 #include "CCharacter.h"
 #include "CCollider.h"
+#include "CAnimation.h"
 
-class CEnemy :public CCharacter
+class CEnemy :public CCharacter, public CAnimation
 {
 public:
+	//更新処理
 	void Update() override;
 
 	//デフォルトコンストラクタ
 	CEnemy();
+
 	/// <summary>
 	/// 敵のコンストラクタ
 	/// </summary>
@@ -18,16 +21,13 @@ public:
 	/// <param name="h">高さ</param>
 	CEnemy(float x, float y, float w, float h);
 
-	void Collision(CCollider* m, CCollider* o);
-
 	//デストラクタ
 	~CEnemy();
 
-	//移動アニメーション
-	void MoveAnimation();
+	void Collision(CCollider* m, CCollider* o);
 
-	//待機アニメーション
-	void WaitAnimation();
+	//アニメーションを設定
+	void SetAnimation();
 
 	//死亡処理
 	void Death();
@@ -36,13 +36,9 @@ public:
 	static CTexture* GetTexture();
 
 private:
-	//フレームカウンタ
-	int mFrame;
-	//1コマのフレーム数
-	int mFps;
-
 	//コライダ
 	CCollider mColider;
 	//static変数の宣言
 	static CTexture mTexture;
+
 };

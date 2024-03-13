@@ -5,7 +5,6 @@ CTaskManager::CTaskManager()
 {
 	mHead.mpNext = &mTail;
 	mTail.mpPrev = &mHead;
-
 	mHeadObj.mpNextObj = &mTailObj;
 	mTailObj.mpPrevObj = &mHeadObj;
 }
@@ -13,7 +12,6 @@ CTaskManager::CTaskManager()
 //デストラクタ
 CTaskManager::~CTaskManager()
 {
-
 }
 
 //リストに追加
@@ -33,9 +31,9 @@ void CTaskManager::Add(CTask* addTask, bool isSort)
 			addTask->mpPrevObj->mpNextObj = addTask;
 			//taskObjの前をaddTaskに
 			taskObj->mpPrevObj = addTask;
+
 		}
 	}
-
 	//mHeadの次から検索
 	CTask* task = mHead.mpNext;
 
@@ -46,6 +44,24 @@ void CTaskManager::Add(CTask* addTask, bool isSort)
 	{
 		task = task->mpNext;
 	}
+	//優先度が同じかつ優先度がオブジェクト用なら処理順番が大きい順に入れる
+	while (addTask->mPriority == task->mPriority && addTask->mPriority == (int)CTaskPriority::Object)
+	{
+		if (addTask->mSortOrder > task->mSortOrder)
+		{
+			//addTaskの次をtask
+			addTask->mpNext = task;
+			//addTaskの前をtaskの前に
+			addTask->mpPrev = task->mpPrev;
+			//addTaskの前の次をaddTaskに
+			addTask->mpPrev->mpNext = addTask;
+			//taskの前をaddTaskに
+			task->mpPrev = addTask;
+			return;
+		}
+		task = task->mpNext;
+	}
+	//優先度が大きいなら前に挿入
 	//addTaskの次をtask
 	addTask->mpNext = task;
 	//addTaskの前をtaskの前に
@@ -54,7 +70,6 @@ void CTaskManager::Add(CTask* addTask, bool isSort)
 	addTask->mpPrev->mpNext = addTask;
 	//taskの前をaddTaskに
 	task->mpPrev = addTask;
-
 }
 
 //リストから削除
@@ -152,3 +167,4 @@ CTaskManager* CTaskManager::GetInstance()
 	}
 	return mpInstance;
 }
+

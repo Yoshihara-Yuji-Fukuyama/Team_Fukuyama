@@ -9,20 +9,22 @@ class CCollider;
 class CCharacter :public CRectangle, public CTask//親クラス名
 {
 public:
-	enum class EState //状態
+	enum class EState//状態
 	{
 		EWAIT,    //待機
-		EMOVE,		//移動
-		EJUMP,		//ジャンプ
+		EMOVE,    //移動
+		EJUMP,    //ジャンプ
+		EATTACK	  //攻撃
 	};
-
 	//デフォルトコンストラクタ
 	CCharacter();
+
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="priority">優先度</param>
 	CCharacter(int priority);
+
 	//デストラクタ
 	virtual ~CCharacter();
 
@@ -34,7 +36,7 @@ public:
 	/// </summary>
 	/// <param name="isEnabled"></param>
 	void SetEnabled(bool isEnabled);
-	
+
 	//有効フラグを返す
 	bool GetEnabled();
 
@@ -57,9 +59,9 @@ public:
 	/// <param name="top">テクスチャの上座標</param>
 	void Texture(CTexture* pTexture, int left, int right, int bottom, int top);
 
-	virtual void Render();//描画
+	void Render();//描画
 
-	//衝突処理2
+		//衝突処理2
 	virtual void Collision() {};
 	//衝突処理4
 	virtual void Collision(CCharacter* m, CCharacter* o) {};
@@ -72,13 +74,24 @@ public:
 	virtual void Collision(CCollider* m, CCollider* o) {}
 
 protected:
-	bool mEnabled;//有効フラグ
-	EState mState;	//状態
+	EState mState;      //状態
+	bool isMove;        //移動しているか
+	bool isMoveX;       //X軸移動しているか
+	bool isMoveY;       //Y軸移動しているか
+	//アニメーション設定用
+	int AnimSetNum;
+	//アニメーションごとの枚数
+	int MoveNum;
+	int AttackNum;
+	int WaitNum;
+	int JumpNum;
+	int HitNum;
 
 	float mVx, mVy;		//速度
 private:
 	CTexture* mpTexture;//テクスチャ
 
 	int mLeft, mRight, mBottom, mTop;//左、右、下、上
+
 };
 

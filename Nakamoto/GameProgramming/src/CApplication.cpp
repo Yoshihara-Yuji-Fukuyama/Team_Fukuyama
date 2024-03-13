@@ -4,8 +4,9 @@
 void CApplication::Start()
 {
 	mpGame = new CGame();
-
 }
+
+
 
 void CApplication::Update()
 {
