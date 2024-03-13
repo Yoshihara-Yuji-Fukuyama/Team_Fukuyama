@@ -22,16 +22,33 @@ public:
 	/// <param name="y">Y座標</param>
 	/// <param name="moveX">Xが動いているか</param>
 	/// <param name="moveY">Yが動いているか</param>
-	/// <param name="speed">移動速度</param>
+	/// <param name="direction">向き</param>
 	/// <param name="limit">モーションの数</param>
-	int MoveAnimation(int x, int y, 
-		bool moveX, bool moveY, float speed,int limit);
+	/// <returns>アニメーション番号</returns>
+	void MoveAnimation(int x, int y, 
+		bool moveX, bool moveY, float direction,int limit);
 
-	int WaitAnimation(int limit);
+	/// <summary>
+	/// 待機アニメーション
+	/// </summary>
+	/// <param name="limit">モーションの数</param>
+	/// <returns>アニメーション番号</returns>
+	void WaitAnimation(int limit);
+
+	/// <summary>
+	/// ジャンプアニメーション
+	/// </summary>
+	/// <param name="y">Y座標</param>
+	/// <param name="jump">ジャンプ前の座標</param>
+	/// <param name="limit">モーションの数</param>
+	/// <returns>アニメーション番号</returns>
+	void JumpAnimation(int y, float jump, int limit);
+
+protected:
+	//アニメーション番号
+	CAnimationNumber mAnimationNum;
 
 private:
-	//アニメーションの番号
-	int AnimationNum;
 	//フレームカウンタ
 	int mFrame;
 };

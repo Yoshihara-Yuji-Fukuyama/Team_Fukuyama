@@ -72,13 +72,20 @@ public:
 	/// <param name="o">コライダ2</param>
 	virtual void Collision(CCollider* m, CCollider* o) {}
 
+	//足元の座標を取得
+	float GetUnderPosY();
+
 protected:
 	EState mState;      //状態
 	bool isMove;        //移動しているか
 	bool isMoveX;       //X軸移動しているか
 	bool isMoveY;       //Y軸移動しているか
-	//アニメーション設定用
-	int AnimSetNum;
+	//足元計算用
+	float mLeg;
+	//足元の座標
+	float mUnderPosY;
+	//ジャンプ距離
+	float mJump;		
 	//アニメーションごとの枚数
 	int MoveNum;
 	int AttackNum;

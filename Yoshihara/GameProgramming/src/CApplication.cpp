@@ -13,7 +13,7 @@ void CApplication::Update()
 {
 	mpGame->Update();
 
-	CCollisionManager::GetInstance()->Collision();
+	//CCollisionManager::GetInstance()->Collision();
 
 	//コライダの表示(確認用)
 	//CCollisionManager::GetInstance()->Render();

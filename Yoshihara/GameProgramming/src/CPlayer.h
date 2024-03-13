@@ -26,8 +26,6 @@ public:
 
 	//アニメーションを設定
 	void SetAnimation();
-	//ジャンプアニメーション
-	void JumpAnimation();
 
 	//staticメソッドの宣言
 	static CPlayer* GetInstance();
@@ -36,7 +34,6 @@ public:
 
 private:
 	CInput mInput;
-	float mJump;		//ジャンプ距離
 
 	//コライダ
 	CCollider mCollider;
