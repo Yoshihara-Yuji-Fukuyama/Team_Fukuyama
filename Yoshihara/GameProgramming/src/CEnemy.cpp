@@ -23,8 +23,10 @@
 #define TEX_RIGHTWAIT4 2400,1800,1800,1200
 
 #define SLIME_BOTTOM 130                    //スライム足元計算用
-#define ONI_BOTTOM 240                      //鬼足元計算用
-#define VELOCITY_ENEMY 2.0f                 //敵の移動速度
+#define ONI_BOTTOM 240                      //鬼足元計算用 
+//敵の移動速度
+#define VELOCITY_ENEMY_X 2.0f                
+#define VELOCITY_ENEMY_Y 1.0f
 
 //static変数の定義
 CTexture CEnemy::mTextureSlime;
@@ -60,9 +62,9 @@ CEnemy::CEnemy(float x, float y, float w, float h,EEnemyType enemyType)
 
 	mState = EState::EWAIT;
 
-	mVx = VELOCITY_ENEMY;
+	mVx = VELOCITY_ENEMY_X;
 
-	mVy = VELOCITY_ENEMY;
+	mVy = VELOCITY_ENEMY_Y;
 
 	mEnemyType = enemyType;
 

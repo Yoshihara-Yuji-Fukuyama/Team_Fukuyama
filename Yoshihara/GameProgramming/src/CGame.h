@@ -2,6 +2,8 @@
 #include "CEnemy.h"
 #include "CBackground.h"
 #include "CPlayer.h"
+#include "CUiFont.h"
+#include "CUiTexture.h"
 
 /*
 CGameクラス
@@ -30,4 +32,5 @@ private:
 	void SetCamera();//カメラを設定
 
 	int mFrame;//フレームカウンタ
+	CUiFont mUiFont;
 };

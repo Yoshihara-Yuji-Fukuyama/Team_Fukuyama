@@ -5,11 +5,10 @@ class CCollisionManager;
 
 enum class CTaskPriority
 {
-	SPACE,
-	UI,
-	Object,
-	Field,
-	Collider,
+	UI,      //UI
+	Object,  //オブジェクト
+	Field,   //背景
+	Collider,//当たり判定
 };
 
 class CTask

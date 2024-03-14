@@ -7,6 +7,8 @@
 #define TEXTURE_BACKGROUND "Background.png"  //”wŒi‰æ‘œ
 #define TEXTURE_SLIME "Slime.png"            //ƒXƒ‰ƒCƒ€‰æ‘œ
 #define TEXTURE_ONI "Oni.png"                //‹S‰æ‘œ
+#define TEXTURE_HP_BAR "Hp.png"              //HP‰æ‘œ
+#define TEXTURE_FRAME "Frame.png"            //˜g‰æ‘œ
 
 #define BACKGROUND_SET1 960.0f,540.0f,960.0f,540.0f//x,y,w,h@”wŒi1‚Ì‰ŠúˆÊ’u
 #define BACKGROUND_SET2 2880.0f,540.0f,960.0f,540.0f//x,y,w,h ”wŒi2‚Ì‰ŠúˆÊ’u
@@ -17,13 +19,22 @@ CGame::CGame()
 {		
 	//ƒeƒNƒXƒ`ƒƒ‚ðƒ[ƒh
 	CPlayer::GetTexture()->Load(TEXTURE_PLAYER);
+
 	CEnemy::GetTextureSlime()->Load(TEXTURE_SLIME);
 	CEnemy::GetTextureOni()->Load(TEXTURE_ONI);
+
 	CBackground::GetTexture()->Load(TEXTURE_BACKGROUND);
+
+	CUiTexture::GetTextureHpBar()->Load(TEXTURE_HP_BAR);
+	CUiTexture::GetTextureFrame()->Load(TEXTURE_FRAME);
+	CUiTexture::GetTextureFace()->Load(TEXTURE_PLAYER);
 
 	//”wŒi¶¬
 	new CBackground(BACKGROUND_SET1, nullptr, nullptr);
 	new CBackground(BACKGROUND_SET2, nullptr, nullptr);
+
+	//Ui¶¬
+	new CUiTexture(200.0f, 1000.0f, 200.0f, 200.0f, CUiTexture::EUiType::HpRed);
 	//ƒvƒŒƒCƒ„[¶¬
 	CPlayer::GetInstance();
 }
@@ -32,6 +43,7 @@ CGame::CGame()
 
 void CGame::Update()
 {	
+	
 	//“G¶¬
 	CreateEnemy();
 	//íœ
@@ -43,6 +55,8 @@ void CGame::Update()
 	//•`‰æ
 	CTaskManager::GetInstance()->Render();
 	CCamera::End();
+
+	mUiFont.Render();
 }
 
 
