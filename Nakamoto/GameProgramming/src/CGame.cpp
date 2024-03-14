@@ -40,7 +40,7 @@ void CGame::Update()
 	CTaskManager::GetInstance()->Update();
 
 	//衝突判定
-	CCollisionManager::GetInstance()->Collision();
+	//CCollisionManager::GetInstance()->Collision();
 
 	//カメラを設定
 	SetCamera();
@@ -52,7 +52,7 @@ void CGame::Update()
 	CTaskManager::GetInstance()->Render();
 
 	//コライダの表示(確認用)
-	CCollisionManager::GetInstance()->Render();
+	//CCollisionManager::GetInstance()->Render();
 
 	CCamera::End();
 }

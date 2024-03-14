@@ -288,12 +288,10 @@ void CEnemy::Collision(CCollider* m, CCollider* o)
 
 	if (CCollider::Collision(m, o, &ax, &ay))
 	{
-		if (GetY() < o->GetSortOrder())//プレイヤーの足よりY座標が大きければ
-		{
-			//プレイヤーとの衝突判定を実行(めり込まない処理)
-			SetX(GetX() + ax);
-			SetY(GetY() + ay);
-		}
+		//プレイヤーとの衝突判定を実行(めり込まない処理)
+		SetX(GetX() + ax);
+		SetY(GetY() + ay);
+
 	}
 }
 
