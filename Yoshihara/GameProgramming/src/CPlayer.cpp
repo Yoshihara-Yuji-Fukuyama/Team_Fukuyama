@@ -1,47 +1,39 @@
 #include "CPlayer.h"
 #include "CApplication.h"
 
-//定数の定義
-//左、右、下、上　敵テクスチャマッピング
+//左、右
+//左向き
+#define TEX_LEFT1 600,0
+#define TEX_LEFT2 1200,600
+#define TEX_LEFT3 1800,1200
+#define TEX_LEFT4 2400,1800
+#define TEX_LEFT5 3000,2400
+#define TEX_LEFT6 3600,3000
+//右向き
+#define TEX_RIGHT1 0,600
+#define TEX_RIGHT2 600,1200
+#define TEX_RIGHT3 1200,1800
+#define TEX_RIGHT4 1800,2400
+#define TEX_RIGHT5 2400,3000
+#define TEX_RIGHT6 3000,3600
+
+//下、上
 //待機
-#define TEX_LEFTWAIT1 600,0,3000,2400
-#define TEX_LEFTWAIT2 1200,600,3000,2400
-#define TEX_LEFTWAIT3 1800,1200,3000,2400
-#define TEX_LEFTWAIT4 2400,1800,3000,2400
-#define TEX_RIGHTWAIT1 0,600,3000,2400
-#define TEX_RIGHTWAIT2 600,1200,3000,2400
-#define TEX_RIGHTWAIT3 1200,1800,3000,2400
-#define TEX_RIGHTWAIT4 1800,2400,3000,2400
+#define TEX_WAIT 3000,2400
 //移動
-#define TEX_LEFTMOVE1 600,0,2400,1800
-#define TEX_LEFTMOVE2 1200,600,2400,1800
-#define TEX_LEFTMOVE3 1800,1200,2400,1800
-#define TEX_LEFTMOVE4 2400,1800,2400,1800
-#define TEX_LEFTMOVE5 3000,2400,2400,1800
-#define TEX_LEFTMOVE6 3600,3000,2400,1800
-#define TEX_RIGHTMOVE1 0, 600, 2400, 1800
-#define TEX_RIGHTMOVE2 600, 1200, 2400, 1800
-#define TEX_RIGHTMOVE3 1200, 1800, 2400, 1800
-#define TEX_RIGHTMOVE4 1800, 2400, 2400, 1800
-#define TEX_RIGHTMOVE5 2400, 3000, 2400, 1800
-#define TEX_RIGHTMOVE6 3000, 3600, 2400, 1800
+#define TEX_MOVE 2400,1800
 //ジャンプ
-#define TEX_LEFTJUMP1 600,0,3600,3000
-#define TEX_LEFTJUMP2 1200,600,3600,3000
-#define TEX_LEFTJUMP3 1800,1200,3600,3000
-#define TEX_LEFTJUMP4 2400,1800,3600,3000
-#define TEX_RIGHTJUMP1 0,600,3600,3000
-#define TEX_RIGHTJUMP2 600,1200,3600,3000
-#define TEX_RIGHTJUMP3 1200,1800,3600,3000
-#define TEX_RIGHTJUMP4 1800,2400,3600,3000
-
-
-
-
-
+#define TEX_JUMP 3600,3000
+//攻撃1
+#define TEX_ATTACK1 600,0
+//攻撃2
+#define TEX_ATTACK2 1200,600
+//攻撃3
+#define TEX_ATTACK3 1800,1200
 
 #define PLAYER_STARTSET 100.0f,300.0f,300.0f,300.0f//x,y,w,h プレイヤーの初期位置
 
+#define PLAYER_HP 100                       //プレイヤーのHP
 #define VELOCITY_PLAYER 3.0f	            //プレイヤーの移動速度
 #define JUMPV0 (30 / 1.4f)		            //ジャンプの初速度
 #define GRAVITY (30 / 30)		            //重力加速度
@@ -63,7 +55,7 @@ CPlayer* CPlayer::GetInstance()
 {
 	if (mpInstance == nullptr)
 	{
-		mpInstance= new CPlayer(PLAYER_STARTSET);
+		mpInstance = new CPlayer(PLAYER_STARTSET, PLAYER_HP);
 	}
 	return mpInstance;
 }
@@ -73,22 +65,31 @@ CPlayer::CPlayer()
 	:CCharacter((int)CTaskPriority::Object)
 	, mCollider(this, &mX, &mY, 100, 100)
 {
+	isAttack = false;
+	isAttackNext = false;
 	mState = EState::EWAIT;
 	WaitNum = 4;//待機アニメーション数
 	MoveNum = 6;//移動アニメーション数
 	JumpNum = 4;//ジャンプアニメーション数
+	AttackNum = 6;//攻撃1アニメーション数
+	AttackNum2 = 6;//攻撃2アニメーション数
+	AttackNum3 = 5;//攻撃3アニメーション数
 }
 
-CPlayer::CPlayer(float x, float y, float w, float h)
+CPlayer::CPlayer(float x, float y, float w, float h, int hp)
 	: CPlayer()
 {
 	Set(x, y, w, h);
 
-	Texture(GetTexture(), TEX_LEFTMOVE1);
+	SetHp(hp);
+
+	Texture(GetTexture(), TEX_LEFT1, TEX_WAIT);
 
 	mVx = VELOCITY_PLAYER;
 
 	mLeg = PLAYER_BOTTOM;
+
+	mAttackPhase = EAttackPhase::Attack0;
 }
 
 CPlayer::~CPlayer()
@@ -107,6 +108,9 @@ void CPlayer::Update()
 
 		//移動入力
 		Move();
+		//攻撃入力
+		Attack();
+
 		//待機アニメーション
 		WaitAnimation(WaitNum);
 		//アニメーションを設定
@@ -125,6 +129,9 @@ void CPlayer::Update()
 
 		//移動入力
 		Move();
+		//攻撃入力
+		Attack();
+
 		//移動アニメーション
 		MoveAnimation(GetX(), GetY(), isMoveX, isMoveY, mVx, MoveNum);
 		//アニメーションを設定
@@ -166,9 +173,39 @@ void CPlayer::Update()
 			mState = EState::EMOVE;
 		}
 		break;
+
+	case EState::EATTACK:	//攻撃処理
+        //処理順番を決定
+		SetSortOrder(GetY() - mLeg);
+
+		Attack();
+
+		if (mAttackPhase == EAttackPhase::Attack1)
+		{
+			//攻撃アニメーション
+			AttackAnimation(AttackNum);
+		}
+		else if (mAttackPhase == EAttackPhase::Attack2)
+		{
+			//攻撃アニメーション
+			AttackAnimation(AttackNum2);
+		}
+		else if (mAttackPhase == EAttackPhase::Attack3)
+		{
+			//攻撃アニメーション
+			AttackAnimation(AttackNum3);
+		}
+
+		//アニメーションを設定
+		SetAnimation();
+
+		if (isAttack == false && mInput.Key(VK_LBUTTON) == false)
+		{
+			mAttackPhase = EAttackPhase::Attack0;
+			mState = EState::EWAIT;
+		}
+		break;
 	}
-
-
 }
 
 //移動入力
@@ -178,7 +215,7 @@ void CPlayer::Move()
 	isMoveX = false;
 	isMoveY = false;
 	//左に移動
-	if (mInput.Key('A'))
+	if (mInput.Key('A') && mState != EState::EATTACK)
 	{
 		if (mVx > 0)
 		{
@@ -189,7 +226,7 @@ void CPlayer::Move()
 		isMoveX = true;
 	}
 	//右に移動
-	if (mInput.Key('D'))
+	if (mInput.Key('D') && mState != EState::EATTACK)
 	{
 		if (mVx <= 0)
 		{
@@ -200,7 +237,7 @@ void CPlayer::Move()
 		isMoveX = true;
 	}
 	//上に移動
-	if (mInput.Key('W'))
+	if (mInput.Key('W') && mState != EState::EATTACK)
 	{
 		//ステータスが移動か待機かつ足元の座標が250未満の時
 		if (mState != EState::EMOVE || mState != EState::EWAIT)
@@ -221,7 +258,7 @@ void CPlayer::Move()
 		}
 	}
 	//下に移動
-	if (mInput.Key('S'))
+	if (mInput.Key('S') && mState != EState::EATTACK)
 	{
 		//ステータスが移動か待機かつ足元の座標が0より大きい時
 		if (mState == EState::EMOVE || mState == EState::EWAIT)
@@ -252,8 +289,43 @@ void CPlayer::Move()
 			mVy = JUMPV0;
 			//状態をジャンプに変更
 			mState = EState::EJUMP;
+			SetHp(50);
 		}
 	}
+
+}
+
+void CPlayer::Attack()
+{
+	//攻撃
+	if (mInput.Key(VK_LBUTTON) && mState != EState::EJUMP)
+	{
+		if (isAttack == false)
+		{
+			//攻撃段階決定
+			if (mAttackPhase == EAttackPhase::Attack0)
+			{
+				mAttackPhase = EAttackPhase::Attack1;
+			}
+			else if (mAttackPhase == EAttackPhase::Attack1)
+			{
+				mAttackPhase = EAttackPhase::Attack2;
+			}
+			else if (mAttackPhase == EAttackPhase::Attack2)
+			{
+				mAttackPhase = EAttackPhase::Attack3;
+			}
+			else
+			{
+				mAttackPhase = EAttackPhase::Attack0;
+			}
+			isAttack = true;
+		}
+
+		//攻撃に移行
+		mState = EState::EATTACK;
+	}
+
 }
 
 //死亡処理
@@ -272,40 +344,40 @@ void CPlayer::SetAnimation()
 		//左向き
 		if (mVx < 0.0f)
 		{
-			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFTWAIT1);
-			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFTWAIT2);
-			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFTWAIT3);
-			else                     Texture(GetTexture(), TEX_LEFTWAIT4);
+			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1,TEX_WAIT);
+			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_WAIT);
+			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_WAIT);
+			else                                              Texture(GetTexture(), TEX_LEFT4, TEX_WAIT);
 		}
 		//右向き
 		else
 		{
-			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHTWAIT1);
-			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHTWAIT2);
-			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHTWAIT3);
-			else                     Texture(GetTexture(), TEX_RIGHTWAIT4);
+			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1,TEX_WAIT);
+			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_WAIT);
+			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_WAIT);
+			else                                              Texture(GetTexture(), TEX_RIGHT4, TEX_WAIT);
 		}
 		break;
 	case EState::EMOVE://移動アニメーション
 		//左移動
 		if (mVx < 0.0f)
 		{
-			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFTMOVE1);
-			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFTMOVE2);
-			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFTMOVE3);
-			else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFTMOVE4);
-			else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_LEFTMOVE5);
-			else                                              Texture(GetTexture(), TEX_LEFTMOVE6);
+			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_MOVE);
+			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_MOVE);
+			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_MOVE);
+			else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_MOVE);
+			else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_LEFT5, TEX_MOVE);
+			else                                              Texture(GetTexture(), TEX_LEFT6, TEX_MOVE);
 		}
 		//右移動
 		else
 		{
-			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHTMOVE1);
-			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHTMOVE2);
-			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHTMOVE3);
-			else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHTMOVE4);
-			else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_RIGHTMOVE5);
-			else                     Texture(GetTexture(), TEX_RIGHTMOVE6);
+			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_MOVE);
+			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_MOVE);
+			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_MOVE);
+			else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHT4, TEX_MOVE);
+			else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_RIGHT5, TEX_MOVE);
+			else                                              Texture(GetTexture(), TEX_RIGHT6, TEX_MOVE);
 		}
 
 		break;
@@ -313,19 +385,90 @@ void CPlayer::SetAnimation()
 		//左向き
 		if (mVx < 0.0f)
 		{
-			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFTJUMP1);
-			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFTJUMP2);
-			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFTJUMP3);
-			else                                              Texture(GetTexture(), TEX_LEFTJUMP4);
+			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_JUMP);
+			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_JUMP);
+			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_JUMP);
+			else                                              Texture(GetTexture(), TEX_LEFT4, TEX_JUMP);
 		}
 		//右向き
 		else
 		{
-			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHTJUMP1);
-			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHTJUMP2);
-			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHTJUMP3);
-			else                                              Texture(GetTexture(), TEX_RIGHTJUMP4);
+			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_JUMP);
+			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_JUMP);
+			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_JUMP);
+			else                                              Texture(GetTexture(), TEX_RIGHT4, TEX_JUMP);
 		}
 		break;
+	case EState::EATTACK:	//攻撃アニメーション
+        //左向き
+		if (mVx < 0.0f)
+		{
+			if (isAttack == true)
+			{
+				if (mAttackPhase == EAttackPhase::Attack1)
+				{
+					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_ATTACK1);
+					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_ATTACK1);
+					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_ATTACK1);
+					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_ATTACK1);
+					else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_LEFT5, TEX_ATTACK1);
+					else isAttack = false;
+				}
+				else if (mAttackPhase == EAttackPhase::Attack2)
+				{
+					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_ATTACK2);
+					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_ATTACK2);
+					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_ATTACK2);
+					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_ATTACK2);
+					else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_LEFT5, TEX_ATTACK2);
+					else isAttack = false;
+				}
+				else if (mAttackPhase == EAttackPhase::Attack3)
+				{
+					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_ATTACK3);
+					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_ATTACK3);
+					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_ATTACK3);
+					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_ATTACK3);
+					else isAttack = false;
+				}
+			}
+		}
+		//右向き
+		else
+		{
+			if (isAttack == true)
+			{
+				if (mAttackPhase == EAttackPhase::Attack1)
+				{
+					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_ATTACK1);
+					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_ATTACK1);
+					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_ATTACK1);
+					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHT4, TEX_ATTACK1);
+					else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_RIGHT5, TEX_ATTACK1);
+					else isAttack = false;
+				}
+				else if (mAttackPhase == EAttackPhase::Attack2)
+				{
+					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_ATTACK2);
+					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_ATTACK2);
+					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_ATTACK2);
+					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHT4, TEX_ATTACK2);
+					else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_RIGHT5, TEX_ATTACK2);
+					else isAttack = false;
+				}
+				else if (mAttackPhase == EAttackPhase::Attack3)
+				{
+					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_ATTACK3);
+					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_ATTACK3);
+					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_ATTACK3);
+					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHT4, TEX_ATTACK3);
+					else isAttack = false;
+				}
+
+			}
+		}
 	}
 }
+
+
+

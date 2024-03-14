@@ -68,3 +68,13 @@ void CRectangle::SetX(float x)
 {
 	mX = x;
 }
+
+void CRectangle::SetW(float w)
+{
+	mW = w;
+}
+
+void CRectangle::SetH(float h)
+{
+	mH = h;
+}

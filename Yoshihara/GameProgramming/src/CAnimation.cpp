@@ -265,3 +265,38 @@ void CAnimation::JumpAnimation(int y, float jump, int limit)
 		mAnimationNum = CAnimationNumber::Move4;
 	}
 }
+
+
+//攻撃アニメーション
+void CAnimation::AttackAnimation(int limit)
+{
+	//画像を切り替える速度
+	const int PITCH = 72;
+	int frame = mFrame++;
+
+	if (frame % PITCH < PITCH / limit)
+	{
+		mAnimationNum = CAnimationNumber::Move1;
+	}
+	else if (frame % PITCH < PITCH * 2 / limit)
+	{
+		mAnimationNum = CAnimationNumber::Move2;
+	}
+	else if (frame % PITCH < PITCH * 3 / limit)
+	{
+		mAnimationNum = CAnimationNumber::Move3;
+	}
+	else if (frame % PITCH < PITCH * 4 / limit)
+	{
+		mAnimationNum = CAnimationNumber::Move4;
+	}
+	else if (frame % PITCH < PITCH * 5 / limit && limit >= 5)
+	{
+		mAnimationNum = CAnimationNumber::Move5;
+	}
+	else if(limit >= 6)
+	{
+		mAnimationNum = CAnimationNumber::Move6;
+	}
+
+}

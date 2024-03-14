@@ -94,3 +94,14 @@ float CCharacter::GetUnderPosY()
 	}
 	return mUnderPosY;
 }
+
+//HP‚ğæ“¾
+int CCharacter::GetHp()
+{
+	return mHp;
+}
+//HP‚ğİ’è
+void CCharacter::SetHp(int hp)
+{
+	mHp = hp;
+}

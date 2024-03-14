@@ -48,6 +48,17 @@ public:
 	/// <param name="x">X座標の変更値</param>
 	void SetX(float x);
 
+	/// <summary>
+	/// 幅の設定
+	/// </summary>
+	/// <param name="w">幅</param>
+	void SetW(float w);
+	/// <summary>
+	/// 高さの設定
+	/// </summary>
+	/// <param name="h">高さ</param>
+	void SetH(float h);
+
 protected:
 	float mX; //X座標
 	float mY; //Y座標

@@ -10,19 +10,20 @@ public:
 		HpRed,
 		HpYellow,
 		Frame,
-		Player,
+		Face,
 	};
 	//デフォルトコンストラクタ
 	CUiTexture();
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="x">X座標</param>
-	/// <param name="y">Y座標</param>
 	/// <param name="w">幅</param>
 	/// <param name="h">高さ</param>
 	/// <param name="uiType">UIの種類</param>
-	CUiTexture(float x, float y, float w, float h, EUiType uiType);
+	CUiTexture(float w, float h, EUiType uiType);
+
+	//更新
+	void Update();
 
 	//staticメソッドの宣言
 	static CTexture* GetTextureHpBar();
@@ -33,6 +34,12 @@ public:
 private:
 	//UIの種類
 	EUiType mUiType;
+	//現在のHP
+	float mHp;
+	//HPの最大値
+	float mMaxHp;
+	//幅の保存
+	float mW;
 
 	//static変数の宣言
 	static CTexture mTextureHpBar;

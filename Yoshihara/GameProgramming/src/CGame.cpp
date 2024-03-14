@@ -2,6 +2,7 @@
 #include "CApplication.h"
 #include "CCamera.h"
 #include "main.h"
+#include "CCollisionManager.h"
 
 #define TEXTURE_PLAYER "Player.png"          //プレイヤー画像
 #define TEXTURE_BACKGROUND "Background.png"  //背景画像
@@ -13,6 +14,13 @@
 #define BACKGROUND_SET1 960.0f,540.0f,960.0f,540.0f//x,y,w,h　背景1の初期位置
 #define BACKGROUND_SET2 2880.0f,540.0f,960.0f,540.0f//x,y,w,h 背景2の初期位置
 #define CHARACTER_SIZE 300.0f,300.0f                //w,h  キャラクターのサイズ
+#define HP_SIZE_RED 380.0f, 20.0f                   //w,h  HpRedのサイズ
+#define HP_SIZE_YELLOW 292.0f,20.0f                 //w,h HpYellowのサイズ
+#define FACE_SIZE 100.0f,100.0f                     //w,h Faceのサイズ
+#define FRAME_SIZE 120.0,120.0f                     //w,h Frameのサイズ
+
+#define SLIME_HP 100 //スライムHP
+#define ONI_HP 100 //鬼HP
 
 CGame::CGame()
 	:mFrame(0)
@@ -34,7 +42,11 @@ CGame::CGame()
 	new CBackground(BACKGROUND_SET2, nullptr, nullptr);
 
 	//Ui生成
-	new CUiTexture(200.0f, 1000.0f, 200.0f, 200.0f, CUiTexture::EUiType::HpRed);
+	new CUiTexture(FRAME_SIZE, CUiTexture::EUiType::Frame);
+	new CUiTexture(FACE_SIZE, CUiTexture::EUiType::Face);
+	new CUiTexture(HP_SIZE_YELLOW, CUiTexture::EUiType::HpYellow);
+	new CUiTexture(HP_SIZE_RED, CUiTexture::EUiType::HpRed);
+	
 	//プレイヤー生成
 	CPlayer::GetInstance();
 }
@@ -50,10 +62,19 @@ void CGame::Update()
 	CTaskManager::GetInstance()->Delete();
 	//更新
 	CTaskManager::GetInstance()->Update();
+
+	//衝突判定
+	CCollisionManager::GetInstance()->Collision();
+
 	//カメラを設定
 	SetCamera();
+
 	//描画
 	CTaskManager::GetInstance()->Render();
+
+	//コライダの表示(確認用)
+	CCollisionManager::GetInstance()->Render();
+
 	CCamera::End();
 
 	mUiFont.Render();
@@ -105,12 +126,12 @@ void CGame::CreateEnemy()
 			//キャラタイプが偶数ならスライム
 			if (charaType % 2 == 0)
 			{
-				new CEnemy(CPlayer::GetInstance()->GetX() + 1000, posY, CHARACTER_SIZE, CEnemy::EEnemyType::Slime);
+				new CEnemy(CPlayer::GetInstance()->GetX() + 1000, posY, CHARACTER_SIZE, SLIME_HP, CEnemy::EEnemyType::Slime);
 			}
 			//奇数なら鬼
 			else
 			{
-				new CEnemy(CPlayer::GetInstance()->GetX() + 1000, posY, CHARACTER_SIZE, CEnemy::EEnemyType::Oni);
+				new CEnemy(CPlayer::GetInstance()->GetX() + 1000, posY, CHARACTER_SIZE, ONI_HP, CEnemy::EEnemyType::Oni);
 			}
 		}
 		//奇数なら後方に生成
@@ -119,12 +140,12 @@ void CGame::CreateEnemy()
 			//キャラタイプが偶数ならスライム
 			if (charaType % 2 == 0)
 			{
-				new CEnemy(CPlayer::GetInstance()->GetX() - 1000, posY, CHARACTER_SIZE, CEnemy::EEnemyType::Slime);
+				new CEnemy(CPlayer::GetInstance()->GetX() - 1000, posY, CHARACTER_SIZE, SLIME_HP, CEnemy::EEnemyType::Slime);
 			}
 			//奇数なら鬼
 			else
 			{
-				new CEnemy(CPlayer::GetInstance()->GetX() - 1000, posY, CHARACTER_SIZE, CEnemy::EEnemyType::Oni);
+				new CEnemy(CPlayer::GetInstance()->GetX() - 1000, posY, CHARACTER_SIZE, ONI_HP, CEnemy::EEnemyType::Oni);
 			}
 		}
 

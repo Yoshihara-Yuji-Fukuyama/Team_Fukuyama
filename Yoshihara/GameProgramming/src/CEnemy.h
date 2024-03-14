@@ -24,9 +24,10 @@ public:
 	/// <param name="x">X座標</param>
 	/// <param name="y">Y座標</param>
 	/// <param name="w">幅</param>
-	/// <param name="h">高さ</param>
+	/// <param name="h">高さ</param>	
+	/// <param name="hp">HP</param>
 	/// <param name="enemyType">敵の種類</param>
-	CEnemy(float x, float y, float w, float h, EEnemyType enemyType);
+	CEnemy(float x, float y, float w, float h, int hp, EEnemyType enemyType);
 
 	//デストラクタ
 	~CEnemy();

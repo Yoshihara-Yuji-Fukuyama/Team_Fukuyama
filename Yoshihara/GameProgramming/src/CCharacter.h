@@ -14,6 +14,7 @@ public:
 		EWAIT,    //待機
 		EMOVE,    //移動
 		EJUMP,    //ジャンプ
+		EATTACK	  //攻撃
 	};
 	//デフォルトコンストラクタ
 	CCharacter();
@@ -75,20 +76,31 @@ public:
 	//足元の座標を取得
 	float GetUnderPosY();
 
+	//HPを取得
+	int GetHp();
+	//HPを設定
+	void SetHp(int hp);
+
 protected:
 	EState mState;      //状態
 	bool isMove;        //移動しているか
 	bool isMoveX;       //X軸移動しているか
 	bool isMoveY;       //Y軸移動しているか
+	bool isAttack;      //攻撃しているか
+	bool isAttackNext;  //次も攻撃するか
 	//足元計算用
 	float mLeg;
 	//足元の座標
 	float mUnderPosY;
 	//ジャンプ距離
-	float mJump;		
+	float mJump;	
+	//HP
+	int mHp;
 	//アニメーションごとの枚数
 	int MoveNum;
 	int AttackNum;
+	int AttackNum2;
+	int AttackNum3;
 	int WaitNum;
 	int JumpNum;
 	int HitNum;

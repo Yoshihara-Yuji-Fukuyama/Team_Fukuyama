@@ -2,8 +2,8 @@
 #include "CUiFont.h"
 
 #define FONT "Font.png"         //フォントの画像
-#define TIME_SIZE 800,1000,20,20//時間表示のサイズ
-#define SCORE_SIZE 320,1000,20,20//スコア表示
+#define TIME_SIZE 1000,1000,20,20//時間表示のサイズ
+#define SCORE_SIZE 520,1000,20,20//スコア表示
 
 
 //デフォルトコンストラクタ
@@ -32,6 +32,6 @@ void CUiFont::Render()
 	sprintf(str, "TIME:%03d", mTime);
 	mFont.Draw(TIME_SIZE, str);
 
-	sprintf(str, "SCORE:%03d", mScore);
+	sprintf(str, "SCORE:%04d", mScore);
 	mFont.Draw(SCORE_SIZE, str);
 }

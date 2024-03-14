@@ -7,6 +7,9 @@ class CCollider :public CCharacter
 {
 	friend CCollisionManager;
 public:
+	//デフォルトコンストラクタ
+	CCollider();
+	//デストラクタ
 	~CCollider();
 
 	/// <summary>
@@ -24,6 +27,9 @@ public:
 
 	//描画
 	void Render();
+
+	//攻撃時の当たり判定生成
+	void AttackCollider(CCharacter* parent, float x, float y, float w, float h);
 
 	/// <summary>
 	/// 衝突判定(めり込まない処理)

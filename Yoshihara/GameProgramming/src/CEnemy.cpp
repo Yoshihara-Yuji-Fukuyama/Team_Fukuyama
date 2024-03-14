@@ -1,26 +1,27 @@
 #include "CEnemy.h"
 #include "CPlayer.h"
 
-//定数の定義
-//左、右、下、上　敵テクスチャマッピング
+//左、右
+//左向き
+#define TEX_LEFT1 0,600
+#define TEX_LEFT2 600,1200
+#define TEX_LEFT3 1200,1800
+#define TEX_LEFT4 1800,2400
+#define TEX_LEFT5 2400,3000
+#define TEX_LEFT6 3000,3600
+//右向き
+#define TEX_RIGHT1 600,0
+#define TEX_RIGHT2 1200,600
+#define TEX_RIGHT3 1800,1200
+#define TEX_RIGHT4 2400,1800
+#define TEX_RIGHT5 3000,2400
+#define TEX_RIGHT6 3600,3000
+//下、上
 //移動
-#define TEX_LEFTMOVE1 0,600,1200,600
-#define TEX_LEFTMOVE2 600,1200,1200,600
-#define TEX_LEFTMOVE3 1200,1800,1200,600
-#define TEX_LEFTMOVE4 1800,2400,1200,600
-#define TEX_RIGHTMOVE1 600,0,1200,600
-#define TEX_RIGHTMOVE2 1200,600,1200,600
-#define TEX_RIGHTMOVE3 1800,1200,1200,600
-#define TEX_RIGHTMOVE4 2400,1800,1200,600
+#define TEX_MOVE 1200,600
 //待機
-#define TEX_LEFTWAIT1 0,600,1800,1200
-#define TEX_LEFTWAIT2 600,1200,1800,1200
-#define TEX_LEFTWAIT3 1200,1800,1800,1200
-#define TEX_LEFTWAIT4 1800,2400,1800,1200
-#define TEX_RIGHTWAIT1 600,0,1800,1200
-#define TEX_RIGHTWAIT2 1200,600,1800,1200
-#define TEX_RIGHTWAIT3 1800,1200,1800,1200
-#define TEX_RIGHTWAIT4 2400,1800,1800,1200
+#define TEX_WAIT 1800,1200
+
 
 #define SLIME_BOTTOM 130                    //スライム足元計算用
 #define ONI_BOTTOM 240                      //鬼足元計算用 
@@ -55,10 +56,12 @@ CEnemy::CEnemy()
 }
 
 //敵のコンストラクタ
-CEnemy::CEnemy(float x, float y, float w, float h,EEnemyType enemyType)
+CEnemy::CEnemy(float x, float y, float w, float h, int hp, EEnemyType enemyType)
 	:CEnemy()
 {
 	Set(x, y, w, h);
+
+	SetHp(hp);
 
 	mState = EState::EWAIT;
 
@@ -71,7 +74,7 @@ CEnemy::CEnemy(float x, float y, float w, float h,EEnemyType enemyType)
 	if (mEnemyType == EEnemyType::Slime)
 	{
 		//スライムの画像
-		Texture(GetTextureSlime(), TEX_LEFTWAIT1);
+		Texture(GetTextureSlime(), TEX_LEFT1, TEX_WAIT);
 		//足元計算用にスライムを入れる
 		mLeg = SLIME_BOTTOM;
 		//攻撃アニメーション数
@@ -85,7 +88,7 @@ CEnemy::CEnemy(float x, float y, float w, float h,EEnemyType enemyType)
 	if (mEnemyType == EEnemyType::Oni)
 	{
 		//鬼の画像
-		Texture(GetTextureOni(), TEX_LEFTWAIT1);
+		Texture(GetTextureOni(), TEX_LEFT1, TEX_WAIT);
 		//足元計算用に鬼を入れる
 		mLeg = ONI_BOTTOM;
 		//攻撃アニメーション数
@@ -222,19 +225,6 @@ void CEnemy::Move()
 	}
 }
 
-
-void CEnemy::Collision(CCollider* m, CCollider* o)
-{
-	float ax, ay;
-	//コライダのmとoが衝突しているか判定しているか判定
-	if (CCollider::Collision(m, o, &ax, &ay))
-	{
-		//プレイヤーとの衝突判定を実行(めり込まない処理)
-		SetX(GetX() + ax);
-		SetY(GetY() + ay);
-	}
-}
-
 //デストラクタ
 CEnemy::~CEnemy()
 {
@@ -256,18 +246,18 @@ void CEnemy::SetAnimation()
 		//左向き
 		if (mVx < 0.0f)
 		{
-			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFTWAIT1);
-			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFTWAIT2);
-			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFTWAIT3);
-			else                                              Texture(GetTexture(), TEX_LEFTWAIT4);
+			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_WAIT);
+			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_WAIT);
+			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_WAIT);
+			else                                              Texture(GetTexture(), TEX_LEFT4, TEX_WAIT);
 		}
 		//右向き
 		else
 		{
-			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHTWAIT1);
-			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHTWAIT2);
-			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHTWAIT3);
-			else                                              Texture(GetTexture(), TEX_RIGHTWAIT4);
+			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_WAIT);
+			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_WAIT);
+			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_WAIT);
+			else                                              Texture(GetTexture(), TEX_RIGHT4, TEX_WAIT);
 		}
 
 		break;
@@ -275,22 +265,34 @@ void CEnemy::SetAnimation()
 		//左移動
 		if (mVx < 0.0f)
 		{
-			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFTMOVE1);
-			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFTMOVE2);
-			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFTMOVE3);
-			else                                              Texture(GetTexture(), TEX_LEFTMOVE4);
+			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_MOVE);
+			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_MOVE);
+			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_MOVE);
+			else                                              Texture(GetTexture(), TEX_LEFT4, TEX_MOVE);
 		}
 		//右移動
 		else
 		{
-			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHTMOVE1);
-			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHTMOVE2);
-			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHTMOVE3);
-			else                                              Texture(GetTexture(), TEX_RIGHTMOVE4);
+			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_MOVE);
+			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_MOVE);
+			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_MOVE);
+			else                                              Texture(GetTexture(), TEX_RIGHT4, TEX_MOVE);
 		}
 
 		break;
 	}
 }
 
+
+void CEnemy::Collision(CCollider* m, CCollider* o)
+{
+	float ax, ay;
+	//コライダのmとoが衝突しているか判定しているか判定
+	if (CCollider::Collision(m, o, &ax, &ay))
+	{
+		//プレイヤーとの衝突判定を実行(めり込まない処理)
+		SetX(GetX() + ax);
+		SetY(GetY() + ay);
+	}
+}
 
