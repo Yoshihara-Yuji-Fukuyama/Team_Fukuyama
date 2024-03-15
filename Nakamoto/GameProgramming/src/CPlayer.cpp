@@ -79,7 +79,8 @@ CPlayer* CPlayer::GetInstance()
 
 CPlayer::CPlayer()
 	:CCharacter((int)CTaskPriority::Object)
-	, mCollider(this, &mX, &mY, &mZ,100, 100)
+	, mCollider(this, &mX, &mY, &mZ,100, 200)
+	, isClick(false)
 {
 	mState = EState::EWAIT;
 	WaitNum = 4;//待機アニメーション数
@@ -191,6 +192,7 @@ void CPlayer::Update()
 
 		if (isAttack == false)
 		{
+
 			mState = EState::EWAIT;
 		}
 		break;
@@ -293,15 +295,23 @@ void CPlayer::Move()
 	//攻撃
 	if (mInput.Key(VK_LBUTTON) && mState != EState::EJUMP)
 	{
-		mState = EState::EATTACK;
-		isAttack = true;
+		if (isClick == false)
+		{
+			isAttack = true;
+			mState = EState::EATTACK;
+
+		}
+		else
+		{
+			isClick = false;
+		}
 	}
 
 }
 
 void CPlayer::Attack()
 {
-	CAttack* attack = new CAttack(this, &mX, &mY);
+	CAttack* attack = new CAttack(this, &mX, &mY ,&mZ);
 	//attack->Set(GetX(), GetY(), 30, 100);
 	//CCollisionManager::GetInstance()->Add(attack);
 }

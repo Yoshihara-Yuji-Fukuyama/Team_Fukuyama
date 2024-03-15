@@ -39,7 +39,9 @@ public:
 private:
 	CInput mInput;
 
-	//体のコライダ
+	bool isClick;
+
+	//コライダ
 	CCollider mCollider;
 	//攻撃のコライダ
 	//CCollider mACollider;

@@ -5,7 +5,7 @@
 class CAttack :public CCharacter
 {
 public:
-	CAttack(CCharacter* p,float *x,float *y);
+	CAttack(CCharacter* p,float *x,float *y,float *z);
 
 	//void Set(float w, float h);
 

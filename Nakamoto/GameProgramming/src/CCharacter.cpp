@@ -94,3 +94,8 @@ float CCharacter::GetUnderPosY()
 	}
 	return mUnderPosY;
 }
+
+float CCharacter::GetmVx()
+{
+	return mVx;
+}

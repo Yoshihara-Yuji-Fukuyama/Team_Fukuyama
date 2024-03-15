@@ -296,6 +296,8 @@ void CEnemy::Collision(CCollider* m, CCollider* o)
 		SetX(GetX() + ax);
 		SetY(GetY() + ay);
 
+		mEnabled = false;
+
 	}
 }
 

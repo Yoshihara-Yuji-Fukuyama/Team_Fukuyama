@@ -2,8 +2,8 @@
 #include "CCollisionManager.h"
 #include "CPlayer.h"
 
-CAttack::CAttack(CCharacter* p, float* x, float* y)
-	:mCollider(p, x, y, &mZ, 100, 200, true)
+CAttack::CAttack(CCharacter* p, float* x, float* y,float *z)
+	:mCollider(p, x, y, z, 100, 150, true)
 {
 	
 }

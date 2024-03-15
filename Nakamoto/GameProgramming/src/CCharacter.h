@@ -76,6 +76,8 @@ public:
 	//‘«Œ³‚ÌÀ•W‚ğæ“¾
 	float GetUnderPosY();
 
+	float GetmVx();
+
 protected:
 	EState mState;      //ó‘Ô
 	bool isMove;        //ˆÚ“®‚µ‚Ä‚¢‚é‚©
