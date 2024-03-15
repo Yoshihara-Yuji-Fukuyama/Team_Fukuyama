@@ -7,8 +7,6 @@ CTaskManager::CTaskManager()
 	mTail.mpPrev = &mHead;
 	mHeadObj.mpNextObj = &mTailObj;
 	mTailObj.mpPrevObj = &mHeadObj;
-	mHeadCollider.mpNextCollider = &mTailCollider;
-	mTailCollider.mpPrevCollider = &mHeadCollider;
 }
 
 //デストラクタ

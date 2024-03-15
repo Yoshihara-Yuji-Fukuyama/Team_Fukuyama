@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="src\CAnimation.cpp" />
     <ClCompile Include="src\CApplication.cpp" />
+    <ClCompile Include="src\CAttack.cpp" />
     <ClCompile Include="src\CBackground.cpp" />
     <ClCompile Include="src\CCamera.cpp" />
     <ClCompile Include="src\CCharacter.cpp" />
@@ -31,6 +32,7 @@
   <ItemGroup>
     <ClInclude Include="src\CAnimation.h" />
     <ClInclude Include="src\CApplication.h" />
+    <ClInclude Include="src\CAttack.h" />
     <ClInclude Include="src\CBackground.h" />
     <ClInclude Include="src\CCamera.h" />
     <ClInclude Include="src\CCharacter.h" />

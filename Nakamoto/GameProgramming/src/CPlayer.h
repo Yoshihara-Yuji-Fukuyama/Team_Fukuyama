@@ -4,6 +4,7 @@
 #include "CInput.h"
 #include "CCollider.h"
 #include "CAnimation.h"
+#include "CAttack.h"
 
 class CPlayer : public CCharacter, public CAnimation
 {
@@ -38,8 +39,10 @@ public:
 private:
 	CInput mInput;
 
-	//コライダ
+	//体のコライダ
 	CCollider mCollider;
+	//攻撃のコライダ
+	//CCollider mACollider;
 
 	//static変数の宣言
 	static CPlayer* mpInstance;//プレイヤーのインスタンス

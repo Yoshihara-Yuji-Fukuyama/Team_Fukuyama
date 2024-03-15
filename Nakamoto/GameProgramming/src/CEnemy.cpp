@@ -44,7 +44,7 @@ CTexture* CEnemy::GetTextureOni()
 //敵のデフォルトコンストラクタ
 CEnemy::CEnemy()
 	:CCharacter((int)CTaskPriority::Object)
-	, mColider(this, &mX, &mY, 140, 90)
+	, mColider(this, &mX, &mY, &mZ,140, 90)
 	, mFrame(0)
 	, RandomX(rand() % 200)//200まででランダム
 	, RandomY(rand() % 100)//100まででランダム
@@ -63,6 +63,8 @@ CEnemy::CEnemy(float x, float y, float w, float h, EEnemyType enemyType)
 	mVx = VELOCITY_ENEMY;
 
 	mVy = VELOCITY_ENEMY;
+
+	SetZ(GetY() - SLIME_BOTTOM);
 
 	mEnemyType = enemyType;
 
@@ -170,7 +172,7 @@ void CEnemy::Move()
 				isMoveX = true;
 				isMove = true;
 			}
-			SetX(GetX() + mVx);
+			//SetX(GetX() + mVx);
 		}
 		//プレイヤーが右にいるなら右に移動
 		else if (CPlayer::GetInstance()->GetX() - GetX() > RandomX)
@@ -182,7 +184,7 @@ void CEnemy::Move()
 				isMoveX = true;
 				isMove = true;
 			}
-			SetX(GetX() + mVx);
+			//SetX(GetX() + mVx);
 		}
 		else
 		{
@@ -199,7 +201,8 @@ void CEnemy::Move()
 				isMoveY = true;
 				isMove = true;
 			}
-			SetY(GetY() + mVy);
+			//SetY(GetY() + mVy);
+			SetZ(GetY() - SLIME_BOTTOM);
 		}
 		//プレイヤーが上にいるなら上に移動
 		else if (CPlayer::GetInstance()->GetUnderPosY() - GetUnderPosY() > RandomY)
@@ -211,7 +214,8 @@ void CEnemy::Move()
 				isMoveY = true;
 				isMove = true;
 			}
-			SetY(GetY() + mVy);
+			//SetY(GetY() + mVy);
+			SetZ(GetY() - SLIME_BOTTOM);
 		}
 		else
 		{
@@ -286,7 +290,7 @@ void CEnemy::Collision(CCollider* m, CCollider* o)
 	float ax, ay;
 	//コライダのmとoが衝突しているか判定しているか判定
 
-	if (CCollider::Collision(m, o, &ax, &ay))
+	if (CCollider::Collision(m, o, &ax, &ay ))
 	{
 		//プレイヤーとの衝突判定を実行(めり込まない処理)
 		SetX(GetX() + ax);

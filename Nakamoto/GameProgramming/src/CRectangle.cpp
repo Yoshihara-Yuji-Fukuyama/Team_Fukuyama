@@ -52,6 +52,11 @@ float CRectangle::GetY()
 	return mY;
 }
 
+float CRectangle::GetZ()
+{
+	return mZ;
+}
+
 float CRectangle::GetW()
 {
 	return mW;
@@ -70,4 +75,9 @@ void CRectangle::SetY(float y)
 void CRectangle::SetX(float x)
 {
 	mX = x;
+}
+
+void CRectangle::SetZ(float z)
+{
+	mZ = z;
 }

@@ -28,7 +28,7 @@ CGame::CGame()
 	new CBackground(BACKGROUND_SET2, nullptr, nullptr);
 	//プレイヤー生成
 	CPlayer::GetInstance();
-	new CEnemy(CPlayer::GetInstance()->GetX() + 1000, 200, CHARACTER_SIZE, CEnemy::EEnemyType::Slime);
+	new CEnemy(CPlayer::GetInstance()->GetX() + 1000, 300, CHARACTER_SIZE, CEnemy::EEnemyType::Slime);
 }
 
 void CGame::Update()
@@ -40,7 +40,7 @@ void CGame::Update()
 	CTaskManager::GetInstance()->Update();
 
 	//衝突判定
-	//CCollisionManager::GetInstance()->Collision();
+	CCollisionManager::GetInstance()->Collision();
 
 	//カメラを設定
 	SetCamera();
@@ -52,7 +52,7 @@ void CGame::Update()
 	CTaskManager::GetInstance()->Render();
 
 	//コライダの表示(確認用)
-	//CCollisionManager::GetInstance()->Render();
+	CCollisionManager::GetInstance()->Render();
 
 	CCamera::End();
 }
