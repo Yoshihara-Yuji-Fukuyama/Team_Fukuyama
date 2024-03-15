@@ -56,7 +56,7 @@ private:
 	EAttackPhase mAttackPhase;
 	EAttackPhase mAttackPhaseNext;
 
-	bool Click;
+	bool isClick;
 
 	//ƒRƒ‰ƒCƒ_
 	CCollider mCollider;

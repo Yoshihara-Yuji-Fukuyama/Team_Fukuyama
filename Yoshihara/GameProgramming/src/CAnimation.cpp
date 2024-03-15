@@ -298,5 +298,5 @@ void CAnimation::AttackAnimation(int limit)
 	{
 		mAnimationNum = CAnimationNumber::Move6;
 	}
-
+	return;
 }

@@ -64,6 +64,7 @@ CPlayer* CPlayer::GetInstance()
 CPlayer::CPlayer()
 	:CCharacter((int)CTaskPriority::Object)
 	, mCollider(this, &mX, &mY, 100, 100)
+	, isClick(false)
 {
 	isAttack = false;
 	isAttackNext = false;
@@ -71,9 +72,9 @@ CPlayer::CPlayer()
 	WaitNum = 4;//待機アニメーション数
 	MoveNum = 6;//移動アニメーション数
 	JumpNum = 4;//ジャンプアニメーション数
-	AttackNum = 6;//攻撃1アニメーション数
-	AttackNum2 = 6;//攻撃2アニメーション数
-	AttackNum3 = 5;//攻撃3アニメーション数
+	AttackNum = 6;//攻撃1アニメーション数+1
+	AttackNum2 = 6;//攻撃2アニメーション数+1
+	AttackNum3 = 5;//攻撃3アニメーション数+1
 }
 
 CPlayer::CPlayer(float x, float y, float w, float h, int hp)
@@ -108,8 +109,6 @@ void CPlayer::Update()
 
 		//移動入力
 		Move();
-		//攻撃入力
-		Attack();
 
 		//待機アニメーション
 		WaitAnimation(WaitNum);
@@ -178,7 +177,7 @@ void CPlayer::Update()
         //処理順番を決定
 		SetSortOrder(GetY() - mLeg);
 
-		Attack();
+		Move();
 
 		if (mAttackPhase == EAttackPhase::Attack1)
 		{
@@ -199,8 +198,19 @@ void CPlayer::Update()
 		//アニメーションを設定
 		SetAnimation();
 
-		if (isAttack == false && mInput.Key(VK_LBUTTON) == false)
+
+		//攻撃が終わったときネクストがtrueなら次の攻撃へ
+		if (isAttack == false && isAttackNext == true)
 		{
+			mFrame = 0;
+			isAttack = true;
+			mAttackPhase = mAttackPhaseNext;
+			isAttackNext = false;
+		}
+		//両方falseなら攻撃終了
+		else if (isAttack == false && isAttackNext == false)
+		{
+			mFrame = 0;
 			mAttackPhase = EAttackPhase::Attack0;
 			mState = EState::EWAIT;
 		}
@@ -292,39 +302,45 @@ void CPlayer::Move()
 			SetHp(50);
 		}
 	}
+	//攻撃
+	if (mInput.Key(VK_LBUTTON) && mState != EState::EJUMP)
+	{
+		if (isClick == false)
+		{
+			if (isAttack == false && mAttackPhase == EAttackPhase::Attack0)
+			{
+				//攻撃段階決定
+				mAttackPhase = EAttackPhase::Attack1;
 
+				isAttack = true;
+			}
+			else if (isAttackNext == false && mAttackPhase != EAttackPhase::Attack3)
+			{
+				//攻撃段階決定
+				if (mAttackPhase == EAttackPhase::Attack1)
+				{
+					mAttackPhaseNext = EAttackPhase::Attack2;
+				}
+				else if (mAttackPhase == EAttackPhase::Attack2)
+				{
+					mAttackPhaseNext = EAttackPhase::Attack3;
+				}
+				isAttackNext = true;
+			}
+			//攻撃に移行
+			mState = EState::EATTACK;
+		}
+		isClick = true;
+	}
+	else
+	{
+		isClick = false;
+	}
 }
 
 void CPlayer::Attack()
 {
-	//攻撃
-	if (mInput.Key(VK_LBUTTON) && mState != EState::EJUMP)
-	{
-		if (isAttack == false)
-		{
-			//攻撃段階決定
-			if (mAttackPhase == EAttackPhase::Attack0)
-			{
-				mAttackPhase = EAttackPhase::Attack1;
-			}
-			else if (mAttackPhase == EAttackPhase::Attack1)
-			{
-				mAttackPhase = EAttackPhase::Attack2;
-			}
-			else if (mAttackPhase == EAttackPhase::Attack2)
-			{
-				mAttackPhase = EAttackPhase::Attack3;
-			}
-			else
-			{
-				mAttackPhase = EAttackPhase::Attack0;
-			}
-			isAttack = true;
-		}
 
-		//攻撃に移行
-		mState = EState::EATTACK;
-	}
 
 }
 
@@ -407,28 +423,31 @@ void CPlayer::SetAnimation()
 			{
 				if (mAttackPhase == EAttackPhase::Attack1)
 				{
-					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_ATTACK1);
-					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_ATTACK1);
-					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_ATTACK1);
-					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_ATTACK1);
-					else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_LEFT5, TEX_ATTACK1);
+					//攻撃アニメーション
+					if (mAnimationNum ==CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_ATTACK1);
+					else if (mAnimationNum ==CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_ATTACK1);
+					else if (mAnimationNum ==CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_ATTACK1);
+					else if (mAnimationNum ==CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_ATTACK1);
+					else if (mAnimationNum ==CAnimationNumber::Move5)Texture(GetTexture(), TEX_LEFT5, TEX_ATTACK1);
 					else isAttack = false;
 				}
 				else if (mAttackPhase == EAttackPhase::Attack2)
 				{
-					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_ATTACK2);
-					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_ATTACK2);
-					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_ATTACK2);
-					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_ATTACK2);
-					else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_LEFT5, TEX_ATTACK2);
+					//攻撃アニメーション
+					if (mAnimationNum ==CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_ATTACK2);
+					else if (mAnimationNum ==CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_ATTACK2);
+					else if (mAnimationNum ==CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_ATTACK2);
+					else if (mAnimationNum ==CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_ATTACK2);
+					else if (mAnimationNum ==CAnimationNumber::Move5)Texture(GetTexture(), TEX_LEFT5, TEX_ATTACK2);
 					else isAttack = false;
 				}
 				else if (mAttackPhase == EAttackPhase::Attack3)
 				{
-					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_ATTACK3);
-					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_ATTACK3);
-					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_ATTACK3);
-					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_ATTACK3);
+					//攻撃アニメーション
+					if (mAnimationNum ==CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_ATTACK3);
+					else if (mAnimationNum ==CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_ATTACK3);
+					else if (mAnimationNum ==CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_ATTACK3);
+					else if (mAnimationNum ==CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_ATTACK3);
 					else isAttack = false;
 				}
 			}
@@ -440,6 +459,7 @@ void CPlayer::SetAnimation()
 			{
 				if (mAttackPhase == EAttackPhase::Attack1)
 				{
+					//攻撃アニメーション
 					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_ATTACK1);
 					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_ATTACK1);
 					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_ATTACK1);
@@ -449,19 +469,21 @@ void CPlayer::SetAnimation()
 				}
 				else if (mAttackPhase == EAttackPhase::Attack2)
 				{
-					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_ATTACK2);
-					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_ATTACK2);
-					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_ATTACK2);
-					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHT4, TEX_ATTACK2);
-					else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_RIGHT5, TEX_ATTACK2);
+					//攻撃アニメーション
+					if (mAnimationNum ==CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_ATTACK2);
+					else if (mAnimationNum ==CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_ATTACK2);
+					else if (mAnimationNum ==CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_ATTACK2);
+					else if (mAnimationNum ==CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHT4, TEX_ATTACK2);
+					else if (mAnimationNum ==CAnimationNumber::Move5)Texture(GetTexture(), TEX_RIGHT5, TEX_ATTACK2);
 					else isAttack = false;
 				}
 				else if (mAttackPhase == EAttackPhase::Attack3)
 				{
-					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_ATTACK3);
-					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_ATTACK3);
-					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_ATTACK3);
-					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHT4, TEX_ATTACK3);
+					//攻撃アニメーション
+					if (mAnimationNum ==CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_ATTACK3);
+					else if (mAnimationNum ==CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_ATTACK3);
+					else if (mAnimationNum ==CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_ATTACK3);
+					else if (mAnimationNum ==CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHT4, TEX_ATTACK3);
 					else isAttack = false;
 				}
 
