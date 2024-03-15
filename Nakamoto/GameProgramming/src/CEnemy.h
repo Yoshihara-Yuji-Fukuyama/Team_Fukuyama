@@ -64,4 +64,6 @@ private:
 
 	static CTexture mTextureOni;
 
+	int mLif;
+
 };

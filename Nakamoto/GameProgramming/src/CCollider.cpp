@@ -25,28 +25,15 @@ CCollider::CCollider(CCharacter* parent,
 	//親の設定
 	mpParent = parent;
 	
-	isAttack = attack;
-
 	mpX = px;	//X座標
 	mpY = py;	//Y座標
-	mpZ = z;
+	mLeg = z;
 	mCW = w;	//高さ
 	mCH = h;	//幅
 
 	if (attack)
 	{
-		mVx = mpParent->GetmVx();
-		//左
-		if (mVx < 0)
-		{
-			*mpX = *mpX - X;
-			*mpY = *mpY;
-		}
-		else
-		{
-			mX = *mpX + X;
-			mY = *mpY;
-		}
+
 	}
 
 }
@@ -58,26 +45,13 @@ CCharacter* CCollider::GetParent()
 
 void CCollider::Render()
 {
-	if (isAttack == false) 
-	{
-		glBegin(GL_QUADS);
-		glVertex2f(*mpX - mCW, *mpY - mCH);
-		glVertex2f(*mpX + mCW, *mpY - mCH);
-		glVertex2f(*mpX + mCW, *mpY + mCH);
-		glVertex2f(*mpX - mCW, *mpY + mCH);
-		glEnd();
-	}
+	glBegin(GL_QUADS);
+	glVertex2f(*mpX - mCW, *mpY - mCH);
+	glVertex2f(*mpX + mCW, *mpY - mCH);
+	glVertex2f(*mpX + mCW, *mpY + mCH);
+	glVertex2f(*mpX - mCW, *mpY + mCH);
+	glEnd();
 
-	else
-	{
-		glBegin(GL_QUADS);
-		glVertex2f(mX - mCW, mY - mCH);
-		glVertex2f(mX + mCW, mY - mCH);
-		glVertex2f(mX + mCW, mY + mCH);
-		glVertex2f(mX - mCW, mY + mCH);
-		glEnd();
-	}
-	
 }
 
 void CCollider::AttackCollider(CCharacter* parent, float x, float y, float w, float h)
@@ -86,11 +60,12 @@ void CCollider::AttackCollider(CCharacter* parent, float x, float y, float w, fl
 	CCollisionManager::GetInstance()->Add(this,true);
 }
 
-#define HANI 150
+#define HANI 50
 
 //衝突判定
 bool CCollider::Collision(CCollider* m, CCollider* o, float *ax, float *ay)
 {
+	
 	//X座標の当たり判定
 	if (*m->mpX < *o->mpX)
 		*ax = *o->mpX - *m->mpX - m->mCW - o->mCW;
@@ -108,11 +83,11 @@ bool CCollider::Collision(CCollider* m, CCollider* o, float *ax, float *ay)
 	if (*ay >= 0.0f)
 		return false;
 	//奥行で衝突しているか
-	if (*o->mpZ > *m->mpY-HANI)
+	if (*o->mLeg < *m->mLeg - HANI)
 		return false;
-	if (*o->mpZ < *m->mpY - 300)
+	if (*o->mLeg > *m->mLeg + HANI)
 		return false;
-
+		
 	//Yが短いか判定
 	if (*ax < *ay)
 	{

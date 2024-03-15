@@ -12,4 +12,5 @@ void CApplication::Update()
 {
 	mpGame->Update();
 
+	
 }

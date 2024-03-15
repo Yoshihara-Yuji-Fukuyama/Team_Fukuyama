@@ -303,17 +303,20 @@ void CPlayer::Move()
 		}
 		else
 		{
-			isClick = false;
+			
 		}
+		isClick = false;
+	}
+	else
+	{
+		isClick = false;
 	}
 
 }
 
 void CPlayer::Attack()
 {
-	CAttack* attack = new CAttack(this, &mX, &mY ,&mZ);
-	//attack->Set(GetX(), GetY(), 30, 100);
-	//CCollisionManager::GetInstance()->Add(attack);
+	CAttack* attack = new CAttack(this, &mX, &mY ,&mZ, mVx);
 }
 
 //€–Sˆ—

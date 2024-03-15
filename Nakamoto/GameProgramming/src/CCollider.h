@@ -3,7 +3,7 @@
 
 class CCollisionManager;
 
-class CCollider :public CCharacter
+class CCollider :public CRectangle,public CTask
 {
 	friend CCollisionManager;
 public:
@@ -44,7 +44,8 @@ public:
 protected:
 	CCharacter* mpParent;	//親
 
-	float* mpX, * mpY, * mpZ;
+	float* mpX, * mpY, * mLeg;
 	float mCH;	//コライダの高さ
 	float mCW;	//コライダの幅
+
 };

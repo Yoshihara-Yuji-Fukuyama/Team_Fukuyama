@@ -44,8 +44,9 @@ CTexture* CEnemy::GetTextureOni()
 //敵のデフォルトコンストラクタ
 CEnemy::CEnemy()
 	:CCharacter((int)CTaskPriority::Object)
-	, mColider(this, &mX, &mY, &mZ,140, 90)
+	, mColider(this, &mX, &mY, &mZ, 140, 90)
 	, mFrame(0)
+	,mLif(3)
 	, RandomX(rand() % 200)//200まででランダム
 	, RandomY(rand() % 100)//100まででランダム
 	, RandomTiming(rand() % 500)//500まででランダム
@@ -284,7 +285,6 @@ void CEnemy::SetAnimation()
 	}
 }
 
-
 void CEnemy::Collision(CCollider* m, CCollider* o)
 {
 	float ax, ay;
@@ -295,8 +295,12 @@ void CEnemy::Collision(CCollider* m, CCollider* o)
 		//プレイヤーとの衝突判定を実行(めり込まない処理)
 		SetX(GetX() + ax);
 		SetY(GetY() + ay);
-
-		mEnabled = false;
+		mLif--;
+		
+		if (mLif < 0)
+		{
+			mEnabled = false;
+		}
 
 	}
 }

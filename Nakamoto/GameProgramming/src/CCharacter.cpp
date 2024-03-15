@@ -32,7 +32,8 @@ CCharacter::CCharacter()
 	: mpTexture(nullptr)
 	, mLeft(0.0f), mRight(0.0f), mBottom(0.0f), mTop(0.0f)
 {
-	//CTaskManager::GetInstance()->Add(this);
+	mPriority = 0;
+	CTaskManager::GetInstance()->Add(this);
 }
 
 //コンストラクタ
