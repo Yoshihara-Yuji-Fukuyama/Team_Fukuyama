@@ -47,7 +47,7 @@ CTexture* CEnemy::GetTextureOni()
 //敵のデフォルトコンストラクタ
 CEnemy::CEnemy()
 	:CCharacter((int)CTaskPriority::Object)
-	, mColider(this, &mX, &mY, 140, 90)
+	, mColider(this, &mX, &mY, &mZ, 140, 90)
 	, mFrame(0)
 	, RandomX(rand() % 200)//200まででランダム
 	, RandomY(rand() % 100)//100まででランダム
@@ -68,6 +68,8 @@ CEnemy::CEnemy(float x, float y, float w, float h, int hp, EEnemyType enemyType)
 	mVx = VELOCITY_ENEMY_X;
 
 	mVy = VELOCITY_ENEMY_Y;
+
+	SetZ(GetY() - SLIME_BOTTOM);
 
 	mEnemyType = enemyType;
 
@@ -198,6 +200,7 @@ void CEnemy::Move()
 				isMove = true;
 			}
 			SetY(GetY() + mVy);
+			SetZ(GetY() - SLIME_BOTTOM);
 		}
 		//プレイヤーが上にいるなら上に移動
 		else if (CPlayer::GetInstance()->GetUnderPosY() - GetUnderPosY() > RandomY)
@@ -210,6 +213,7 @@ void CEnemy::Move()
 				isMove = true;
 			}
 			SetY(GetY() + mVy);
+			SetZ(GetY() - SLIME_BOTTOM);
 		}
 		else
 		{

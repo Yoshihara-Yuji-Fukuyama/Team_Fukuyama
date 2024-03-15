@@ -39,6 +39,8 @@ CCharacter::CCharacter()
 CCharacter::CCharacter(int priority)
 	: mpTexture(nullptr)
 	, mLeft(0.0f), mRight(0.0f), mBottom(0.0f), mTop(0.0f)
+	, isAttack(false)
+	, isAttackNext(false)
 {
 	mPriority = priority;
 	CTaskManager::GetInstance()->Add(this);

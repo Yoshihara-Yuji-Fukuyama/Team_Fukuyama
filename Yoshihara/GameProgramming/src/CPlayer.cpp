@@ -63,11 +63,9 @@ CPlayer* CPlayer::GetInstance()
 
 CPlayer::CPlayer()
 	:CCharacter((int)CTaskPriority::Object)
-	, mCollider(this, &mX, &mY, 100, 100)
+	, mCollider(this, &mX, &mY, &mZ, 100, 100)
 	, isClick(false)
 {
-	isAttack = false;
-	isAttackNext = false;
 	mState = EState::EWAIT;
 	WaitNum = 4;//待機アニメーション数
 	MoveNum = 6;//移動アニメーション数
@@ -89,6 +87,8 @@ CPlayer::CPlayer(float x, float y, float w, float h, int hp)
 	mVx = VELOCITY_PLAYER;
 
 	mLeg = PLAYER_BOTTOM;
+
+	SetZ(GetY() - mLeg);
 
 	mAttackPhase = EAttackPhase::Attack0;
 }
@@ -178,6 +178,7 @@ void CPlayer::Update()
 		SetSortOrder(GetY() - mLeg);
 
 		Move();
+		//Attack();
 
 		if (mAttackPhase == EAttackPhase::Attack1)
 		{
@@ -255,6 +256,7 @@ void CPlayer::Move()
 			if (GetY() - mLeg < 250)
 			{
 				SetY(GetY() + VELOCITY_PLAYER);
+				SetZ(GetY() - mLeg);
 				isMove = true;
 				isMoveY = true;
 			}
@@ -276,6 +278,7 @@ void CPlayer::Move()
 			if (GetY() - mLeg > 0)
 			{
 				SetY(GetY() - VELOCITY_PLAYER);
+				SetZ(GetY() - mLeg);
 				isMove = true;
 				isMoveY = true;
 			}
@@ -340,8 +343,9 @@ void CPlayer::Move()
 
 void CPlayer::Attack()
 {
-
-
+	CAttack* attack = new CAttack(this, &mX, &mY);
+	//attack->Set(GetX(), GetY(), 30, 100);
+	//CCollisionManager::GetInstance()->Add(attack);
 }
 
 //死亡処理

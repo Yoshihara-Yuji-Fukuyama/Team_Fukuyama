@@ -32,6 +32,8 @@ public:
 	float GetX();
 	//Y座標の取得
 	float GetY();
+	//Z座標の取得
+	float GetZ();
 	//幅の取得
 	float GetW();
 	//高さの取得
@@ -47,6 +49,11 @@ public:
 	/// </summary>
 	/// <param name="x">X座標の変更値</param>
 	void SetX(float x);
+	/// <summary>
+    /// //Z座標の設定
+    /// </summary>
+    /// <param name="x">Z座標の変更値</param>
+	void SetZ(float z);
 
 	/// <summary>
 	/// 幅の設定
@@ -62,6 +69,7 @@ public:
 protected:
 	float mX; //X座標
 	float mY; //Y座標
+	float mZ; //足元
 
 private:
 	float mW; //幅

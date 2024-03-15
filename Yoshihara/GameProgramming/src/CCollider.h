@@ -21,7 +21,7 @@ public:
 	/// <param name="w">幅</param>
 	/// <param name="h">高さ</param>
 	CCollider(CCharacter* parent, 
-		float *px, float *py, float w, float h);
+		float* px, float* py, float* z, float w, float h, bool attack = false);
 	//親ポインタの取得
 	CCharacter* GetParent();
 
@@ -44,5 +44,7 @@ public:
 protected:
 	CCharacter* mpParent;	//親
 
-	float* mpX, * mpY, mH, mW;	
+	float* mpX, * mpY, * mpZ;
+	float mCH;	//コライダの高さ
+	float mCW;	//コライダの幅
 };
