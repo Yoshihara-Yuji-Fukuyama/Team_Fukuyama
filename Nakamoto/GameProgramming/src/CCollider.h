@@ -7,6 +7,23 @@ class CCollider :public CRectangle,public CTask
 {
 	friend CCollisionManager;
 public:
+	//コライダのタイプ
+	enum class EType
+	{
+		EPLAYER,	//プレイヤーのコライダ
+		EPATTACK1,	//プレイヤーの攻撃1
+		EPATTACK2,	//プレイヤーの攻撃2
+		EPATTACK3,	//プレイヤーの攻撃3
+
+		ESLIME,     //スライムのコライダ
+		ESATTACK,	//スライムの攻撃
+
+		EONI,		//鬼のコライダ
+		EOATTACK	//鬼の攻撃
+	};
+
+
+
 	//デフォルトコンストラクタ
 	CCollider();
 	//デストラクタ
