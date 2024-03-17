@@ -1,6 +1,7 @@
 #pragma once
 #include "CCharacter.h"
 #include "CCollider.h"
+#include "CPlayer.h"
 
 class CAttack :public CCharacter
 {
@@ -12,13 +13,12 @@ public:
 	/// <param name="x">X座標のアドレス</param>
 	/// <param name="y">Y座標のアドレス</param>
 	/// <param name="z">Z座標のアドレス</param>
+	/// <param name="mvx">Xの移動方向</param>
 	CAttack(CCharacter* p,float *x,float *y,float *z ,float mvx);
 
 	//更新
 	void Update();
 
-	//衝突判定
-	void Collision();
 	/// <summary>
 	/// 衝突判定
 	/// </summary>

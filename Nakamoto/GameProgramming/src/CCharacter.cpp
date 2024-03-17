@@ -96,7 +96,18 @@ float CCharacter::GetUnderPosY()
 	return mUnderPosY;
 }
 
-float CCharacter::GetmVx()
+//HP‚ğæ“¾
+int CCharacter::GetHp()
 {
-	return mVx;
+	return mHp;
+}
+//HP‚ğİ’è
+void CCharacter::SetHp(int hp)
+{
+	mHp = hp;
+}
+
+CCharacter::ETag CCharacter::GetTag()
+{
+	return mTag;
 }

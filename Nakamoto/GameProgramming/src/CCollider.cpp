@@ -1,8 +1,9 @@
 #include "CCollider.h"
 #include "CCollisionManager.h"
-#include <stdio.h>
 
-#define X 150
+#include "CCharacter.h"
+#include "CEnemy.h"
+#include <stdio.h>	//確認用 削除予定
 
 CCollider::CCollider()
 {
@@ -15,27 +16,33 @@ CCollider::~CCollider()
 }
 
 CCollider::CCollider(CCharacter* parent,
-	float* px, float* py,float* z, float w, float h ,bool attack)
+	float* px, float* py, float* z, float w, float h, EColliderType cType, bool attack)
 	:CCollider()
 {
 	//コリジョンマネージャに追加
 	CCollisionManager::GetInstance()->Add(this);
-	printf("コライダー生成");
+
+	printf("コライダー生成\n");//確認用 削除予定
 
 	//親の設定
 	mpParent = parent;
 	
 	mpX = px;	//X座標
 	mpY = py;	//Y座標
-	mLeg = z;
+	mLeg = z;	//足元の座標
 	mCW = w;	//高さ
 	mCH = h;	//幅
+	mColliderType = EColliderType::EONI;	//タイプの種類
 
-	if (attack)
+	if (mColliderType == EColliderType::ESLIME)
 	{
-
+		
 	}
-
+	else if (mColliderType == EColliderType::EONI)
+	{
+		
+	}
+	
 }
 
 CCharacter* CCollider::GetParent()
@@ -54,10 +61,9 @@ void CCollider::Render()
 
 }
 
-void CCollider::AttackCollider(CCharacter* parent, float x, float y, float w, float h)
-{	
-	//コリジョンマネージャに追加
-	CCollisionManager::GetInstance()->Add(this,true);
+CCollider::EColliderType CCollider::GetCType()
+{
+	return mColliderType;
 }
 
 #define HANI 50
@@ -65,7 +71,6 @@ void CCollider::AttackCollider(CCharacter* parent, float x, float y, float w, fl
 //衝突判定
 bool CCollider::Collision(CCollider* m, CCollider* o, float *ax, float *ay)
 {
-	
 	//X座標の当たり判定
 	if (*m->mpX < *o->mpX)
 		*ax = *o->mpX - *m->mpX - m->mCW - o->mCW;

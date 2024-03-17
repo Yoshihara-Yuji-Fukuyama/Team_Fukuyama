@@ -167,4 +167,3 @@ CTaskManager* CTaskManager::GetInstance()
 	}
 	return mpInstance;
 }
-

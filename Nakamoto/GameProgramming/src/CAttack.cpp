@@ -1,12 +1,11 @@
 #include "CAttack.h"
 #include "CCollisionManager.h"
-#include "CPlayer.h"
 
-#define LIFE 30
+#define LIFE 50
 
-CAttack::CAttack(CCharacter* p, float* x, float* y,float *z ,float mvx)
+CAttack::CAttack(CCharacter* p, float* x, float* y, float* z, float mvx )
 	:CCharacter(*z)
-	,mCollider(this, &mX, &mY, &mZ, 50, 150, true)
+	, mCollider(this, &mX, &mY, &mZ, 50, 150, CCollider::EColliderType::EPATTACK1, true)
 	,mLife(LIFE)
 {
 	mVx = mvx;
@@ -22,7 +21,6 @@ CAttack::CAttack(CCharacter* p, float* x, float* y,float *z ,float mvx)
 		mY = *y + 50;
 		mZ = *z;
 	}
-	
 }
 
 void CAttack::Update()
@@ -31,11 +29,7 @@ void CAttack::Update()
 	{
 		mEnabled = false;
 	}
-}
-
-void CAttack::Collision()
-{
-	CCollisionManager::GetInstance()->Add(this);
+	
 }
 
 void CAttack::Collision(CCharacter* m, CCharacter* o)

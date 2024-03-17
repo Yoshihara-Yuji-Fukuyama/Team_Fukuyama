@@ -9,6 +9,14 @@ class CCollider;
 class CCharacter :public CRectangle, public CTask//親クラス名
 {
 public:
+	
+	enum class ETag //識別子
+	{
+		EPLAYER,	//プレイヤー
+		ESLIME,		//スライム
+		EONI			//鬼
+	};
+
 	enum class EState//状態
 	{
 		EWAIT,    //待機
@@ -76,25 +84,35 @@ public:
 	//足元の座標を取得
 	float GetUnderPosY();
 
-	float GetmVx();
+	//HPを取得
+	int GetHp();
+	//HPを設定
+	void SetHp(int hp);
+
+	//識別子の取得
+	ETag GetTag();
 
 protected:
+	ETag mTag;			//識別子の格納
 	EState mState;      //状態
 	bool isMove;        //移動しているか
 	bool isMoveX;       //X軸移動しているか
 	bool isMoveY;       //Y軸移動しているか
 	bool isAttack;      //攻撃しているか
+	bool isAttackNext;  //次も攻撃するか
 	//足元計算用
 	float mLeg;
 	//足元の座標
 	float mUnderPosY;
 	//ジャンプ距離
 	float mJump;
-	//アニメーション設定用
-	int AnimSetNum;
+	//HP
+	int mHp;
 	//アニメーションごとの枚数
 	int MoveNum;
 	int AttackNum;
+	int AttackNum2;
+	int AttackNum3;
 	int WaitNum;
 	int JumpNum;
 	int HitNum;
