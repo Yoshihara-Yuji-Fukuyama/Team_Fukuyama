@@ -6,6 +6,7 @@
 #include <stdio.h>	//確認用 削除予定
 
 CCollider::CCollider()
+	:mpParent(nullptr)
 {
 }
 
@@ -16,7 +17,7 @@ CCollider::~CCollider()
 }
 
 CCollider::CCollider(CCharacter* parent,
-	float* px, float* py, float* z, float w, float h, EColliderType cType, bool attack)
+	float* px, float* py, float* z, float w, float h, EColliderType cType)
 	:CCollider()
 {
 	//コリジョンマネージャに追加
@@ -32,22 +33,28 @@ CCollider::CCollider(CCharacter* parent,
 	mLeg = z;	//足元の座標
 	mCW = w;	//高さ
 	mCH = h;	//幅
-	mColliderType = EColliderType::EONI;	//タイプの種類
+	mColliderType = cType;	//コライダの種類
 
-	if (mColliderType == EColliderType::ESLIME)
-	{
-		
-	}
-	else if (mColliderType == EColliderType::EONI)
-	{
-		
-	}
-	
 }
 
-CCharacter* CCollider::GetParent()
+void CCollider::SetCollider(CCharacter* parent,
+	float* px, float* py, float* z, float w, float h, EColliderType cType)
 {
-	return mpParent;
+	//コリジョンマネージャに追加
+	CCollisionManager::GetInstance()->Add(this);
+
+	printf("コライダー生成\n");//確認用 削除予定
+
+	//親の設定
+	mpParent = parent;
+
+	mpX = px;	//X座標
+	mpY = py;	//Y座標
+	mLeg = z;	//足元の座標
+	mCW = w;	//高さ
+	mCH = h;	//幅
+	mColliderType = cType;	//コライダの種類
+
 }
 
 void CCollider::Render()
@@ -106,7 +113,7 @@ bool CCollider::Collision(CCollider* m, CCollider* o, float *ax, float *ay)
 	{
 		//X修正、Yは0
 		*ay = 0.0f;
-		//上の時
+		//右の時
 		if (*m->mpX > *o->mpX)
 			*ax = -*ax;
 	}

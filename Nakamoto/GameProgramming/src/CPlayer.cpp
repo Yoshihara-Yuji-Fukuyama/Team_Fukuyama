@@ -342,6 +342,7 @@ void CPlayer::Move()
 	}
 }
 
+//UŒ‚ƒRƒ‰ƒCƒ_‚Ì¶¬
 void CPlayer::Attack()
 {
 	CAttack* attack = new CAttack(this, &mX, &mY ,&mZ, mVx);

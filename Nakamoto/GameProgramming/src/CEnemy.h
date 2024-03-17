@@ -61,6 +61,7 @@ private:
 	EEnemyType mEnemyType;
 	//コライダ
 	CCollider mCollider;
+
 	//フレームカウンタ
 	int mFrame;
 	//ランダム

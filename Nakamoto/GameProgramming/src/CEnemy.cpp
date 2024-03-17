@@ -1,7 +1,7 @@
 #include "CEnemy.h"
 #include "CPlayer.h"
 
-//確認用
+//確認用 削除予定
 #include <iostream>
 
 //左、右
@@ -50,7 +50,6 @@ CTexture* CEnemy::GetTextureOni()
 //敵のデフォルトコンストラクタ
 CEnemy::CEnemy()
 	:CCharacter((int)CTaskPriority::Object)
-	, mCollider(this, &mX, &mY, &mZ, 140, 90, CCollider::EColliderType::ESLIME)
 	, mFrame(0)
 	, RandomX(rand() % 200)//200まででランダム
 	, RandomY(rand() % 100)//100まででランダム
@@ -73,11 +72,7 @@ CEnemy::CEnemy(float x, float y, float w, float h, int hp,
 
 	mVy = VELOCITY_ENEMY_Y;
 
-	SetZ(GetY() - SLIME_BOTTOM);
-
 	mEnemyType = enemyType;
-
-	
 
 	if (mEnemyType == EEnemyType::Slime)
 	{
@@ -92,7 +87,10 @@ CEnemy::CEnemy(float x, float y, float w, float h, int hp,
 		//待機アニメーション数
 		WaitNum = 4;
 
-		mTag = ETag::ESLIME;
+		//足元設定
+		SetZ(GetY() - mLeg);
+		//スライムのコライダの生成
+		mCollider.SetCollider(this, &mX, &mY, &mZ, 140, 90, CCollider::EColliderType::ESLIME);
 	}
 
 	if (mEnemyType == EEnemyType::Oni)
@@ -108,9 +106,12 @@ CEnemy::CEnemy(float x, float y, float w, float h, int hp,
 		//待機アニメーション数
 		WaitNum = 4;
 
-		mTag = ETag::ESLIME;
+		//足元設定
+		SetZ(GetY() - mLeg);
+		//鬼のコライダの生成
+		mCollider.SetCollider(this, &mX, &mY, &mZ, 100, 200, CCollider::EColliderType::EONI);
 	}
-
+	
 }
 
 //デストラクタ
@@ -217,7 +218,7 @@ void CEnemy::Move()
 				isMove = true;
 			}
 			//SetY(GetY() + mVy);
-			SetZ(GetY() - SLIME_BOTTOM);
+			SetZ(GetY() - mLeg);
 		}
 		//プレイヤーが上にいるなら上に移動
 		else if (CPlayer::GetInstance()->GetUnderPosY() - GetUnderPosY() > RandomY)
@@ -230,7 +231,7 @@ void CEnemy::Move()
 				isMove = true;
 			}
 			//SetY(GetY() + mVy);
-			SetZ(GetY() - SLIME_BOTTOM);
+			SetZ(GetY() - mLeg);
 		}
 		else
 		{
@@ -327,10 +328,8 @@ void CEnemy::Collision(CCollider *m, CCollider *o)
 			//プレイヤーとの衝突判定を実行(めり込まない処理)
 			SetX(GetX() + 10);
 			mHp -= 25;
-
+			std::cout << "HPの値は" << mHp << "です\n";//削除予定
 		}
-
-		std::cout << "HPの値は" << mHp << "です\n";
 
 		if (mHp <= 0)
 		{

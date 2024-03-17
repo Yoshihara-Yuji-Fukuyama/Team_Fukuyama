@@ -14,7 +14,7 @@ public:
 	/// <param name="y">Y座標のアドレス</param>
 	/// <param name="z">Z座標のアドレス</param>
 	/// <param name="mvx">Xの移動方向</param>
-	CAttack(CCharacter* p,float *x,float *y,float *z ,float mvx);
+	CAttack(CCharacter* p, float* x, float* y, float* z, float mvx);
 
 	//更新
 	void Update();
