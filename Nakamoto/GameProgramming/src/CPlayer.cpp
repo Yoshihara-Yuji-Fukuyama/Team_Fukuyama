@@ -198,10 +198,29 @@ void CPlayer::Update()
 		//アニメーションを設定
 		SetAnimation();
 
-
-		//攻撃が終わったときネクストがtrueなら次の攻撃へ
-		if (isAttack == false && isAttackNext == true)
+		
+		if (isAttack == true && isCollider == true)
 		{
+			mAttackNumber = 1;
+			//攻撃コライダの生成 
+			Attack();
+
+			isCollider = false;
+		}
+		//攻撃が終わったときネクストがtrueなら次の攻撃へ
+		else if (isAttack == false && isAttackNext == true)
+		{
+			if (mAttackPhase == EAttackPhase::Attack1)
+			{
+				mAttackNumber = 2;
+			}
+			else if (mAttackPhase == EAttackPhase::Attack2)
+			{
+				mAttackNumber = 3;
+			}
+			//攻撃コライダの生成 
+			Attack();
+
 			mFrame = 0;
 			isAttack = true;
 			mAttackPhase = mAttackPhaseNext;
@@ -214,6 +233,7 @@ void CPlayer::Update()
 			mAttackPhase = EAttackPhase::Attack0;
 			mState = EState::EWAIT;
 		}
+		
 		break;
 	}
 }
@@ -309,12 +329,12 @@ void CPlayer::Move()
 	{
 		if (isClick == false)
 		{
-			Attack();
-
 			if (isAttack == false && mAttackPhase == EAttackPhase::Attack0)
 			{
 				//攻撃段階決定
 				mAttackPhase = EAttackPhase::Attack1;
+
+				isCollider = true;
 
 				isAttack = true;
 			}
@@ -345,13 +365,41 @@ void CPlayer::Move()
 //攻撃コライダの生成
 void CPlayer::Attack()
 {
-	CAttack* attack = new CAttack(this, &mX, &mY ,&mZ, mVx);
+	CAttack* attack = new CAttack(this, &mX, &mY, &mZ, mVx, mAttackNumber);
 	attack->Update();
 }
 
-CPlayer::EAttackPhase CPlayer::GetAttackPhase()
+void CPlayer::Collision(CCollider* m, CCollider* o)
 {
-	return mAttackPhase;
+	float ax, ay;
+
+	switch (o->GetCType())
+	{
+	case CCollider::EColliderType::ESLIME:
+
+		//コライダのmとoが衝突しているか判定しているか判定
+		if (CCollider::Collision(m, o, &ax, &ay))
+		{
+			//プレイヤーとの衝突判定を実行(めり込まない処理)
+			//SetX(GetX() + ax);
+
+			//調整中
+			//SetY(GetY() + ay);
+		}
+		break;
+
+	case CCollider::EColliderType::EONI:
+		//コライダのmとoが衝突しているか判定しているか判定
+		if (CCollider::Collision(m, o, &ax, &ay))
+		{
+			//プレイヤーとの衝突判定を実行(めり込まない処理)
+			//SetX(GetX() + ax);
+
+			//調整中
+			//SetY(GetY() + ay);
+		}
+		break;
+	}
 }
 
 //死亡処理

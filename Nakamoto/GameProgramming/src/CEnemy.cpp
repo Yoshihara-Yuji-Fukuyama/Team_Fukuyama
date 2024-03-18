@@ -24,7 +24,13 @@
 #define TEX_MOVE 1200,600
 //待機
 #define TEX_WAIT 1800,1200
+//攻撃
+#define TEX_ATTACK 600,0
+//死亡
+#define TEX_DEATH 2400,1800
 
+#define KNOCKBACK 10	//ノックバック
+#define DAMAGE 25		//受けるダメージ量
 
 #define SLIME_BOTTOM 130                    //スライム足元計算用
 #define ONI_BOTTOM 240                      //鬼足元計算用 
@@ -80,8 +86,8 @@ CEnemy::CEnemy(float x, float y, float w, float h, int hp,
 		Texture(GetTextureSlime(), TEX_LEFT1, TEX_WAIT);
 		//足元計算用にスライムを入れる
 		mLeg = SLIME_BOTTOM;
-		//攻撃アニメーション数
-		AttackNum = 4;
+		//攻撃アニメーション数+1
+		AttackNum = 5;
 		//移動アニメーション数
 		MoveNum = 4;
 		//待機アニメーション数
@@ -99,8 +105,8 @@ CEnemy::CEnemy(float x, float y, float w, float h, int hp,
 		Texture(GetTextureOni(), TEX_LEFT1, TEX_WAIT);
 		//足元計算用に鬼を入れる
 		mLeg = ONI_BOTTOM;
-		//攻撃アニメーション数
-		AttackNum = 6;
+		//攻撃アニメーション数+1
+		AttackNum = 7;
 		//移動アニメーション数
 		MoveNum = 5;
 		//待機アニメーション数
@@ -148,8 +154,28 @@ void CEnemy::Update()
 		SetAnimation();
 
 		break;
+	case EState::EATTACK: //攻撃
+		
+		AttackAnimation(AttackNum);
+
+		//アニメーションを設定
+		SetAnimation();
+
+		//攻撃コライダの生成
+		Attack();
+
+		if (isAttack == false)
+		{
+			mState = EState::EWAIT;
+		}
+		break;
 	}
 
+	//HPが0なら削除
+	if (mHp <= 0)
+	{
+		mEnabled = false;
+	}
 }
 
 void CEnemy::Move()
@@ -188,7 +214,7 @@ void CEnemy::Move()
 				isMoveX = true;
 				isMove = true;
 			}
-			//SetX(GetX() + mVx);
+			SetX(GetX() + mVx);
 		}
 		//プレイヤーが右にいるなら右に移動
 		else if (CPlayer::GetInstance()->GetX() - GetX() > RandomX)
@@ -200,7 +226,7 @@ void CEnemy::Move()
 				isMoveX = true;
 				isMove = true;
 			}
-			//SetX(GetX() + mVx);
+			SetX(GetX() + mVx);
 		}
 		else
 		{
@@ -217,7 +243,7 @@ void CEnemy::Move()
 				isMoveY = true;
 				isMove = true;
 			}
-			//SetY(GetY() + mVy);
+			SetY(GetY() + mVy);
 			SetZ(GetY() - mLeg);
 		}
 		//プレイヤーが上にいるなら上に移動
@@ -230,7 +256,7 @@ void CEnemy::Move()
 				isMoveY = true;
 				isMove = true;
 			}
-			//SetY(GetY() + mVy);
+			SetY(GetY() + mVy);
 			SetZ(GetY() - mLeg);
 		}
 		else
@@ -245,6 +271,20 @@ void CEnemy::Move()
 			mState = EState::EWAIT;
 		}
 	}
+}
+
+void CEnemy::Attack()
+{
+	//攻撃コライダの種類
+	int attackNumber = 4;
+
+	if (mEnemyType == EEnemyType::Oni)
+	{
+		attackNumber = 5;
+	}
+
+	//攻撃コライダの生成
+	CAttack* attack = new CAttack(this, &mX, &mY, &mZ, mVx, attackNumber);
 }
 
 void CEnemy::Death()
@@ -294,8 +334,60 @@ void CEnemy::SetAnimation()
 			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_MOVE);
 			else                                              Texture(GetTexture(), TEX_RIGHT4, TEX_MOVE);
 		}
-
 		break;
+	case EState::EATTACK://攻撃アニメーション
+		if (mEnemyType == EEnemyType::Oni)
+		{
+			//左向き
+			if (mVx < 0.0f)
+			{
+				if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_ATTACK);
+				else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_ATTACK);
+				else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_ATTACK);
+				else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_ATTACK);
+				else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_LEFT5, TEX_ATTACK);
+				else if (mAnimationNum == CAnimationNumber::Move6)Texture(GetTexture(), TEX_LEFT6, TEX_ATTACK);
+				else isAttack = false;
+
+			}
+			//右向き
+			else
+			{
+				if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_ATTACK);
+				else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_ATTACK);
+				else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_ATTACK);
+				else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHT4, TEX_ATTACK);
+				else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_RIGHT5, TEX_ATTACK);
+				else if (mAnimationNum == CAnimationNumber::Move6)Texture(GetTexture(), TEX_RIGHT6, TEX_ATTACK);
+				else isAttack = false;
+
+			}
+		break;
+		}
+		else if (mEnemyType == EEnemyType::Slime)
+		{
+			//左向き
+			if (mVx < 0.0f)
+			{
+				if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_ATTACK);
+				else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_ATTACK);
+				else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_ATTACK);
+				else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_ATTACK);
+				else isAttack = false;
+
+			}
+			//右向き
+			else
+			{
+				if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_ATTACK);
+				else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_ATTACK);
+				else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_ATTACK);
+				else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHT4, TEX_ATTACK);
+				else isAttack = false;
+
+			}
+			break;
+		}
 	}
 }
 
@@ -317,25 +409,65 @@ void CEnemy::Collision(CCollider *m, CCollider *o)
 		if (CCollider::Collision(m, o, &ax, &ay))
 		{
 			//プレイヤーとの衝突判定を実行(めり込まない処理)
-			SetX(GetX() + ax);
-			SetY(GetY() + ay);
+			//SetX(GetX() + ax);
+
+			//調整中
+			//SetY(GetY() + ay);
+
+			mState = EState::EATTACK;
+			isAttack = true;
 		}
 		break;
 	case CCollider::EColliderType::EPATTACK1:
 		//コライダのmとoが衝突しているか判定しているか判定
 		if (CCollider::Collision(m, o, &ax, &ay))
 		{
-			//プレイヤーとの衝突判定を実行(めり込まない処理)
-			SetX(GetX() + 10);
-			mHp -= 25;
-			std::cout << "HPの値は" << mHp << "です\n";//削除予定
+			//ノックバック処理
+			if (ax < 0)
+			{
+				SetX(GetX() - KNOCKBACK);
+			}
+			else
+			{
+				SetX(GetX() + KNOCKBACK);
+			}
+			mHp -= DAMAGE;
 		}
-
-		if (mHp <= 0)
+		break;
+	case CCollider::EColliderType::EPATTACK2:
+		//コライダのmとoが衝突しているか判定しているか判定
+		if (CCollider::Collision(m, o, &ax, &ay))
 		{
-			mEnabled = false;
+			//ノックバック処理
+			if (ax < 0)
+			{
+				SetX(GetX() - KNOCKBACK);
+			}
+			else
+			{
+				SetX(GetX() + KNOCKBACK);
+			}
+			
+			mHp -= DAMAGE;
+		}
+		break;
+	case CCollider::EColliderType::EPATTACK3:
+		//コライダのmとoが衝突しているか判定しているか判定
+		if (CCollider::Collision(m, o, &ax, &ay))
+		{
+			//ノックバック処理
+			if (ax < 0)
+			{
+				SetX(GetX() - KNOCKBACK);
+			}
+			else
+			{
+				SetX(GetX() + KNOCKBACK);
+			}
+			mHp -= DAMAGE;
 		}
 		break;
 	}
+
 }
 

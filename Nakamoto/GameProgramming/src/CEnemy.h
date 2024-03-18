@@ -2,6 +2,7 @@
 #include "CCharacter.h"
 #include "CAnimation.h"
 #include "CCollider.h"
+#include "CAttack.h"
 
 class CEnemy :public CCharacter, public CAnimation
 {
@@ -37,6 +38,8 @@ public:
 
 	//アニメーションを設定
 	void SetAnimation();
+
+	void Attack();
 
 	//死亡処理
 	void Death();

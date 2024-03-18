@@ -43,8 +43,6 @@ void CCollider::SetCollider(CCharacter* parent,
 	//コリジョンマネージャに追加
 	CCollisionManager::GetInstance()->Add(this);
 
-	printf("コライダー生成\n");//確認用 削除予定
-
 	//親の設定
 	mpParent = parent;
 

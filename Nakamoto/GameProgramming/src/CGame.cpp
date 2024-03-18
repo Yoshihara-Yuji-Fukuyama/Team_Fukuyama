@@ -52,7 +52,6 @@ CGame::CGame()
 	new CEnemy(CPlayer::GetInstance()->GetX() + 700, 300, CHARACTER_SIZE, SLIME_HP,CEnemy::EEnemyType::Slime);
 
 	new CEnemy(CPlayer::GetInstance()->GetX() + 1000, 300, CHARACTER_SIZE, ONI_HP,CEnemy::EEnemyType::Oni);
-
 }
 
 void CGame::Update()

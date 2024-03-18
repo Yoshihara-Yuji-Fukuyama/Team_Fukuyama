@@ -8,6 +8,7 @@ enum class CAnimationNumber
 	Move4,
 	Move5,
 	Move6,
+	END
 };
 
 class CAnimation

@@ -100,6 +100,7 @@ protected:
 	bool isMoveY;       //Y軸移動しているか
 	bool isAttack;      //攻撃しているか
 	bool isAttackNext;  //次も攻撃するか
+	bool isGeneration;	//コライダが生成されているか
 	//足元計算用
 	float mLeg;
 	//足元の座標

@@ -293,10 +293,13 @@ void CAnimation::AttackAnimation(int limit)
 	{
 		mAnimationNum = CAnimationNumber::Move5;
 	}
-	else if (limit >= 6)
+	else if (frame % PITCH < PITCH * 6 / limit)
 	{
 		mAnimationNum = CAnimationNumber::Move6;
 	}
+	else
+	{
+		mAnimationNum = CAnimationNumber::END;
+	}
 	return;
-		
 }

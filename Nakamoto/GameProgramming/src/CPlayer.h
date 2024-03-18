@@ -40,8 +40,13 @@ public:
 
 	//攻撃処理
 	void Attack();
-	//攻撃段階の取得
-	CPlayer::EAttackPhase GetAttackPhase();
+
+	/// <summary>
+	/// 衝突判定
+	/// </summary>
+	/// <param name="m">コライダ1</param>
+	/// <param name="o">コライダ2</param>
+	void Collision(CCollider* m, CCollider* o);
 
 	//死亡処理
 	void Death();
@@ -64,6 +69,10 @@ private:
 
 	//コライダ
 	CCollider mCollider;
+	//コライダが出ているか
+	bool isCollider;
+	//攻撃の番号
+	int mAttackNumber;
 
 	//static変数の宣言
 	static CPlayer* mpInstance;//プレイヤーのインスタンス

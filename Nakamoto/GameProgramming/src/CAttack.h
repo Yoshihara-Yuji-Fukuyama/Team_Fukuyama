@@ -14,7 +14,10 @@ public:
 	/// <param name="y">Y座標のアドレス</param>
 	/// <param name="z">Z座標のアドレス</param>
 	/// <param name="mvx">Xの移動方向</param>
-	CAttack(CCharacter* p, float* x, float* y, float* z, float mvx);
+	/// <param name="attackNumber">攻撃段階</param>
+	CAttack(CCharacter* parent, float* x, float* y, float* z, float mvx, int attackNumber);
+
+	void AttackEnamy(CCharacter* parent, float* x, float* y, float* z, float mvx, int enemyNumber);
 
 	//更新
 	void Update();
