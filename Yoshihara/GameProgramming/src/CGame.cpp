@@ -21,6 +21,8 @@
 #define TEXTURE_HP_BAR "Hp.png"              //HPâÊëú
 #define TEXTURE_FRAME "Frame.png"            //ògâÊëú
 
+#define TEXTURE_SHADOW "Shadow.png"          //âeÇÃâÊëú
+
 #define BACKGROUND_SET1 960.0f,540.0f,960.0f,540.0f//x,y,w,hÅ@îwåi1ÇÃèâä˙à íu
 #define BACKGROUND_SET2 2880.0f,540.0f,960.0f,540.0f//x,y,w,h îwåi2ÇÃèâä˙à íu
 #define CHARACTER_SIZE 300.0f,300.0f                //w,h  ÉLÉÉÉâÉNÉ^Å[ÇÃÉTÉCÉY
@@ -55,6 +57,8 @@ CGame::CGame()
 	CUiTexture::GetTextureHpBar()->Load(TEXTURE_HP_BAR);
 	CUiTexture::GetTextureFrame()->Load(TEXTURE_FRAME);
 	CUiTexture::GetTextureFace()->Load(TEXTURE_PLAYER);
+
+	CShadow::GetTexture()->Load(TEXTURE_SHADOW);
 
 	//îwåiê∂ê¨
 	new CBackground(BACKGROUND_SET1, nullptr, nullptr, (int)EFieldSort::Sky);

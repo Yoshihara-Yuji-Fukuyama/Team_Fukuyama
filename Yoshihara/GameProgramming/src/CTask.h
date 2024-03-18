@@ -7,6 +7,7 @@ enum class CTaskPriority
 {
 	UI,      //UI
 	Object,  //オブジェクト
+	Shadow,  //影
 	Field,   //背景
 	Collider,//当たり判定
 };

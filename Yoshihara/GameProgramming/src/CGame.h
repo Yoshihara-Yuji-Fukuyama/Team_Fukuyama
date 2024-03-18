@@ -4,6 +4,7 @@
 #include "CPlayer.h"
 #include "CUiFont.h"
 #include "CUiTexture.h"
+#include "CShadow.h"
 
 /*
 CGameƒNƒ‰ƒX

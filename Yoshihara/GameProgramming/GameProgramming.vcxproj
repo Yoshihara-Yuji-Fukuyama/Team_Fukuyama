@@ -31,6 +31,7 @@
     <ClCompile Include="src\CUiFont.cpp" />
     <ClCompile Include="src\CUiTexture.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\CShadow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\CAnimation.h" />
@@ -54,6 +55,7 @@
     <ClInclude Include="src\CUiFont.h" />
     <ClInclude Include="src\CUiTexture.h" />
     <ClInclude Include="src\main.h" />
+    <ClInclude Include="src\CShadow.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8802AF2F-2920-4700-89F2-CA6778727283}</ProjectGuid>

@@ -5,6 +5,7 @@
 #include "CCollider.h"
 #include "CAnimation.h"
 #include "CAttack.h"
+#include "CShadow.h"
 
 class CPlayer : public CCharacter, public CAnimation
 {
@@ -58,6 +59,7 @@ public:
 
 private:
 	CInput mInput;
+	CShadow* mpShadow;
 
 	EAttackPhase mAttackPhase;
 	EAttackPhase mAttackPhaseNext;

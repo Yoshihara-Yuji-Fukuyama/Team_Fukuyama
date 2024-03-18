@@ -3,6 +3,7 @@
 #include "CRectangle.h"
 #include "CTask.h"
 
+
 //コライダクラスの宣言
 class CCollider;
 
@@ -75,6 +76,8 @@ public:
 
 	//足元の座標を取得
 	float GetUnderPosY();
+	//影の座標を首都kう
+	float GetShadowPosY();
 
 	//HPを取得
 	int GetHp();
@@ -90,8 +93,13 @@ protected:
 	bool isAttackNext;  //次も攻撃するか
 	//足元計算用
 	float mLeg;
+	//影計算用
+	float mShadow;
 	//足元の座標
 	float mUnderPosY;
+	//影の座標
+	float mShadowPosX;
+	float mShadowPosY;
 	//ジャンプ距離
 	float mJump;	
 	//HP
@@ -109,6 +117,7 @@ protected:
 	float mVxPlayer;
 private:
 	CTexture* mpTexture;//テクスチャ
+
 
 	int mLeft, mRight, mBottom, mTop;//左、右、下、上
 

@@ -26,6 +26,23 @@
 
 #define SLIME_BOTTOM 138                    //スライム足元計算用
 #define ONI_BOTTOM 240                      //鬼足元計算用 
+
+#define SLIME_SHADOW_WAIT 20               //スライムの待機中の影計算用
+#define SLIME_SHADOW_MOVE 40               //スライムの移動中の影計算用
+#define SLIME_SHADOW_ATTACK 70             //スライムの攻撃中の影計算用
+
+#define SLIME_SHADOW_SIZE_WAIT 200,180      //スライムの待機中の影の大きさ
+#define SLIME_SHADOW_SIZE_MOVE 200,180      //スライムの移動中の影の大きさ
+#define SLIME_SHADOW_SIZE_ATTACK 200,180    //スライムの攻撃中の影の大きさ
+
+#define ONI_SHADOW_WAIT 200               //鬼の待機中の影計算用
+#define ONI_SHADOW_MOVE 200               //鬼の移動中の影計算用
+#define ONI_SHADOW_ATTACK 200             //鬼の攻撃中の影計算用
+
+#define ONI_SHADOW_SIZE_WAIT 200,100      //鬼の待機中の影の大きさ
+#define ONI_SHADOW_SIZE_MOVE 200,100      //鬼の移動中の影の大きさ
+#define ONI_SHADOW_SIZE_ATTACK 200,100    //鬼の攻撃中の影の大きさ
+
 //敵の移動速度
 #define VELOCITY_ENEMY_X 2.0f                
 #define VELOCITY_ENEMY_Y 1.0f
@@ -86,36 +103,42 @@ CEnemy::CEnemy(float x, float y, float w, float h, int hp, EEnemyType enemyType)
 
 	mVy = VELOCITY_ENEMY_Y;
 
-	SetZ(GetY() - SLIME_BOTTOM);
-
 	mEnemyType = enemyType;
-
+	//スライムなら
 	if (mEnemyType == EEnemyType::Slime)
 	{
 		//スライムの画像
 		Texture(GetTextureSlime(), TEX_LEFT1, TEX_WAIT);
 		//足元計算用にスライムを入れる
-		mLeg = SLIME_BOTTOM;
+		mLeg = SLIME_BOTTOM;	
+		
+		SetZ(GetY() - SLIME_BOTTOM);
 		//攻撃アニメーション数
 		AttackNum = 4;
 		//移動アニメーション数
 		MoveNum = 4;
 		//待機アニメーション数
 		WaitNum = 4;
+
+		mpShadow = new CShadow(GetX(), GetShadowPosY(), SLIME_SHADOW_SIZE_WAIT);
 	}
-	
+	//鬼なら
 	if (mEnemyType == EEnemyType::Oni)
 	{
 		//鬼の画像
 		Texture(GetTextureOni(), TEX_LEFT1, TEX_WAIT);
 		//足元計算用に鬼を入れる
 		mLeg = ONI_BOTTOM;
+
+		SetZ(GetY() - ONI_BOTTOM);
 		//攻撃アニメーション数
 		AttackNum = 6;
 		//移動アニメーション数
 		MoveNum = 5;
 		//待機アニメーション数
 		WaitNum = 4;
+
+		mpShadow = new CShadow(GetX(), GetShadowPosY(), ONI_SHADOW_SIZE_WAIT);
 	}
 
 }
@@ -132,6 +155,22 @@ void CEnemy::Update()
 	switch (mState)
 	{
 	case EState::EWAIT://待機
+		
+		if (mEnemyType == EEnemyType::Slime)
+		{
+			//影の高さ
+			mShadow = SLIME_SHADOW_WAIT;
+			//影の大きさ
+			mpShadow->SetShadow(GetX(), GetShadowPosY(), SLIME_SHADOW_SIZE_WAIT);
+		}
+		else
+		{
+			//影の高さ
+			mShadow = ONI_SHADOW_WAIT;
+			//影の大きさ
+			mpShadow->SetShadow(GetX(), GetShadowPosY(), ONI_SHADOW_SIZE_WAIT);
+		}
+
 
 		//移動できるようになるとステータスが移動になる
 		Move();
@@ -143,6 +182,22 @@ void CEnemy::Update()
 		break;
 		
 	case EState::EMOVE://移動
+
+		if (mEnemyType == EEnemyType::Slime)
+		{
+			//影の高さ
+			mShadow = SLIME_SHADOW_MOVE;
+			//影の大きさ
+			mpShadow->SetShadow(GetX(), GetShadowPosY(), SLIME_SHADOW_SIZE_MOVE);
+		}
+		else
+		{
+			//影の高さ
+			mShadow = ONI_SHADOW_MOVE;
+			//影の大きさ
+			mpShadow->SetShadow(GetX(), GetShadowPosY(), ONI_SHADOW_SIZE_MOVE);
+		}
+
 		//移動処理
 		Move();
 
@@ -172,11 +227,11 @@ void CEnemy::Move()
 	//ステータスが移動なら移動処理
 	if (mState == EState::EMOVE)
 	{
-		//プレイヤーが左にいるなら左に移動
-		if (CPlayer::GetInstance()->GetX() - GetX() < -RandomX)
+		//プレイヤーが右にいるなら右に移動
+		if (CPlayer::GetInstance()->GetX() - GetX() > RandomX)
 		{
-			//mVxが正数なら負の数にする
-			if (mVx > 0)
+			//mVxが負の数なら正数にする
+			if (mVx < 0)
 			{
 				mVx = -mVx;
 			}
@@ -184,11 +239,11 @@ void CEnemy::Move()
 			isMoveX = true;
 			isMove = true;
 		}
-		//プレイヤーが右にいるなら右に移動
-		else if (CPlayer::GetInstance()->GetX() - GetX() > RandomX)
+		//プレイヤーが左にいるなら左に移動
+		else if (CPlayer::GetInstance()->GetX() - GetX() < -RandomX)
 		{
-			//mVxが負の数なら正数にする
-			if (mVx < 0)
+			//mVxが正数なら負の数にする
+			if (mVx > 0)
 			{
 				mVx = -mVx;
 			}
@@ -200,12 +255,11 @@ void CEnemy::Move()
 		{
 			isMoveX = false;
 		}
-
-		//プレイヤーが下にいるなら下に移動
-		if (CPlayer::GetInstance()->GetUnderPosY() - GetUnderPosY() < -RandomY)
+		//プレイヤーが上にいるなら上に移動
+		if (CPlayer::GetInstance()->GetUnderPosY() - GetUnderPosY() > RandomY)
 		{
-			//mVyが正数なら負の数にする
-			if (mVy > 0)
+			//mVyが負の数なら正数にする
+			if (mVy < 0)
 			{
 				mVy = -mVy;
 			}
@@ -214,11 +268,11 @@ void CEnemy::Move()
 			isMoveY = true;
 			isMove = true;
 		}
-		//プレイヤーが上にいるなら上に移動
-		else if (CPlayer::GetInstance()->GetUnderPosY() - GetUnderPosY() > RandomY)
+		//プレイヤーが下にいるなら下に移動
+		else if (CPlayer::GetInstance()->GetUnderPosY() - GetUnderPosY() < -RandomY)
 		{
-			//mVyが負の数なら正数にする
-			if (mVy < 0)
+			//mVyが正数なら負の数にする
+			if (mVy > 0)
 			{
 				mVy = -mVy;
 			}
@@ -271,42 +325,41 @@ void CEnemy::SetAnimation()
 	switch (mState)
 	{
 	case EState::EWAIT://待機アニメーション
-		//左向き
-		if (mVx < 0.0f)
-		{
-			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_WAIT);
-			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_WAIT);
-			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_WAIT);
-			else                                              Texture(GetTexture(), TEX_LEFT4, TEX_WAIT);
-		}
 		//右向き
-		else
+		if (mVx > 0.0f)
 		{
 			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_WAIT);
 			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_WAIT);
 			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_WAIT);
 			else                                              Texture(GetTexture(), TEX_RIGHT4, TEX_WAIT);
 		}
-
-		break;
-	case EState::EMOVE://移動アニメーション
-		//左移動
-		if (mVx < 0.0f)
-		{
-			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_MOVE);
-			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_MOVE);
-			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_MOVE);
-			else                                              Texture(GetTexture(), TEX_LEFT4, TEX_MOVE);
-		}
-		//右移動
+		//左向き
 		else
+		{
+			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_WAIT);
+			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_WAIT);
+			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_WAIT);
+			else                                              Texture(GetTexture(), TEX_LEFT4, TEX_WAIT);
+		}
+		break;
+
+	case EState::EMOVE://移動アニメーション
+		//右移動
+		if (mVx > 0.0f)
 		{
 			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_MOVE);
 			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_MOVE);
 			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_MOVE);
 			else                                              Texture(GetTexture(), TEX_RIGHT4, TEX_MOVE);
 		}
-
+		//左移動
+		else
+		{
+			if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_MOVE);
+			else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_MOVE);
+			else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_MOVE);
+			else                                              Texture(GetTexture(), TEX_LEFT4, TEX_MOVE);
+		}
 		break;
 	}
 }

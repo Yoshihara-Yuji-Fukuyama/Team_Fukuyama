@@ -2,6 +2,7 @@
 #include "CCharacter.h"
 #include "CCollider.h"
 #include "CAnimation.h"
+#include "CShadow.h"
 
 class CEnemy :public CCharacter, public CAnimation
 {
@@ -54,6 +55,7 @@ public:
 	static void PlusEnemyCount();
 
 private:
+	CShadow* mpShadow;
 	//“G‚ÌŽí—Þ
 	EEnemyType mEnemyType;
 	//ƒRƒ‰ƒCƒ_
