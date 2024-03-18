@@ -1,10 +1,22 @@
 #pragma once
 #include "CCharacter.h"
 #include "CPlayer.h"
+#include"CInput.h"
+
+enum class EFieldSort
+{
+	Road,
+	Building,
+	CloudC,
+	CloudB,
+	CloudA,
+	Sky,
+};
 
 class CBackground :public CCharacter
 {
 public:
+
 	void Update();
 
 	//背景のデフォルトコンストラクタ
@@ -20,7 +32,7 @@ public:
 	/// <param name="next">次の次の背景のポインタ</param>
 	/// <param name="prev">前の前の背景のポインタ</param>
 	CBackground(float x, float y, float w, float h,
-		CBackground* next2, CBackground* prev2);
+		CBackground* next2, CBackground* prev2, int sortOrder, float distanceX = 0);
 
 	/// <summary>
 	/// 背景生成
@@ -36,12 +48,24 @@ public:
 	void DeleteBackground(CBackground* background, CPlayer* player);
 
 	//staticメソッドの宣言
-	static CTexture* GetTexture();
+	static CTexture* GetTextureSky();
+	static CTexture* GetTextureCloudA();
+	static CTexture* GetTextureCloudB();
+	static CTexture* GetTextureCloudC();
+	static CTexture* GetTextureBuilding();
+	static CTexture* GetTextureRoad();
 
 private:
-	CBackground* Next2Background;//次の次の背景のポインタ
-	CBackground* Prev2Background;//前の前の背景のポインタ
+	float X;//背景のX座標計算用
+	CInput mInput;
+	CBackground* NextBackground;//次の次の背景のポインタ
+	CBackground* PrevBackground;//前の前の背景のポインタ
 
 	//static変数の宣言
-	static CTexture mTexture;
+	static CTexture mTextureSky;
+	static CTexture mTextureCloudA;
+	static CTexture mTextureCloudB;
+	static CTexture mTextureCloudC;
+	static CTexture mTextureBuilding;
+	static CTexture mTextureRoad;
 };

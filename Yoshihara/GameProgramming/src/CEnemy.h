@@ -48,6 +48,11 @@ public:
 
 	static CTexture* GetTextureOni();
 
+	//“G‚Ì”‚ğæ“¾
+	static int GetEnemyCount();
+	//“G‚Ì”‚ğ‚P‰ÁZ
+	static void PlusEnemyCount();
+
 private:
 	//“G‚Ìí—Ş
 	EEnemyType mEnemyType;
@@ -64,5 +69,7 @@ private:
 	static CTexture mTextureSlime;
 
 	static CTexture mTextureOni;
+
+	static int mEnemyCount;
 
 };

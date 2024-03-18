@@ -46,6 +46,11 @@ public:
 	//アニメーションを設定
 	void SetAnimation();
 
+	//isMoveXを取得
+	bool GetMoveX();
+	//mVxを取得
+	float GetmVx();
+
 	//staticメソッドの宣言
 	static CPlayer* GetInstance();
 

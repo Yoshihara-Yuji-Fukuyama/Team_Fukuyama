@@ -106,6 +106,7 @@ protected:
 	int HitNum;
 
 	float mVx, mVy;		//速度
+	float mVxPlayer;
 private:
 	CTexture* mpTexture;//テクスチャ
 

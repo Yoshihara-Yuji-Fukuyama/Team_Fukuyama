@@ -39,4 +39,6 @@ private:
 	CTask* mpPrev;//前のポインタ
 	CTask* mpNextObj;//オブジェの次のポインタ
 	CTask* mpPrevObj;//オブジェの前のポインタ
+	CTask* mpNextBackground;//背景の次のポインタ
+	CTask* mpPrevBackground;//背景の前のポインタ
 };

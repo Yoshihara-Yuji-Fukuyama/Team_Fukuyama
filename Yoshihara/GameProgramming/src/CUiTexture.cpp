@@ -6,13 +6,13 @@
 #define TEX_FRAME 0,645,645,0             //枠
 #define TEX_FACE 150,390,2710,2470        //顔
 
-#define HP_BAR_YELLOW_POSX 445            //HpYellowX座標計算用
-#define HP_BAR_RED_POSX 525               //HpRedX座標計算用
-#define HP_BAR_POSY 750                   //HpY座標計算用
+#define HP_BAR_YELLOW_POSX 471            //HpYellowX座標計算用
+#define HP_BAR_RED_POSX 520               //HpRedX座標計算用
+#define HP_BAR_POSY 945                   //HpY座標計算用
 #define FACE_POSX 830                     //FaceX座標計算用
-#define FACE_POSY 890                     //FaceY座標計算用
-#define FRAME_POSX 825                    //FrameX座標計算用
-#define FRAME_POSY 900                    //FrameY座標計算用
+#define FACE_POSY 985                     //FaceY座標計算用
+#define FRAME_POSX 830                    //FrameX座標計算用
+#define FRAME_POSY 990                    //FrameY座標計算用
 
 //static変数の定義
 CTexture CUiTexture::mTextureHpBar;

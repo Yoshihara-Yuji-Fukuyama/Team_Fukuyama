@@ -34,7 +34,7 @@
 #define PLAYER_STARTSET 100.0f,300.0f,300.0f,300.0f//x,y,w,h プレイヤーの初期位置
 
 #define PLAYER_HP 100                       //プレイヤーのHP
-#define VELOCITY_PLAYER 3.0f	            //プレイヤーの移動速度
+#define VELOCITY_PLAYER 6.0f	            //プレイヤーの移動速度
 #define JUMPV0 (30 / 1.4f)		            //ジャンプの初速度
 #define GRAVITY (30 / 30)		            //重力加速度
 #define PLAYER_BOTTOM 270                   //プレイヤー足元計算用
@@ -353,6 +353,16 @@ void CPlayer::Death()
 {
 	//タスクリストから削除
 	SetEnabled(false);
+}
+
+bool CPlayer::GetMoveX()
+{
+	return isMoveX;
+}
+
+float CPlayer::GetmVx()
+{
+	return mVx;
 }
 
 //アニメーションを設定

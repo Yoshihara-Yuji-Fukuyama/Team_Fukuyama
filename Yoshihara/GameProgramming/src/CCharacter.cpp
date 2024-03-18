@@ -1,6 +1,8 @@
 #include "CCharacter.h"
 #include "CTaskManager.h"
 
+#define VELOCITY_PLAYER 6.0f	            //プレイヤーの移動速度
+
 //テクスチャの設定
 void CCharacter::Texture(CTexture* pTexture,int left, int right, int bottom, int top)
 {

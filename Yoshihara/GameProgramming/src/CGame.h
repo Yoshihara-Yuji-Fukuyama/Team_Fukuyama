@@ -32,5 +32,6 @@ private:
 	void SetCamera();//カメラを設定
 
 	int mFrame;//フレームカウンタ
-	CUiFont mUiFont;
+
+	double count;//秒数カウンタ
 };

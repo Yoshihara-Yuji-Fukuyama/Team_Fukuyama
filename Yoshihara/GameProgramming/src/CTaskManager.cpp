@@ -7,6 +7,8 @@ CTaskManager::CTaskManager()
 	mTail.mpPrev = &mHead;
 	mHeadObj.mpNextObj = &mTailObj;
 	mTailObj.mpPrevObj = &mHeadObj;
+	mHeadBackground.mpNextBackground = &mTailBackground;
+	mTailBackground.mpPrevBackground = &mHeadBackground;
 }
 
 //デストラクタ
@@ -31,7 +33,19 @@ void CTaskManager::Add(CTask* addTask, bool isSort)
 			addTask->mpPrevObj->mpNextObj = addTask;
 			//taskObjの前をaddTaskに
 			taskObj->mpPrevObj = addTask;
-			
+		}
+		//addTaskの優先度がオブジェクト用ならオブジェクトのリストに追加
+		if (addTask->mPriority == (int)CTaskPriority::Field)
+		{
+			CTask* taskBackground = mHeadBackground.mpNextBackground;
+			//addTaskの次をtaskBackground
+			addTask->mpNextBackground = taskBackground;
+			//addTaskの前をtaskBackgroundの前に
+			addTask->mpPrevBackground = taskBackground->mpPrevBackground;
+			//addTaskの前の次をaddTaskに
+			addTask->mpPrevBackground->mpNextBackground = addTask;
+			//taskBackgroundの前をaddTaskに
+			taskBackground->mpPrevBackground = addTask;
 		}
 	}
 	//mHeadの次から検索
@@ -46,6 +60,23 @@ void CTaskManager::Add(CTask* addTask, bool isSort)
 	}
 	//優先度が同じかつ優先度がオブジェクト用なら処理順番が大きい順に入れる
 	while (addTask->mPriority == task->mPriority && addTask->mPriority == (int)CTaskPriority::Object)
+	{
+		if (addTask->mSortOrder > task->mSortOrder)
+		{
+			//addTaskの次をtask
+			addTask->mpNext = task;
+			//addTaskの前をtaskの前に
+			addTask->mpPrev = task->mpPrev;
+			//addTaskの前の次をaddTaskに
+			addTask->mpPrev->mpNext = addTask;
+			//taskの前をaddTaskに
+			task->mpPrev = addTask;
+			return;
+		}
+		task = task->mpNext;
+	}
+	//優先度が同じかつ優先度が背景用なら処理順番が大きい順に入れる
+	while (addTask->mPriority == task->mPriority && addTask->mPriority == (int)CTaskPriority::Field)
 	{
 		if (addTask->mSortOrder > task->mSortOrder)
 		{
@@ -84,6 +115,14 @@ void CTaskManager::Remove(CTask* removeTask, bool isSort)
 			removeTask->mpPrevObj->mpNextObj = removeTask->mpNextObj;
 			//removeTaskの次の前を、removeTaskの前にする
 			removeTask->mpNextObj->mpPrevObj = removeTask->mpPrevObj;
+		}
+		//優先度が背景用であれば、背景のリストからも取り除く
+		if (removeTask->mPriority == (int)CTaskPriority::Field)
+		{
+			//removeTaskの前の次を、removeTaskの次にする
+			removeTask->mpPrevBackground->mpNextBackground = removeTask->mpNextBackground;
+			//removeTaskの次の前を、removeTaskの前にする
+			removeTask->mpNextBackground->mpPrevBackground = removeTask->mpPrevBackground;
 		}
 	}
 	//タスクの前の次を、タスクの次にする

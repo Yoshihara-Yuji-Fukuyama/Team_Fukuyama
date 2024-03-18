@@ -1,5 +1,6 @@
 #include "CEnemy.h"
 #include "CPlayer.h"
+#include "CUiFont.h"
 
 //左、右
 //左向き
@@ -23,15 +24,19 @@
 #define TEX_WAIT 1800,1200
 
 
-#define SLIME_BOTTOM 130                    //スライム足元計算用
+#define SLIME_BOTTOM 138                    //スライム足元計算用
 #define ONI_BOTTOM 240                      //鬼足元計算用 
 //敵の移動速度
 #define VELOCITY_ENEMY_X 2.0f                
 #define VELOCITY_ENEMY_Y 1.0f
 
+#define SLIME_POINT 10
+#define ONI_POINT 20
+
 //static変数の定義
 CTexture CEnemy::mTextureSlime;
 CTexture CEnemy::mTextureOni;
+int CEnemy::mEnemyCount = 0;
 
 //メソッドの定義
 CTexture* CEnemy::GetTextureSlime()
@@ -44,14 +49,26 @@ CTexture* CEnemy::GetTextureOni()
 	return &mTextureOni;
 }
 
+int CEnemy::GetEnemyCount()
+{
+	return mEnemyCount;
+}
+
+void CEnemy::PlusEnemyCount()
+{
+	mEnemyCount++;
+}
+
 //敵のデフォルトコンストラクタ
 CEnemy::CEnemy()
 	:CCharacter((int)CTaskPriority::Object)
 	, mColider(this, &mX, &mY, &mZ, 140, 90)
 	, mFrame(0)
-	, RandomX(rand() % 200)//200まででランダム
-	, RandomY(rand() % 100)//100まででランダム
-	, RandomTiming(rand() % 500)//500まででランダム
+	//敵がプレイヤーに近づける距離
+	, RandomX(rand() % 100 + 50)//50から100未満まででランダム
+	, RandomY(rand() % 50 + 50)//50から100未満まででランダム
+	//行動の間隔
+	, RandomTiming(rand() % 100 + 150)//250から500未満まででランダム
 {
 }
 
@@ -105,6 +122,11 @@ CEnemy::CEnemy(float x, float y, float w, float h, int hp, EEnemyType enemyType)
 
 void CEnemy::Update()
 {
+	//離れた敵は消去する
+	if (CPlayer::GetInstance()->GetX() - GetX() > 1920 || CPlayer::GetInstance()->GetX() - GetX() < -1920)
+	{
+		SetEnabled(false);
+	}
 	//処理順番を決定
 	SetSortOrder(GetY() - mLeg);
 	switch (mState)
@@ -136,7 +158,7 @@ void CEnemy::Update()
 
 void CEnemy::Move()
 {
-	const int MoveInterval = 500;
+	const int MoveInterval = 250;
 	int frame = mFrame++;
 	int move;
 
@@ -144,17 +166,7 @@ void CEnemy::Move()
 	//frame/MoveIntervalのあまりがRandomTimingの倍数なら
 	if (frame % MoveInterval % RandomTiming == 0)
 	{
-		move = rand();//偶数か奇数をランダム
-		//偶数なら移動
-		if (move % 2 == 0)
-		{
 			mState = EState::EMOVE;
-		}
-		//奇数なら待機
-		else
-		{
-			mState = EState::EWAIT;
-		}
 	}
 
 	//ステータスが移動なら移動処理
@@ -167,10 +179,10 @@ void CEnemy::Move()
 			if (mVx > 0)
 			{
 				mVx = -mVx;
-				isMoveX = true;
-				isMove = true;
 			}
 			SetX(GetX() + mVx);
+			isMoveX = true;
+			isMove = true;
 		}
 		//プレイヤーが右にいるなら右に移動
 		else if (CPlayer::GetInstance()->GetX() - GetX() > RandomX)
@@ -179,10 +191,10 @@ void CEnemy::Move()
 			if (mVx < 0)
 			{
 				mVx = -mVx;
-				isMoveX = true;
-				isMove = true;
 			}
 			SetX(GetX() + mVx);
+			isMoveX = true;
+			isMove = true;
 		}
 		else
 		{
@@ -196,11 +208,11 @@ void CEnemy::Move()
 			if (mVy > 0)
 			{
 				mVy = -mVy;
-				isMoveY = true;
-				isMove = true;
 			}
 			SetY(GetY() + mVy);
 			SetZ(GetY() - SLIME_BOTTOM);
+			isMoveY = true;
+			isMove = true;
 		}
 		//プレイヤーが上にいるなら上に移動
 		else if (CPlayer::GetInstance()->GetUnderPosY() - GetUnderPosY() > RandomY)
@@ -209,11 +221,11 @@ void CEnemy::Move()
 			if (mVy < 0)
 			{
 				mVy = -mVy;
-				isMoveY = true;
-				isMove = true;
 			}
 			SetY(GetY() + mVy);
 			SetZ(GetY() - SLIME_BOTTOM);
+			isMoveY = true;
+			isMove = true;
 		}
 		else
 		{
@@ -232,6 +244,18 @@ void CEnemy::Move()
 //デストラクタ
 CEnemy::~CEnemy()
 {
+	mEnemyCount--;
+	if (mHp <= 0)
+	{
+		if (mEnemyType == EEnemyType::Oni)
+		{
+			CUiFont::GetInstance()->SetScore(ONI_POINT);
+		}
+		else
+		{
+			CUiFont::GetInstance()->SetScore(SLIME_POINT);
+		}
+	}
 
 }
 
