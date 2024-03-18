@@ -32,6 +32,7 @@ public:
 	void Update();
 	//描画
 	void Render();
+
 protected:
 	CTask mHead;//先頭タスク
 	CTask mTail;//最終タスク

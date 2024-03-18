@@ -1,7 +1,10 @@
 #pragma once
 #include "CEnemy.h"
-#include "CPlayer.h"
 #include "CBackground.h"
+#include "CPlayer.h"
+#include "CUiFont.h"
+#include "CUiTexture.h"
+
 
 
 /*

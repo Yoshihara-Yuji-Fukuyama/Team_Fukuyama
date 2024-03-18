@@ -293,9 +293,10 @@ void CAnimation::AttackAnimation(int limit)
 	{
 		mAnimationNum = CAnimationNumber::Move5;
 	}
-	else
+	else if (limit >= 6)
 	{
 		mAnimationNum = CAnimationNumber::Move6;
 	}
+	return;
 		
 }

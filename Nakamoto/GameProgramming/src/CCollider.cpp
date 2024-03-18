@@ -1,10 +1,12 @@
 #include "CCollider.h"
 #include "CCollisionManager.h"
-#include <stdio.h>
 
-#define X 150
+#include "CCharacter.h"
+#include "CEnemy.h"
+#include <stdio.h>	//確認用 削除予定
 
 CCollider::CCollider()
+	:mpParent(nullptr)
 {
 }
 
@@ -15,78 +17,63 @@ CCollider::~CCollider()
 }
 
 CCollider::CCollider(CCharacter* parent,
-	float* px, float* py,float* z, float w, float h ,bool attack)
+	float* px, float* py, float* z, float w, float h, EColliderType cType)
 	:CCollider()
 {
 	//コリジョンマネージャに追加
 	CCollisionManager::GetInstance()->Add(this);
-	printf("コライダー生成");
+
+	printf("コライダー生成\n");//確認用 削除予定
 
 	//親の設定
 	mpParent = parent;
 	
-	isAttack = attack;
-
 	mpX = px;	//X座標
 	mpY = py;	//Y座標
-	mpZ = z;
+	mLeg = z;	//足元の座標
 	mCW = w;	//高さ
 	mCH = h;	//幅
-
-	if (attack)
-	{
-		mVx = mpParent->GetmVx();
-		//左
-		if (mVx < 0)
-		{
-			*mpX = *mpX - X;
-			*mpY = *mpY;
-		}
-		else
-		{
-			mX = *mpX + X;
-			mY = *mpY;
-		}
-	}
+	mColliderType = cType;	//コライダの種類
 
 }
 
-CCharacter* CCollider::GetParent()
+void CCollider::SetCollider(CCharacter* parent,
+	float* px, float* py, float* z, float w, float h, EColliderType cType)
 {
-	return mpParent;
+	//コリジョンマネージャに追加
+	CCollisionManager::GetInstance()->Add(this);
+
+	printf("コライダー生成\n");//確認用 削除予定
+
+	//親の設定
+	mpParent = parent;
+
+	mpX = px;	//X座標
+	mpY = py;	//Y座標
+	mLeg = z;	//足元の座標
+	mCW = w;	//高さ
+	mCH = h;	//幅
+	mColliderType = cType;	//コライダの種類
+
 }
 
 void CCollider::Render()
 {
-	if (isAttack == false) 
-	{
-		glBegin(GL_QUADS);
-		glVertex2f(*mpX - mCW, *mpY - mCH);
-		glVertex2f(*mpX + mCW, *mpY - mCH);
-		glVertex2f(*mpX + mCW, *mpY + mCH);
-		glVertex2f(*mpX - mCW, *mpY + mCH);
-		glEnd();
-	}
+	glBegin(GL_QUADS);
+	glVertex2f(*mpX - mCW, *mpY - mCH);
+	glVertex2f(*mpX + mCW, *mpY - mCH);
+	glVertex2f(*mpX + mCW, *mpY + mCH);
+	glVertex2f(*mpX - mCW, *mpY + mCH);
+	glEnd();
 
-	else
-	{
-		glBegin(GL_QUADS);
-		glVertex2f(mX - mCW, mY - mCH);
-		glVertex2f(mX + mCW, mY - mCH);
-		glVertex2f(mX + mCW, mY + mCH);
-		glVertex2f(mX - mCW, mY + mCH);
-		glEnd();
-	}
-	
 }
 
-void CCollider::AttackCollider(CCharacter* parent, float x, float y, float w, float h)
-{	
-	//コリジョンマネージャに追加
-	CCollisionManager::GetInstance()->Add(this,true);
+CCollider::EColliderType CCollider::GetCType()
+{
+	return mColliderType;
 }
 
-#define HANI 150
+#define HANI 50
 
 //衝突判定
 bool CCollider::Collision(CCollider* m, CCollider* o, float *ax, float *ay)
@@ -108,11 +95,11 @@ bool CCollider::Collision(CCollider* m, CCollider* o, float *ax, float *ay)
 	if (*ay >= 0.0f)
 		return false;
 	//奥行で衝突しているか
-	if (*o->mpZ > *m->mpY-HANI)
+	if (*o->mLeg < *m->mLeg - HANI)
 		return false;
-	if (*o->mpZ < *m->mpY - 300)
+	if (*o->mLeg > *m->mLeg + HANI)
 		return false;
-
+		
 	//Yが短いか判定
 	if (*ax < *ay)
 	{
@@ -126,7 +113,7 @@ bool CCollider::Collision(CCollider* m, CCollider* o, float *ax, float *ay)
 	{
 		//X修正、Yは0
 		*ay = 0.0f;
-		//上の時
+		//右の時
 		if (*m->mpX > *o->mpX)
 			*ax = -*ax;
 	}

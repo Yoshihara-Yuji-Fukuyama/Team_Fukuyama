@@ -3,10 +3,25 @@
 
 class CCollisionManager;
 
-class CCollider :public CCharacter
+class CCollider :public CRectangle,public CTask
 {
 	friend CCollisionManager;
 public:
+	//コライダのタイプ
+	enum class EColliderType
+	{
+		EPLAYER,	//プレイヤーのコライダ
+		EPATTACK1,	//プレイヤーの攻撃1
+		EPATTACK2,	//プレイヤーの攻撃2
+		EPATTACK3,	//プレイヤーの攻撃3
+
+		ESLIME,     //スライムのコライダ
+		ESATTACK,	//スライムの攻撃
+
+		EONI,		//鬼のコライダ
+		EOATTACK	//鬼の攻撃
+	};
+
 	//デフォルトコンストラクタ
 	CCollider();
 	//デストラクタ
@@ -18,18 +33,32 @@ public:
 	/// <param name="parent">親</param>
 	/// <param name="x">X座標ポインタ</param>
 	/// <param name="y">Y座標ポインタ</param>
+	/// <param name="y">Z座標ポインタ</param>
 	/// <param name="w">幅</param>
 	/// <param name="h">高さ</param>
+	/// <param name="cType">コライダのタイプ</param>
+	/// <param name="attack">攻撃しているか</param>
 	CCollider(CCharacter* parent, 
-		float *px, float *py,float* z, float w, float h , bool attack = false);
-	//親ポインタの取得
-	CCharacter* GetParent();
+		float *px, float *py,float* z, float w, float h, EColliderType cType);
+
+	/// <summary>
+	/// 敵のコライダ
+	/// </summary>
+	/// <param name="parent">親</param>
+	/// <param name="px">X座標のポインタ</param>
+	/// <param name="py">Y座標のポインタ</param>
+	/// <param name="z">Z座標のポインタ</param>
+	/// <param name="w">幅</param>
+	/// <param name="h">高さ</param>
+	/// <param name="cType">コライダのタイプ</param>
+	void SetCollider(CCharacter* parent,
+		float* px, float* py, float* z, float w, float h, EColliderType cType);
 
 	//描画
 	void Render();
 
-	//攻撃時の当たり判定生成
-	void AttackCollider(CCharacter* parent, float x,float y,float w,float h);
+	//コライダのタイプを取得
+	CCollider::EColliderType GetCType();
 
 	/// <summary>
 	/// 衝突判定(めり込まない処理)
@@ -43,8 +72,14 @@ public:
 
 protected:
 	CCharacter* mpParent;	//親
+	//コライダのタイプ
+	EColliderType mColliderType;	
 
-	float* mpX, * mpY, * mpZ;
+	CCharacter::ETag mTag;
+
+	float* mpX, * mpY, * mLeg;
+	float mCX;	//コライダのX座標
+	float mCY;	//コライダのY座標
 	float mCH;	//コライダの高さ
 	float mCW;	//コライダの幅
 };

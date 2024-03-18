@@ -32,7 +32,8 @@ CCharacter::CCharacter()
 	: mpTexture(nullptr)
 	, mLeft(0.0f), mRight(0.0f), mBottom(0.0f), mTop(0.0f)
 {
-	//CTaskManager::GetInstance()->Add(this);
+	mPriority = 0;
+	CTaskManager::GetInstance()->Add(this);
 }
 
 //コンストラクタ
@@ -95,7 +96,18 @@ float CCharacter::GetUnderPosY()
 	return mUnderPosY;
 }
 
-float CCharacter::GetmVx()
+//HPを取得
+int CCharacter::GetHp()
 {
-	return mVx;
+	return mHp;
+}
+//HPを設定
+void CCharacter::SetHp(int hp)
+{
+	mHp = hp;
+}
+
+CCharacter::ETag CCharacter::GetTag()
+{
+	return mTag;
 }

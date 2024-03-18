@@ -49,8 +49,8 @@ public:
 protected:
 	//アニメーション番号
 	CAnimationNumber mAnimationNum;
-
-private:
 	//フレームカウンタ
 	int mFrame;
+
+private:
 };
