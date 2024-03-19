@@ -202,13 +202,13 @@ void CPlayer::Update()
 		SetAnimation();
 
 		
-		if (isAttack == true && isCollider == false)
+		if (isAttack == true && isCollider == true)
 		{
 			mAttackNumber = 1;
 			//攻撃コライダの生成 
 			Attack();
 
-			isCollider = true;
+			isCollider = false;
 		}
 		//攻撃が終わったときネクストがtrueなら次の攻撃へ
 		else if (isAttack == false && isAttackNext == true)
@@ -221,6 +221,7 @@ void CPlayer::Update()
 			{
 				mAttackNumber = 3;
 			}
+
 			//攻撃コライダの生成 
 			Attack();
 
@@ -344,7 +345,7 @@ void CPlayer::Move()
 				//攻撃段階決定
 				mAttackPhase = EAttackPhase::Attack1;
 
-				isCollider = false;
+				isCollider = true;
 
 				isAttack = true;
 			}
@@ -360,6 +361,7 @@ void CPlayer::Move()
 					mAttackPhaseNext = EAttackPhase::Attack3;
 				}
 				isAttackNext = true;
+
 			}
 			//攻撃に移行
 			mState = EState::EATTACK;

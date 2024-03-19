@@ -73,6 +73,7 @@ private:
 	int RandomTiming;
 
 	bool isCollider;
+	bool is;
 
 	//–³“GƒJƒEƒ“ƒg
 	int mInvincible;

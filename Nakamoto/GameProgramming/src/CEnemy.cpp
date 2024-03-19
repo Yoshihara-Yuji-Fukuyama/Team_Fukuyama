@@ -64,9 +64,9 @@ CEnemy::CEnemy()
 	, RandomX(rand() % 200)//200まででランダム
 	, RandomY(rand() % 100)//100まででランダム
 	, RandomTiming(rand() % 500)//500まででランダム
+	, isCollider(false)
 {
 	isAttack = false;
-	isCollider = false;
 }
 
 //敵のコンストラクタ
@@ -121,7 +121,7 @@ CEnemy::CEnemy(float x, float y, float w, float h, int hp,
 		//足元設定
 		SetZ(GetY() - mLeg);
 		//鬼のコライダの生成
-		mCollider.SetCollider(this, &mX, &mY, &mZ, 100, 200, CCollider::EColliderType::EONI);
+		mCollider.SetCollider(this, &mX, &mY, &mZ, 80, 200, CCollider::EColliderType::EONI);
 	}
 	
 }
@@ -167,10 +167,11 @@ void CEnemy::Update()
 		//アニメーションを設定
 		SetAnimation();
 
-		if (isAttack == true && isCollider == false)
+		if (isAttack == true && isCollider == true && mAnimationNum == CAnimationNumber::Move4)
 		{
 			Attack();
-			isCollider = true;
+			isCollider = false;
+			is = false;
 		}
 
 		if (isAttack == false)
@@ -438,7 +439,7 @@ void CEnemy::Collision(CCollider *m, CCollider *o)
 					//状態を攻撃に変更
 					mState = EState::EATTACK;
 					isAttack = true;
-					isCollider = false;
+					isCollider = true;
 				}
 			}
 		}
