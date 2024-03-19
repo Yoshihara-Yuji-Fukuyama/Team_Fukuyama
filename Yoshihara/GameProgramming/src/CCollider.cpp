@@ -1,7 +1,12 @@
 #include "CCollider.h"
 #include "CCollisionManager.h"
 
+#include "CCharacter.h"
+#include "CEnemy.h"
+#include <stdio.h>	//確認用 削除予定
+
 CCollider::CCollider()
+	:mpParent(nullptr)
 {
 }
 
@@ -12,8 +17,28 @@ CCollider::~CCollider()
 }
 
 CCollider::CCollider(CCharacter* parent,
-	float* px, float* py, float* z, float w, float h, bool attack)
+	float* px, float* py, float* z, float w, float h, EColliderType cType)
 	:CCollider()
+{
+	//コリジョンマネージャに追加
+	CCollisionManager::GetInstance()->Add(this);
+
+	printf("コライダー生成\n");//確認用 削除予定
+
+	//親の設定
+	mpParent = parent;
+
+	mpX = px;	//X座標
+	mpY = py;	//Y座標
+	mLeg = z;	//足元の座標
+	mCW = w;	//高さ
+	mCH = h;	//幅
+	mColliderType = cType;	//コライダの種類
+
+}
+
+void CCollider::SetCollider(CCharacter* parent,
+	float* px, float* py, float* z, float w, float h, EColliderType cType)
 {
 	//コリジョンマネージャに追加
 	CCollisionManager::GetInstance()->Add(this);
@@ -22,21 +47,12 @@ CCollider::CCollider(CCharacter* parent,
 	mpParent = parent;
 
 	mpX = px;	//X座標
-
-	if (attack)
-	{
-		mX = 100;
-	}
-	
 	mpY = py;	//Y座標
-	mpZ = z;    //奥行
-	mCW = w;		//高さ
-	mCH = h;		//幅
-}
+	mLeg = z;	//足元の座標
+	mCW = w;	//高さ
+	mCH = h;	//幅
+	mColliderType = cType;	//コライダの種類
 
-CCharacter* CCollider::GetParent()
-{
-	return mpParent;
 }
 
 void CCollider::Render()
@@ -47,20 +63,20 @@ void CCollider::Render()
 	glVertex2f(*mpX + mCW, *mpY + mCH);
 	glVertex2f(*mpX - mCW, *mpY + mCH);
 	glEnd();
+
 }
 
-void CCollider::AttackCollider(CCharacter* parent, float x, float y, float w, float h)
+CCollider::EColliderType CCollider::GetCType()
 {
-	//コリジョンマネージャに追加
-	CCollisionManager::GetInstance()->Add(this, true);
+	return mColliderType;
 }
 
-//範囲
-#define AREA 150
+#define HANI 60
 
 //衝突判定
-bool CCollider::Collision(CCollider* m, CCollider* o, float *ax, float *ay)
+bool CCollider::Collision(CCollider* m, CCollider* o, float* ax, float* ay)
 {
+	//X座標の当たり判定
 	if (*m->mpX < *o->mpX)
 		*ax = *o->mpX - *m->mpX - m->mCW - o->mCW;
 	else
@@ -68,7 +84,6 @@ bool CCollider::Collision(CCollider* m, CCollider* o, float *ax, float *ay)
 	//0以上は衝突しない
 	if (*ax >= 0.0f)
 		return false;
-
 	//Y座標の当たり判定
 	if (*m->mpY < *o->mpY)
 		*ay = *o->mpY - *m->mpY - m->mCH - o->mCH;
@@ -77,10 +92,10 @@ bool CCollider::Collision(CCollider* m, CCollider* o, float *ax, float *ay)
 	//0以上は衝突しない
 	if (*ay >= 0.0f)
 		return false;
-
-	if (*o->mpZ > *m->mpY - AREA)
+	//奥行で衝突しているか
+	if (*o->mLeg < *m->mLeg - HANI)
 		return false;
-	if (*o->mpZ < *m->mpY - 300)
+	if (*o->mLeg > *m->mLeg + HANI)
 		return false;
 
 	//Yが短いか判定
@@ -96,7 +111,7 @@ bool CCollider::Collision(CCollider* m, CCollider* o, float *ax, float *ay)
 	{
 		//X修正、Yは0
 		*ay = 0.0f;
-		//上の時
+		//右の時
 		if (*m->mpX > *o->mpX)
 			*ax = -*ax;
 	}

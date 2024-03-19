@@ -7,7 +7,7 @@
 #define SCORE_SIZE_END1 560,700,100,100 //終了後のスコアのサイズ
 #define SCORE_SIZE_END2 710,400,50,50   //終了後のスコアの数値のサイズ
 
-#define TIME_MAX 1 //最大時間
+#define TIME_MAX 180 //最大時間
 
 //static変数の宣言
 CUiFont* CUiFont::mpInstance;
@@ -22,6 +22,15 @@ CUiFont* CUiFont::GetInstance()
 	return mpInstance;
 }
 
+void CUiFont::DeleteInstance()
+{
+	if (mpInstance != nullptr)
+	{
+		delete mpInstance;
+		mpInstance = nullptr;
+	}
+}
+
 
 //デフォルトコンストラクタ
 CUiFont::CUiFont()
@@ -34,11 +43,6 @@ CUiFont::CUiFont()
 void CUiFont::SetTime()
 {
 	mTime = mTime--;
-}
-
-void CUiFont::SetMaxTime()
-{
-	mTime = TIME_MAX;
 }
 
 int CUiFont::GetTime()

@@ -34,21 +34,17 @@ CCharacter::CCharacter()
 	: mpTexture(nullptr)
 	, mLeft(0.0f), mRight(0.0f), mBottom(0.0f), mTop(0.0f)
 {
-	//CTaskManager::GetInstance()->Add(this);
+	mPriority = 0;
+	CTaskManager::GetInstance()->Add(this);
 }
 
 //コンストラクタ
 CCharacter::CCharacter(int priority)
 	: mpTexture(nullptr)
 	, mLeft(0.0f), mRight(0.0f), mBottom(0.0f), mTop(0.0f)
-	, isAttack(false)
-	, isAttackNext(false)
 {	
 	//優先順位の設定
 	mPriority = priority;
-
-
-
 	//タスクマネージャーへ追加
 	CTaskManager::GetInstance()->Add(this);
 }
@@ -125,3 +121,7 @@ void CCharacter::SetHp(int hp)
 	mHp = hp;
 }
 
+CCharacter::ETag CCharacter::GetTag()
+{
+	return mTag;
+}

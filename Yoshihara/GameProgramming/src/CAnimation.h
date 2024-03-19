@@ -8,6 +8,7 @@ enum class CAnimationNumber
 	Move4,
 	Move5,
 	Move6,
+	END
 };
 
 class CAnimation
@@ -49,6 +50,12 @@ public:
 	/// </summary>
 	/// <param name="limit">モーションの数</param>
 	void AttackAnimation(int limit);
+
+	/// <summary>
+    /// やられモーション
+    /// </summary>
+    /// <param name="limit">アニメーション番号</param>
+	void DeathAnimation(int limit);
 
 protected:
 	//アニメーション番号

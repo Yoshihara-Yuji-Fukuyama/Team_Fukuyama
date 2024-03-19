@@ -26,6 +26,8 @@
 
 #define TEXTURE_SHADOW "Shadow.png"          //影の画像
 
+#define TEXTURE_HEAL "Heal.png"              //回復の画像
+
 #define TITLE_NAME_SET 960.0f,540.0f,359.0f,254.5f
 #define BACKGROUND_SET1 960.0f,540.0f,960.0f,540.0f//x,y,w,h　背景1の初期位置
 #define BACKGROUND_SET2 2880.0f,540.0f,960.0f,540.0f//x,y,w,h 背景2の初期位置
@@ -69,6 +71,8 @@ CGame::CGame()
 	CUiTexture::GetTextureFace()->Load(TEXTURE_PLAYER);
 	//影
 	CShadow::GetTexture()->Load(TEXTURE_SHADOW);
+	//アイテム
+	CItem::GetTexture()->Load(TEXTURE_HEAL);
 }
 
 
@@ -120,12 +124,8 @@ void CGame::Update()
 		new CUiTexture(HP_SIZE_YELLOW, CUiTexture::EUiType::HpYellow);
 		new CUiTexture(HP_SIZE_RED, CUiTexture::EUiType::HpRed);
 
-		//プレイヤー生成
-		CPlayer::GetInstance();
 		//敵の数をゼロにする
 		CEnemy::ZeroEnemyCount();
-		//最大時間に設定
-		CUiFont::GetInstance()->SetMaxTime();
 		mFrame = 0;//フレームカウンタをゼロに
 		mCount = 1;//秒数カウンタを1に
 		start = clock();//始まりの時間を保存
@@ -155,7 +155,7 @@ void CGame::Update()
 
 		}
 		//衝突判定
-		//CCollisionManager::GetInstance()->Collision();
+		CCollisionManager::GetInstance()->Collision();
 
 		//カメラを設定
 		SetCamera();
@@ -171,7 +171,7 @@ void CGame::Update()
 		//テキスト系UI描画
 		CUiFont::GetInstance()->Render();
 
-		if (CUiFont::GetInstance()->GetTime() <= 0)
+		if (CUiFont::GetInstance()->GetTime() <= 0 || CPlayer::GetInstance()->GetHp() <= 0)
 		{
 			mScene = EGameScene::GameResult;
 		}
@@ -201,6 +201,8 @@ void CGame::Update()
 		break;
 
 	case EGameScene::GameEnd://ゲーム終了
+		CPlayer::DeleteInstance();
+		CUiFont::DeleteInstance();
 		CTaskManager::GetInstance()->AllDelete();
 		mScene = EGameScene::GameTitle;
 		break;
@@ -244,7 +246,7 @@ void CGame::CreateEnemy()
 
 	int charaType = rand();//偶数か奇数がランダム
 
-	int posY = rand() % 100 + 150;//150から250未満の値がランダム
+	int posY;
 
 	//frame/CREATE_TIMEのあまりがCREATE_TIMEの半分の数値の倍数なら生成
 	//敵の数が最大値なら生成しない
@@ -254,6 +256,7 @@ void CGame::CreateEnemy()
 			//キャラタイプが偶数ならスライム
 			if (charaType % 2 == 0)
 			{
+				posY = rand() % 125 + 125;//125から250未満の値がランダム
 				new CEnemy(CPlayer::GetInstance()->GetX() + 1000, posY, CHARACTER_SIZE, SLIME_HP, CEnemy::EEnemyType::Slime);
 				//敵の数を１加算
 				CEnemy::PlusEnemyCount();
@@ -261,6 +264,7 @@ void CGame::CreateEnemy()
 			//奇数なら鬼
 			else
 			{
+				posY = rand() % 125 + 365;//365から490未満の値がランダム
 				new CEnemy(CPlayer::GetInstance()->GetX() + 1000, posY, CHARACTER_SIZE, ONI_HP, CEnemy::EEnemyType::Oni);
 				//敵の数を１加算
 				CEnemy::PlusEnemyCount();

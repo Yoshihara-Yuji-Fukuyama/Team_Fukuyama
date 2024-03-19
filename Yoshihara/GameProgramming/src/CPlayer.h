@@ -44,6 +44,13 @@ public:
 	//死亡処理
 	void Death();
 
+	/// <summary>
+    /// 衝突判定
+    /// </summary>
+    /// <param name="m">コライダ1</param>
+    /// <param name="o">コライダ2</param>
+	void Collision(CCollider* m, CCollider* o);
+
 	//アニメーションを設定
 	void SetAnimation();
 
@@ -57,6 +64,8 @@ public:
 
 	static CTexture* GetTexture();
 
+	static void DeleteInstance();
+
 private:
 	CInput mInput;
 	CShadow* mpShadow;
@@ -68,8 +77,15 @@ private:
 
 	//体のコライダ
 	CCollider mCollider;
-	//攻撃のコライダ
-	//CCollider mACollider;
+
+	//コライダが出ているか
+	bool isCollider;
+
+	//無敵カウント
+	int mInvincible;
+
+	//攻撃の番号
+	int mAttackNumber;
 
 	//static変数の宣言
 	static CPlayer* mpInstance;//プレイヤーのインスタンス

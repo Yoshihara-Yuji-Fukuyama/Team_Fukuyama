@@ -2,6 +2,9 @@
 #include "CPlayer.h"
 #include "CUiFont.h"
 
+//確認用 削除予定
+#include <iostream>
+
 //左、右
 //左向き
 #define TEX_LEFT1 0,600
@@ -22,26 +25,35 @@
 #define TEX_MOVE 1200,600
 //待機
 #define TEX_WAIT 1800,1200
+//攻撃
+#define TEX_ATTACK 600,0
+//死亡
+#define TEX_DEATH 2400,1800
 
+#define KNOCKBACK 10	//ノックバック
+#define DAMAGE1 20		//受けるダメージ量
+#define DAMAGE2 30		//受けるダメージ量
+#define DAMAGE3 50		//受けるダメージ量
+#define INVINCIBLE 55	//無敵カウント
 
-#define SLIME_BOTTOM 138                    //スライム足元計算用
+#define SLIME_BOTTOM 140                    //スライム足元計算用
 #define ONI_BOTTOM 240                      //鬼足元計算用 
 
-#define SLIME_SHADOW_WAIT 20               //スライムの待機中の影計算用
-#define SLIME_SHADOW_MOVE 40               //スライムの移動中の影計算用
-#define SLIME_SHADOW_ATTACK 70             //スライムの攻撃中の影計算用
+#define SLIME_SHADOW_WAIT 20               //スライムの待機中の影高さ計算用
+#define SLIME_SHADOW_MOVE 40               //スライムの移動中の影高さ計算用
+#define SLIME_SHADOW_ATTACK 80             //スライムの攻撃中の影高さ計算用
 
 #define SLIME_SHADOW_SIZE_WAIT 200,180      //スライムの待機中の影の大きさ
 #define SLIME_SHADOW_SIZE_MOVE 200,180      //スライムの移動中の影の大きさ
 #define SLIME_SHADOW_SIZE_ATTACK 200,180    //スライムの攻撃中の影の大きさ
 
-#define ONI_SHADOW_WAIT 200               //鬼の待機中の影計算用
-#define ONI_SHADOW_MOVE 200               //鬼の移動中の影計算用
-#define ONI_SHADOW_ATTACK 200             //鬼の攻撃中の影計算用
+#define ONI_SHADOW_WAIT 200               //鬼の待機中の影高さ計算用
+#define ONI_SHADOW_MOVE 200               //鬼の移動中の影高さ計算用
+#define ONI_SHADOW_ATTACK 220             //鬼の攻撃中の影高さ計算用
 
 #define ONI_SHADOW_SIZE_WAIT 200,100      //鬼の待機中の影の大きさ
 #define ONI_SHADOW_SIZE_MOVE 200,100      //鬼の移動中の影の大きさ
-#define ONI_SHADOW_SIZE_ATTACK 200,100    //鬼の攻撃中の影の大きさ
+#define ONI_SHADOW_SIZE_ATTACK 220,100    //鬼の攻撃中の影の大きさ
 
 //敵の移動速度
 #define VELOCITY_ENEMY_X 2.0f                
@@ -84,14 +96,16 @@ void CEnemy::PlusEnemyCount()
 //敵のデフォルトコンストラクタ
 CEnemy::CEnemy()
 	:CCharacter((int)CTaskPriority::Object)
-	, mColider(this, &mX, &mY, &mZ, 140, 90)
 	, mFrame(0)
+	, mInvincible(0)
 	//敵がプレイヤーに近づける距離
-	, RandomX(rand() % 100 + 50)//50から100未満まででランダム
-	, RandomY(rand() % 50 + 50)//50から100未満まででランダム
+	, RandomX(rand() % 50 + 10)//10から60未満まででランダム
+	, RandomY(rand() % 50 + 10)//10から60未満まででランダム
 	//行動の間隔
 	, RandomTiming(rand() % 100 + 150)//250から500未満まででランダム
+	, isCollider(false)
 {
+	isAttack = false;
 }
 
 //敵のコンストラクタ
@@ -117,14 +131,18 @@ CEnemy::CEnemy(float x, float y, float w, float h, int hp, EEnemyType enemyType)
 		//足元計算用にスライムを入れる
 		mLeg = SLIME_BOTTOM;	
 		
-		SetZ(GetY() - SLIME_BOTTOM);
-		//攻撃アニメーション数
-		AttackNum = 4;
+		//攻撃アニメーション数+1
+		AttackNum = 5;
 		//移動アニメーション数
 		MoveNum = 4;
 		//待機アニメーション数
 		WaitNum = 4;
 
+		//足元設定
+		SetZ(GetY() - mLeg);
+		//スライムのコライダの生成
+		mCollider.SetCollider(this, &mX, &mY, &mZ, 140, 90, CCollider::EColliderType::ESLIME);
+		//スライムの影
 		mpShadow = new CShadow(GetX(), GetShadowPosY(), SLIME_SHADOW_SIZE_WAIT);
 	}
 	//鬼なら
@@ -135,14 +153,18 @@ CEnemy::CEnemy(float x, float y, float w, float h, int hp, EEnemyType enemyType)
 		//足元計算用に鬼を入れる
 		mLeg = ONI_BOTTOM;
 
-		SetZ(GetY() - ONI_BOTTOM);
-		//攻撃アニメーション数
-		AttackNum = 6;
+		//攻撃アニメーション数+1
+		AttackNum = 7;
 		//移動アニメーション数
 		MoveNum = 5;
 		//待機アニメーション数
 		WaitNum = 4;
 
+		//足元設定
+		SetZ(GetY() - mLeg);
+		//鬼のコライダの生成
+		mCollider.SetCollider(this, &mX, &mY, &mZ, 80, 200, CCollider::EColliderType::EONI);
+		//鬼の影
 		mpShadow = new CShadow(GetX(), GetShadowPosY(), ONI_SHADOW_SIZE_WAIT);
 	}
 
@@ -212,6 +234,54 @@ void CEnemy::Update()
 		SetAnimation();
 
 		break;
+
+	case EState::EATTACK: //攻撃
+
+		if (mEnemyType == EEnemyType::Slime)
+		{
+			//影の高さ
+			mShadow = SLIME_SHADOW_ATTACK;
+			//影の大きさ
+			mpShadow->SetShadow(GetX(), GetShadowPosY(), SLIME_SHADOW_SIZE_ATTACK);
+		}
+		else
+		{
+			//影の高さ
+			mShadow = ONI_SHADOW_ATTACK;
+			//影の大きさ
+			mpShadow->SetShadow(GetX(), GetShadowPosY(), ONI_SHADOW_SIZE_ATTACK);
+		}
+
+		AttackAnimation(AttackNum);
+
+		//アニメーションを設定
+		SetAnimation();
+
+		if (isAttack == true && isCollider == true && mAnimationNum == CAnimationNumber::Move4)
+		{
+			Attack();
+			isCollider = false;
+			is = false;
+		}
+
+		if (isAttack == false)
+		{
+			mState = EState::EWAIT;
+		}
+		break;
+	}
+
+	//無敵時間
+	if (mInvincible > 0)
+	{
+		//無敵時間中減算
+		mInvincible--;
+	}
+
+	//HPが0なら削除
+	if (mHp <= 0)
+	{
+		Death();
 	}
 
 }
@@ -269,7 +339,7 @@ void CEnemy::Move()
 				mVy = -mVy;
 			}
 			SetY(GetY() + mVy);
-			SetZ(GetY() - SLIME_BOTTOM);
+			SetZ(GetY() - mLeg);
 			isMoveY = true;
 			isMove = true;
 		}
@@ -282,7 +352,7 @@ void CEnemy::Move()
 				mVy = -mVy;
 			}
 			SetY(GetY() + mVy);
-			SetZ(GetY() - SLIME_BOTTOM);
+			SetZ(GetY() - mLeg);
 			isMoveY = true;
 			isMove = true;
 		}
@@ -303,6 +373,8 @@ void CEnemy::Move()
 //デストラクタ
 CEnemy::~CEnemy()
 {
+	//影をタスクリストから削除
+	mpShadow->SetEnabled(false);
 	mEnemyCount--;
 	if (mHp <= 0)
 	{
@@ -316,6 +388,21 @@ CEnemy::~CEnemy()
 		}
 	}
 
+}
+
+void CEnemy::Attack()
+{
+	//攻撃コライダの種類
+	int attackNumber = 4;
+
+	if (mEnemyType == EEnemyType::Oni)
+	{
+		attackNumber = 5;
+	}
+
+	//攻撃コライダの生成
+	CAttack* attack = new CAttack(this, &mX, &mY, &mZ, mVx, attackNumber);
+	printf("敵の攻撃コライダ生成\n");
 }
 
 void CEnemy::Death()
@@ -366,19 +453,169 @@ void CEnemy::SetAnimation()
 			else                                              Texture(GetTexture(), TEX_LEFT4, TEX_MOVE);
 		}
 		break;
+
+	case EState::EATTACK://攻撃アニメーション
+		if (mEnemyType == EEnemyType::Oni)
+		{
+			if (isAttack == true)
+			{
+				//右向き
+				if (mVx > 0.0f)
+				{
+					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHT4, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_RIGHT5, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move6)Texture(GetTexture(), TEX_RIGHT6, TEX_ATTACK);
+					else isAttack = false;
+				}
+				//左向き
+				else
+				{
+					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_LEFT5, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move6)Texture(GetTexture(), TEX_LEFT6, TEX_ATTACK);
+					else isAttack = false;
+				}
+			}
+			break;
+		}
+		else if (mEnemyType == EEnemyType::Slime)
+		{
+			if (isAttack == true)
+			{
+				//右向き
+				if (mVx > 0.0f)
+				{
+					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHT4, TEX_ATTACK);
+					else isAttack = false;
+				}
+				//左向き
+				else
+				{
+					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_ATTACK);
+					else isAttack = false;
+				}
+			}
+			break;
+		}
 	}
 }
 
+CEnemy::EEnemyType CEnemy::GetEnemyType()
+{
+	return mEnemyType;
+}
 
+//衝突判定
 void CEnemy::Collision(CCollider* m, CCollider* o)
 {
 	float ax, ay;
-	//コライダのmとoが衝突しているか判定しているか判定
-	if (CCollider::Collision(m, o, &ax, &ay))
+
+	switch (o->GetCType())
 	{
-		//プレイヤーとの衝突判定を実行(めり込まない処理)
-		SetX(GetX() + ax);
-		SetY(GetY() + ay);
+	case CCollider::EColliderType::EPLAYER:	//プレイヤーの体のコライダとの衝突判定
+		//コライダのmとoが衝突しているか判定しているか判定
+		if (CCollider::Collision(m, o, &ax, &ay))
+		{
+			if (isAttack == false)
+			{
+				//プレイヤーとの衝突判定を実行(めり込まない処理)
+				//SetX(GetX() + ax);
+
+				//調整中
+				//SetY(GetY() + ay);
+
+				if (mVx < 0 && ax > 0 || mVx > 0 && ax < 0)
+				{
+					//状態を攻撃に変更
+					mState = EState::EATTACK;
+					isAttack = true;
+					isCollider = true;
+				}
+			}
+		}
+		break;
+	case CCollider::EColliderType::EPATTACK1:	//プレイヤーの攻撃1のコライダとの衝突判定
+		//コライダのmとoが衝突しているか判定しているか判定
+		if (CCollider::Collision(m, o, &ax, &ay))
+		{
+			if (mInvincible == 0)
+			{
+				//ノックバック処理
+				if (ax < 0)
+				{
+					SetX(GetX() - KNOCKBACK);
+				}
+				else
+				{
+					SetX(GetX() + KNOCKBACK);
+				}
+				mHp -= DAMAGE1;
+				mInvincible = INVINCIBLE;
+
+				std::cout << "攻撃1により敵の残りHPは" << mHp << "です\n";
+			}
+		}
+		break;
+	case CCollider::EColliderType::EPATTACK2:	//プレイヤーの攻撃2のコライダとの衝突判定
+		//コライダのmとoが衝突しているか判定しているか判定
+		if (CCollider::Collision(m, o, &ax, &ay))
+		{
+			if (mInvincible == 0)
+			{
+				//ノックバック処理
+				if (ax < 0)
+				{
+					SetX(GetX() - KNOCKBACK);
+				}
+				else
+				{
+					SetX(GetX() + KNOCKBACK);
+				}
+
+				mHp -= DAMAGE2;
+				mInvincible = INVINCIBLE;
+
+				std::cout << "攻撃2により敵の残りHPは" << mHp << "です\n";
+			}
+		}
+		break;
+	case CCollider::EColliderType::EPATTACK3:	//プレイヤーの攻撃3のコライダとの衝突判定
+		//コライダのmとoが衝突しているか判定しているか判定
+		if (CCollider::Collision(m, o, &ax, &ay))
+		{
+			if (mInvincible == 0)
+			{
+				//ノックバック処理
+				if (ax < 0)
+				{
+					SetX(GetX() - KNOCKBACK);
+				}
+				else
+				{
+					SetX(GetX() + KNOCKBACK);
+				}
+				mHp -= DAMAGE3;
+				mInvincible = INVINCIBLE;
+
+				std::cout << "攻撃3により敵の残りHPは" << mHp << "です\n";
+			}
+		}
+		break;
 	}
+
 }
+
+
 

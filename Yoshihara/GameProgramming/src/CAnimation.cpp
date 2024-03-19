@@ -248,15 +248,15 @@ void CAnimation::JumpAnimation(int y, float jump, int limit)
 	int JumpPos = y - jump;
 
 
-	if (JumpPos % PITCH < PITCH / 4)
+	if (JumpPos % PITCH < PITCH / limit)
 	{
 			mAnimationNum = CAnimationNumber::Move1;
 	}
-	else if (JumpPos % PITCH < PITCH * 2 / 4)
+	else if (JumpPos % PITCH < PITCH * 2 / limit)
 	{
 		mAnimationNum = CAnimationNumber::Move2;
 	}
-	else if (JumpPos % PITCH < PITCH * 3 / 4)
+	else if (JumpPos % PITCH < PITCH * 3 / limit)
 	{
 		mAnimationNum = CAnimationNumber::Move3;
 	}
@@ -290,13 +290,30 @@ void CAnimation::AttackAnimation(int limit)
 	{
 		mAnimationNum = CAnimationNumber::Move4;
 	}
-	else if (frame % PITCH < PITCH * 5 / limit && limit >= 5)
+	else if (frame % PITCH < PITCH * 5 / limit)
 	{
 		mAnimationNum = CAnimationNumber::Move5;
 	}
-	else if(limit >= 6)
+	else if (frame % PITCH < PITCH * 6 / limit)
 	{
 		mAnimationNum = CAnimationNumber::Move6;
 	}
+	else
+	{
+		mAnimationNum = CAnimationNumber::END;
+	}
 	return;
+}
+
+//やられアニメーション
+void CAnimation::DeathAnimation(int limit)
+{
+	//画像を切り替える速度
+	const int PITCH = 12;
+	int frame = mFrame++;
+
+	if (frame % PITCH < PITCH / limit)
+	{
+		mAnimationNum = CAnimationNumber::Move1;
+	}
 }

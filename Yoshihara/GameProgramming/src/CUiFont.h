@@ -10,9 +10,6 @@ public:
 	//時間
 	void SetTime();
 
-	//最大時間に設定
-	void SetMaxTime();
-
 	//時間の取得
 	int GetTime();
 
@@ -27,6 +24,7 @@ public:
 
 	//staticメソッドの宣言
 	static CUiFont* GetInstance();
+	static void DeleteInstance();
 
 private:
 	int mTime;//タイムリミット

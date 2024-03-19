@@ -35,7 +35,17 @@ public:
 
 	//移動処理
 	void Move();
+	//攻撃
+	void Attack();
 
+	//敵のタイプの取得
+	CEnemy::EEnemyType GetEnemyType();
+
+	/// <summary>
+	/// 衝突判定
+	/// </summary>
+	/// <param name="m">コライダ1</param>
+	/// <param name="o">コライダ2</param>
 	void Collision(CCollider* m, CCollider* o);
 
 	//アニメーションを設定
@@ -61,13 +71,19 @@ private:
 	//敵の種類
 	EEnemyType mEnemyType;
 	//コライダ
-	CCollider mColider;
+	CCollider mCollider;
 	//フレームカウンタ
 	int mFrame;
 	//ランダム
 	int RandomX;
 	int RandomY;
 	int RandomTiming;
+
+	bool isCollider;
+	bool is;
+
+	//無敵カウント
+	int mInvincible;
 
 	//static変数の宣言
 	static CTexture mTextureSlime;

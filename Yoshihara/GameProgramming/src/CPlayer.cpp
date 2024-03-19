@@ -30,6 +30,8 @@
 #define TEX_ATTACK2 1200,600
 //攻撃3
 #define TEX_ATTACK3 1800,1200
+//やられ、防御
+#define TEX_MOTION 4200,3600
 
 #define PLAYER_STARTSET 100.0f,300.0f,300.0f,300.0f//x,y,w,h プレイヤーの初期位置
 
@@ -38,9 +40,9 @@
 #define JUMPV0 (30 / 1.4f)		            //ジャンプの初速度
 #define GRAVITY (30 / 30)		            //重力加速度
 
-#define PLAYER_BOTTOM 270                   //プレイヤー足元計算用
+#define PLAYER_BOTTOM 272                   //プレイヤー足元計算用
 
-#define PLAYER_SHADOW_WAIT 240               //プレイヤー待機中の影計算用dwsdwwwwww
+#define PLAYER_SHADOW_WAIT 240               //プレイヤー待機中の影計算用
 #define PLAYER_SHADOW_JUMP 240               //プレイヤージャンプ中の影計算用
 #define PLAYER_SHADOW_MOVE 220               //プレイヤー移動中の影計算用
 #define PLAYER_SHADOW_ATTACK 240             //プレイヤー攻撃中の影計算用
@@ -73,13 +75,25 @@ CPlayer* CPlayer::GetInstance()
 	}
 	return mpInstance;
 }
+//インスタンスの削除
+void CPlayer::DeleteInstance()
+{
+	if (mpInstance != nullptr)
+	{
+		delete mpInstance;
+		mpInstance = nullptr;
+	}
+}
 
 
 CPlayer::CPlayer()
 	:CCharacter((int)CTaskPriority::Object)
-	, mCollider(this, &mX, &mY, &mZ, 100, 100)
+	, mCollider(this, &mX, &mY, &mZ, 100, 200, CCollider::EColliderType::EPLAYER)
 	, isClick(false)
+	, mInvincible(0)
 {
+	isAttack = false;
+	isAttackNext = false;
 	mState = EState::EWAIT;
 	WaitNum = 4;//待機アニメーション数
 	MoveNum = 6;//移動アニメーション数
@@ -105,7 +119,7 @@ CPlayer::CPlayer(float x, float y, float w, float h, int hp)
 	SetZ(GetY() - mLeg);
 
 	mAttackPhase = EAttackPhase::Attack0;
-
+	//プレイヤーの影
 	mpShadow = new CShadow(GetX() - PLAYER_SHADOW_POSX, GetShadowPosY(), PLAYER_SHADOW_SIZE_WAIT);
 }
 
@@ -152,8 +166,6 @@ void CPlayer::Update()
 
 		//移動入力
 		Move();
-		//攻撃入力
-		Attack();
 
 		//移動アニメーション
 		MoveAnimation(GetX(), GetY(), isMoveX, isMoveY, mVx, MoveNum);
@@ -227,9 +239,8 @@ void CPlayer::Update()
 
         //処理順番を決定
 		SetSortOrder(GetY() - mLeg);
-
+		//移動入力
 		Move();
-		//Attack();
 
 		if (mAttackPhase == EAttackPhase::Attack1)
 		{
@@ -250,10 +261,29 @@ void CPlayer::Update()
 		//アニメーションを設定
 		SetAnimation();
 
-
-		//攻撃が終わったときネクストがtrueなら次の攻撃へ
-		if (isAttack == false && isAttackNext == true)
+		if (isAttack == true && isCollider == true)
 		{
+			mAttackNumber = 1;
+			//攻撃コライダの生成 
+			Attack();
+
+			isCollider = false;
+		}
+		//攻撃が終わったときネクストがtrueなら次の攻撃へ
+		else if (isAttack == false && isAttackNext == true)
+		{
+			if (mAttackPhase == EAttackPhase::Attack1)
+			{
+				mAttackNumber = 2;
+			}
+			else if (mAttackPhase == EAttackPhase::Attack2)
+			{
+				mAttackNumber = 3;
+			}
+
+			//攻撃コライダの生成 
+			Attack();
+
 			mFrame = 0;
 			isAttack = true;
 			mAttackPhase = mAttackPhaseNext;
@@ -267,6 +297,13 @@ void CPlayer::Update()
 			mState = EState::EWAIT;
 		}
 		break;
+	}
+
+	//無敵時間
+	if (mInvincible > 0)
+	{
+		//無敵時間中減算
+		mInvincible--;
 	}
 }
 
@@ -345,7 +382,7 @@ void CPlayer::Move()
 		}
 	}
 	//ジャンプ
-	if (mInput.Key(VK_SPACE))
+	if (mInput.Key(VK_SPACE) && mState != EState::EATTACK)
 	{
 		if (mState != EState::EJUMP)
 		{
@@ -356,7 +393,6 @@ void CPlayer::Move()
 			mVy = JUMPV0;
 			//状態をジャンプに変更
 			mState = EState::EJUMP;
-			SetHp(50);
 		}
 	}
 	//攻撃
@@ -368,6 +404,8 @@ void CPlayer::Move()
 			{
 				//攻撃段階決定
 				mAttackPhase = EAttackPhase::Attack1;
+
+				isCollider = true;
 
 				isAttack = true;
 			}
@@ -397,9 +435,8 @@ void CPlayer::Move()
 
 void CPlayer::Attack()
 {
-	CAttack* attack = new CAttack(this, &mX, &mY);
-	//attack->Set(GetX(), GetY(), 30, 100);
-	//CCollisionManager::GetInstance()->Add(attack);
+	CAttack* attack = new CAttack(this, &mX, &mY, &mZ, mVx, mAttackNumber);
+	attack->Update();
 }
 
 //死亡処理
@@ -560,4 +597,66 @@ void CPlayer::SetAnimation()
 }
 
 
+void CPlayer::Collision(CCollider* m, CCollider* o)
+{
+	float ax, ay;
 
+	switch (o->GetCType())
+	{
+	case CCollider::EColliderType::ESLIME:	//スライムの体のコライダとの衝突判定
+
+		//コライダのmとoが衝突しているか判定しているか判定
+		if (CCollider::Collision(m, o, &ax, &ay))
+		{
+			//プレイヤーとの衝突判定を実行(めり込まない処理)
+			//SetX(GetX() + ax);
+			//調整中
+			//SetY(GetY() + ay);
+
+
+		}
+		break;
+	case CCollider::EColliderType::ESATTACK:	//スライムの攻撃コライダとの衝突判定
+		//コライダのmとoが衝突しているか判定しているか判定
+		if (CCollider::Collision(m, o, &ax, &ay))
+		{
+			if (mInvincible == 0)
+			{
+				//プレイヤーとの衝突判定を実行(めり込まない処理)
+				//SetX(GetX() + 20);
+				//調整中
+				//SetY(GetY() + ay);
+
+				mHp -= 10;
+				mInvincible = 60;
+			}
+		}
+		break;
+	case CCollider::EColliderType::EONI:	//鬼の体のコライダとの衝突判定
+		//コライダのmとoが衝突しているか判定しているか判定
+		if (CCollider::Collision(m, o, &ax, &ay))
+		{
+			//プレイヤーとの衝突判定を実行(めり込まない処理)
+			//SetX(GetX() + ax);
+			//調整中
+			//SetY(GetY() + ay);
+		}
+		break;
+	case CCollider::EColliderType::EOATTACK:	//鬼の攻撃コライダとの衝突判定
+		//コライダのmとoが衝突しているか判定しているか判定
+		if (CCollider::Collision(m, o, &ax, &ay))
+		{
+			if (mInvincible == 0)
+			{
+				//プレイヤーとの衝突判定を実行(めり込まない処理)
+				//SetX(GetX() + 20);
+				//調整中
+				//SetY(GetY() + ay);
+
+				mHp -= 20;
+				mInvincible = 60;
+			}
+		}
+		break;
+	}
+}

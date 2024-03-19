@@ -10,6 +10,14 @@ class CCollider;
 class CCharacter :public CRectangle,public CTask//親クラス名
 {
 public:
+
+	enum class ETag //識別子
+	{
+		EPLAYER,	//プレイヤー
+		ESLIME,		//スライム
+		EONI			//鬼
+	};
+
 	enum class EState//状態
 	{
 		EWAIT,    //待機
@@ -84,13 +92,18 @@ public:
 	//HPを設定
 	void SetHp(int hp);
 
+	//識別子の取得
+	ETag GetTag();
+
 protected:
+	ETag mTag;			//識別子の格納
 	EState mState;      //状態
 	bool isMove;        //移動しているか
 	bool isMoveX;       //X軸移動しているか
 	bool isMoveY;       //Y軸移動しているか
 	bool isAttack;      //攻撃しているか
 	bool isAttackNext;  //次も攻撃するか
+	bool isGeneration;	//コライダが生成されているか
 	//足元計算用
 	float mLeg;
 	//影計算用
@@ -114,7 +127,6 @@ protected:
 	int HitNum;
 
 	float mVx, mVy;		//速度
-	float mVxPlayer;
 private:
 	CTexture* mpTexture;//テクスチャ
 
