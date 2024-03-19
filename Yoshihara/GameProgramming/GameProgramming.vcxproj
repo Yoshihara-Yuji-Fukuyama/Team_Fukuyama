@@ -32,6 +32,7 @@
     <ClCompile Include="src\CUiTexture.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\CShadow.cpp" />
+    <ClCompile Include="src\CTitle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\CAnimation.h" />
@@ -56,6 +57,7 @@
     <ClInclude Include="src\CUiTexture.h" />
     <ClInclude Include="src\main.h" />
     <ClInclude Include="src\CShadow.h" />
+    <ClInclude Include="src\CTitle.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8802AF2F-2920-4700-89F2-CA6778727283}</ProjectGuid>

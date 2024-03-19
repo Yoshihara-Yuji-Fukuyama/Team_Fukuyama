@@ -53,6 +53,8 @@ public:
 	static int GetEnemyCount();
 	//“G‚Ì”‚ğ‚P‰ÁZ
 	static void PlusEnemyCount();
+	//“G‚Ì”‚ğƒ[ƒ‚É‚·‚é
+	static void ZeroEnemyCount();
 
 private:
 	CShadow* mpShadow;

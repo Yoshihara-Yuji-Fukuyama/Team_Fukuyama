@@ -46,9 +46,9 @@
 //敵の移動速度
 #define VELOCITY_ENEMY_X 2.0f                
 #define VELOCITY_ENEMY_Y 1.0f
-
-#define SLIME_POINT 10
-#define ONI_POINT 20
+//敵の撃破ポイント
+#define SLIME_POINT 1000
+#define ONI_POINT 2000
 
 //static変数の定義
 CTexture CEnemy::mTextureSlime;
@@ -69,6 +69,11 @@ CTexture* CEnemy::GetTextureOni()
 int CEnemy::GetEnemyCount()
 {
 	return mEnemyCount;
+}
+
+void CEnemy::ZeroEnemyCount()
+{
+	mEnemyCount = 0;
 }
 
 void CEnemy::PlusEnemyCount()

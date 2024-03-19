@@ -4,7 +4,8 @@ class CTaskManager;
 class CCollisionManager;
 
 enum class CTaskPriority
-{
+{	
+	Title,    //タイトル
 	UI,      //UI
 	Object,  //オブジェクト
 	Shadow,  //影

@@ -3,8 +3,11 @@
 #include "CCamera.h"
 #include "main.h"
 #include "CCollisionManager.h"
-#include <time.h>
 #include "CBackground.h"
+
+#define TEXTURE_TITLE "Title.png"            //タイトル画像
+#define TEXTURE_TITLE_NAME "TitleName.png"   //タイトル名画像
+#define TEXTURE_RESULT "Result.png"          //リザルト画像
 
 #define TEXTURE_PLAYER "Player.png"          //プレイヤー画像
 
@@ -23,6 +26,7 @@
 
 #define TEXTURE_SHADOW "Shadow.png"          //影の画像
 
+#define TITLE_NAME_SET 960.0f,540.0f,359.0f,254.5f
 #define BACKGROUND_SET1 960.0f,540.0f,960.0f,540.0f//x,y,w,h　背景1の初期位置
 #define BACKGROUND_SET2 2880.0f,540.0f,960.0f,540.0f//x,y,w,h 背景2の初期位置
 #define CHARACTER_SIZE 300.0f,300.0f                //w,h  キャラクターのサイズ
@@ -37,72 +41,119 @@
 #define ENEMY_MAX 4 //敵の最大数
 
 CGame::CGame()
-	:mFrame(0)
+	:mScene(EGameScene::GameTitle)
+	, isTitleCreate(false)
+	, isEnter(false)
 {		
-	count = 1;//秒数カウンタ
-
 	//テクスチャをロード
+	//タイトル
+	CTitle::GetTextureTitle()->Load(TEXTURE_TITLE);
+	CTitle::GetTextureTitleName()->Load(TEXTURE_TITLE_NAME);
+	//リザルト
+	CTitle::GetTextureResult()->Load(TEXTURE_RESULT);
+	//プレイヤー
 	CPlayer::GetTexture()->Load(TEXTURE_PLAYER);
-
+	//敵
 	CEnemy::GetTextureSlime()->Load(TEXTURE_SLIME);
 	CEnemy::GetTextureOni()->Load(TEXTURE_ONI);
-
+	//背景
 	CBackground::GetTextureSky()->Load(TEXTURE_SKY);
 	CBackground::GetTextureCloudA()->Load(TEXTURE_CLOUD_A);
 	CBackground::GetTextureCloudB()->Load(TEXTURE_CLOUD_B);
 	CBackground::GetTextureCloudC()->Load(TEXTURE_CLOUD_C);
 	CBackground::GetTextureBuilding()->Load(TEXTURE_BUILDING);
 	CBackground::GetTextureRoad()->Load(TEXTURE_ROAD);
-
+	//UI
 	CUiTexture::GetTextureHpBar()->Load(TEXTURE_HP_BAR);
 	CUiTexture::GetTextureFrame()->Load(TEXTURE_FRAME);
 	CUiTexture::GetTextureFace()->Load(TEXTURE_PLAYER);
-
+	//影
 	CShadow::GetTexture()->Load(TEXTURE_SHADOW);
-
-	//背景生成
-	new CBackground(BACKGROUND_SET1, nullptr, nullptr, (int)EFieldSort::Sky);
-	new CBackground(BACKGROUND_SET2, nullptr, nullptr, (int)EFieldSort::Sky);
-	new CBackground(BACKGROUND_SET1, nullptr, nullptr, (int)EFieldSort::CloudA);
-	new CBackground(BACKGROUND_SET1, nullptr, nullptr, (int)EFieldSort::CloudB);
-	new CBackground(BACKGROUND_SET1, nullptr, nullptr, (int)EFieldSort::CloudC);
-	new CBackground(BACKGROUND_SET1, nullptr, nullptr, (int)EFieldSort::Building);
-	new CBackground(BACKGROUND_SET1, nullptr, nullptr, (int)EFieldSort::Road);
-	new CBackground(BACKGROUND_SET2, nullptr, nullptr, (int)EFieldSort::Road);
-
-	//Ui生成
-	new CUiTexture(FRAME_SIZE, CUiTexture::EUiType::Frame);
-	new CUiTexture(FACE_SIZE, CUiTexture::EUiType::Face);
-	new CUiTexture(HP_SIZE_YELLOW, CUiTexture::EUiType::HpYellow);
-	new CUiTexture(HP_SIZE_RED, CUiTexture::EUiType::HpRed);
-	
-	//プレイヤー生成
-	CPlayer::GetInstance();
 }
 
 
 
 void CGame::Update()
 {	
-	//時間が0になったら停止
-	if (CUiFont::GetInstance()->GetTime() > 0)
+	switch (mScene)
 	{
-		clock_t end = clock();//経過時間
-		double sec = (double)(end) / CLOCKS_PER_SEC;//秒数に変換
-		if (sec >= count)
+	case EGameScene::GameTitle://ゲームタイトル
+		if (isTitleCreate == false)
 		{
-			//1秒マイナス
-			CUiFont::GetInstance()-> SetTime();
-			count++;
+			new CTitle(TITLE_NAME_SET, CTitle::GetTextureTitleName());//タイトル名
+			new CTitle(BACKGROUND_SET1, CTitle::GetTextureTitle());//タイトル
+			
+			isTitleCreate = true;//タイトルを生成している
 		}
-		//敵生成
-		CreateEnemy();
-		//削除
-		CTaskManager::GetInstance()->Delete();
-		//更新
-		CTaskManager::GetInstance()->Update();
+		CTaskManager::GetInstance()->Render();//タイトルを描画
 
-	}
+		if (mInput.Key(VK_RETURN))
+		{
+			if (isEnter == false)
+			{
+				CTaskManager::GetInstance()->AllDelete();//タイトルを消す
+				isTitleCreate = false;//タイトルを生成していない
+				mScene = EGameScene::GameStart;//ゲームスタートへ変移
+			}
+			isEnter = true;
+		}
+		else
+		{
+			isEnter = false;
+		}
+		break;
+
+	case EGameScene::GameStart://スタート
+		//背景生成
+		new CBackground(BACKGROUND_SET1, nullptr, nullptr, (int)EFieldSort::Sky);
+		new CBackground(BACKGROUND_SET2, nullptr, nullptr, (int)EFieldSort::Sky);
+		new CBackground(BACKGROUND_SET1, nullptr, nullptr, (int)EFieldSort::CloudA);
+		new CBackground(BACKGROUND_SET1, nullptr, nullptr, (int)EFieldSort::CloudB);
+		new CBackground(BACKGROUND_SET1, nullptr, nullptr, (int)EFieldSort::CloudC);
+		new CBackground(BACKGROUND_SET1, nullptr, nullptr, (int)EFieldSort::Building);
+		new CBackground(BACKGROUND_SET1, nullptr, nullptr, (int)EFieldSort::Road);
+		new CBackground(BACKGROUND_SET2, nullptr, nullptr, (int)EFieldSort::Road);
+
+		//Ui生成
+		new CUiTexture(FRAME_SIZE, CUiTexture::EUiType::Frame);
+		new CUiTexture(FACE_SIZE, CUiTexture::EUiType::Face);
+		new CUiTexture(HP_SIZE_YELLOW, CUiTexture::EUiType::HpYellow);
+		new CUiTexture(HP_SIZE_RED, CUiTexture::EUiType::HpRed);
+
+		//プレイヤー生成
+		CPlayer::GetInstance();
+		//敵の数をゼロにする
+		CEnemy::ZeroEnemyCount();
+		//最大時間に設定
+		CUiFont::GetInstance()->SetMaxTime();
+		mFrame = 0;//フレームカウンタをゼロに
+		mCount = 1;//秒数カウンタを1に
+		start = clock();//始まりの時間を保存
+
+		mScene = EGameScene::Game;//ゲームへ変移
+
+		break;
+
+	case EGameScene::Game://ゲーム
+		//時間が0になったら停止
+		if (CUiFont::GetInstance()->GetTime() > 0)
+		{
+			clock_t end = clock();//経過時間
+			double sec = (double)(end - start) / CLOCKS_PER_SEC;//秒数に変換
+			if (sec >= mCount)
+			{
+				//1秒マイナス
+				CUiFont::GetInstance()->SetTime();
+				mCount++;
+			}
+			//敵生成
+			CreateEnemy();
+			//削除
+			CTaskManager::GetInstance()->Delete();
+			//更新
+			CTaskManager::GetInstance()->Update();
+
+		}
 		//衝突判定
 		//CCollisionManager::GetInstance()->Collision();
 
@@ -119,6 +170,42 @@ void CGame::Update()
 
 		//テキスト系UI描画
 		CUiFont::GetInstance()->Render();
+
+		if (CUiFont::GetInstance()->GetTime() <= 0)
+		{
+			mScene = EGameScene::GameResult;
+		}
+
+		break;
+
+	case EGameScene::GameResult://リザルト
+		//リザルト背景
+		new CTitle(BACKGROUND_SET1, CTitle::GetTextureResult());
+		//描画
+		CTaskManager::GetInstance()->Render();
+		//スコアの表示
+		CUiFont::GetInstance()->EndRender();
+
+		if (mInput.Key(VK_RETURN))
+		{
+			if (isEnter == false)
+			{
+				mScene = EGameScene::GameEnd;
+			}
+			isEnter = true;
+		}
+		else
+		{
+			isEnter = false;
+		}
+		break;
+
+	case EGameScene::GameEnd://ゲーム終了
+		CTaskManager::GetInstance()->AllDelete();
+		mScene = EGameScene::GameTitle;
+		break;
+
+	}
 
 
 }
