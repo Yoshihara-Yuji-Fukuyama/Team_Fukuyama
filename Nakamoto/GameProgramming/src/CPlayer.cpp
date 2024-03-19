@@ -31,6 +31,8 @@
 #define TEX_ATTACK2 1200,600
 //攻撃3
 #define TEX_ATTACK3 1800,1200
+//やられ、防御
+#define TEX_MOTION 4200,3600
 
 #define PLAYER_STARTSET 100.0f,300.0f,300.0f,300.0f//x,y,w,h プレイヤーの初期位置
 
@@ -65,6 +67,7 @@ CPlayer::CPlayer()
 	:CCharacter((int)CTaskPriority::Object)
 	, mCollider(this, &mX, &mY, &mZ, 100, 200, CCollider::EColliderType::EPLAYER)
 	, isClick(false)
+	, mInvincible(0)
 {
 	isAttack = false;
 	isAttackNext = false;
@@ -199,13 +202,13 @@ void CPlayer::Update()
 		SetAnimation();
 
 		
-		if (isAttack == true && isCollider == true)
+		if (isAttack == true && isCollider == false)
 		{
 			mAttackNumber = 1;
 			//攻撃コライダの生成 
 			Attack();
 
-			isCollider = false;
+			isCollider = true;
 		}
 		//攻撃が終わったときネクストがtrueなら次の攻撃へ
 		else if (isAttack == false && isAttackNext == true)
@@ -233,9 +236,16 @@ void CPlayer::Update()
 			mAttackPhase = EAttackPhase::Attack0;
 			mState = EState::EWAIT;
 		}
-		
 		break;
 	}
+
+	//無敵時間
+	if (mInvincible > 0)
+	{
+		//無敵時間中減算
+		mInvincible--;
+	}
+
 }
 
 //移動入力
@@ -334,7 +344,7 @@ void CPlayer::Move()
 				//攻撃段階決定
 				mAttackPhase = EAttackPhase::Attack1;
 
-				isCollider = true;
+				isCollider = false;
 
 				isAttack = true;
 			}
@@ -375,28 +385,59 @@ void CPlayer::Collision(CCollider* m, CCollider* o)
 
 	switch (o->GetCType())
 	{
-	case CCollider::EColliderType::ESLIME:
+	case CCollider::EColliderType::ESLIME:	//スライムの体のコライダとの衝突判定
 
 		//コライダのmとoが衝突しているか判定しているか判定
 		if (CCollider::Collision(m, o, &ax, &ay))
 		{
 			//プレイヤーとの衝突判定を実行(めり込まない処理)
 			//SetX(GetX() + ax);
+			//調整中
+			//SetY(GetY() + ay);
 
+
+		}
+		break;
+	case CCollider::EColliderType::ESATTACK:	//スライムの攻撃コライダとの衝突判定
+		//コライダのmとoが衝突しているか判定しているか判定
+		if (CCollider::Collision(m, o, &ax, &ay))
+		{
+			if (mInvincible == 0)
+			{
+				//プレイヤーとの衝突判定を実行(めり込まない処理)
+				//SetX(GetX() + 20);
+				//調整中
+				//SetY(GetY() + ay);
+
+				mHp -= 10;
+				mInvincible = 60;
+			}
+		}
+		break;
+	case CCollider::EColliderType::EONI:	//鬼の体のコライダとの衝突判定
+		//コライダのmとoが衝突しているか判定しているか判定
+		if (CCollider::Collision(m, o, &ax, &ay))
+		{
+			//プレイヤーとの衝突判定を実行(めり込まない処理)
+			//SetX(GetX() + ax);
 			//調整中
 			//SetY(GetY() + ay);
 		}
 		break;
-
-	case CCollider::EColliderType::EONI:
+	case CCollider::EColliderType::EOATTACK:	//鬼の攻撃コライダとの衝突判定
 		//コライダのmとoが衝突しているか判定しているか判定
 		if (CCollider::Collision(m, o, &ax, &ay))
 		{
-			//プレイヤーとの衝突判定を実行(めり込まない処理)
-			//SetX(GetX() + ax);
+			if (mInvincible == 0)
+			{
+				//プレイヤーとの衝突判定を実行(めり込まない処理)
+				//SetX(GetX() + 20);
+				//調整中
+				//SetY(GetY() + ay);
 
-			//調整中
-			//SetY(GetY() + ay);
+				mHp -= 20;
+				mInvincible = 60;
+			}
 		}
 		break;
 	}
@@ -544,7 +585,6 @@ void CPlayer::SetAnimation()
 					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHT4, TEX_ATTACK3);
 					else isAttack = false;
 				}
-
 			}
 		}
 	}

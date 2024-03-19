@@ -30,7 +30,10 @@
 #define TEX_DEATH 2400,1800
 
 #define KNOCKBACK 10	//ノックバック
-#define DAMAGE 25		//受けるダメージ量
+#define DAMAGE1 20		//受けるダメージ量
+#define DAMAGE2 30		//受けるダメージ量
+#define DAMAGE3 50		//受けるダメージ量
+#define INVINCIBLE 55	//無敵カウント
 
 #define SLIME_BOTTOM 130                    //スライム足元計算用
 #define ONI_BOTTOM 240                      //鬼足元計算用 
@@ -57,10 +60,13 @@ CTexture* CEnemy::GetTextureOni()
 CEnemy::CEnemy()
 	:CCharacter((int)CTaskPriority::Object)
 	, mFrame(0)
+	, mInvincible(0)
 	, RandomX(rand() % 200)//200まででランダム
 	, RandomY(rand() % 100)//100まででランダム
 	, RandomTiming(rand() % 500)//500まででランダム
 {
+	isAttack = false;
+	isCollider = false;
 }
 
 //敵のコンストラクタ
@@ -161,14 +167,24 @@ void CEnemy::Update()
 		//アニメーションを設定
 		SetAnimation();
 
-		//攻撃コライダの生成
-		Attack();
+		if (isAttack == true && isCollider == false)
+		{
+			Attack();
+			isCollider = true;
+		}
 
 		if (isAttack == false)
 		{
 			mState = EState::EWAIT;
 		}
 		break;
+	}
+
+	//無敵時間
+	if (mInvincible > 0)
+	{
+		//無敵時間中減算
+		mInvincible--;
 	}
 
 	//HPが0なら削除
@@ -183,7 +199,6 @@ void CEnemy::Move()
 	const int MoveInterval = 500;
 	int frame = mFrame++;
 	int move;
-
 
 	//frame/MoveIntervalのあまりがRandomTimingの倍数なら
 	if (frame % MoveInterval % RandomTiming == 0)
@@ -285,6 +300,7 @@ void CEnemy::Attack()
 
 	//攻撃コライダの生成
 	CAttack* attack = new CAttack(this, &mX, &mY, &mZ, mVx, attackNumber);
+	printf("敵の攻撃コライダ生成\n");
 }
 
 void CEnemy::Death()
@@ -338,53 +354,55 @@ void CEnemy::SetAnimation()
 	case EState::EATTACK://攻撃アニメーション
 		if (mEnemyType == EEnemyType::Oni)
 		{
-			//左向き
-			if (mVx < 0.0f)
+			if (isAttack == true)
 			{
-				if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_ATTACK);
-				else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_ATTACK);
-				else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_ATTACK);
-				else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_ATTACK);
-				else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_LEFT5, TEX_ATTACK);
-				else if (mAnimationNum == CAnimationNumber::Move6)Texture(GetTexture(), TEX_LEFT6, TEX_ATTACK);
-				else isAttack = false;
-
+				//左向き
+				if (mVx < 0.0f)
+				{
+					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_LEFT5, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move6)Texture(GetTexture(), TEX_LEFT6, TEX_ATTACK);
+					else isAttack = false;
+				}
+				//右向き
+				else
+				{
+					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHT4, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_RIGHT5, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move6)Texture(GetTexture(), TEX_RIGHT6, TEX_ATTACK);
+					else isAttack = false;
+				}
 			}
-			//右向き
-			else
-			{
-				if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_ATTACK);
-				else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_ATTACK);
-				else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_ATTACK);
-				else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHT4, TEX_ATTACK);
-				else if (mAnimationNum == CAnimationNumber::Move5)Texture(GetTexture(), TEX_RIGHT5, TEX_ATTACK);
-				else if (mAnimationNum == CAnimationNumber::Move6)Texture(GetTexture(), TEX_RIGHT6, TEX_ATTACK);
-				else isAttack = false;
-
-			}
-		break;
+			break;
 		}
 		else if (mEnemyType == EEnemyType::Slime)
 		{
-			//左向き
-			if (mVx < 0.0f)
+			if (isAttack == true)
 			{
-				if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_ATTACK);
-				else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_ATTACK);
-				else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_ATTACK);
-				else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_ATTACK);
-				else isAttack = false;
-
-			}
-			//右向き
-			else
-			{
-				if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_ATTACK);
-				else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_ATTACK);
-				else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_ATTACK);
-				else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHT4, TEX_ATTACK);
-				else isAttack = false;
-
+				//左向き
+				if (mVx < 0.0f)
+				{
+					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_LEFT1, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_LEFT2, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_LEFT3, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_LEFT4, TEX_ATTACK);
+					else isAttack = false;
+				}
+				//右向き
+				else
+				{
+					if (mAnimationNum == CAnimationNumber::Move1)     Texture(GetTexture(), TEX_RIGHT1, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move2)Texture(GetTexture(), TEX_RIGHT2, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move3)Texture(GetTexture(), TEX_RIGHT3, TEX_ATTACK);
+					else if (mAnimationNum == CAnimationNumber::Move4)Texture(GetTexture(), TEX_RIGHT4, TEX_ATTACK);
+					else isAttack = false;
+				}
 			}
 			break;
 		}
@@ -403,68 +421,93 @@ void CEnemy::Collision(CCollider *m, CCollider *o)
 
 	switch (o->GetCType())
 	{
-	case CCollider::EColliderType::EPLAYER:
-
+	case CCollider::EColliderType::EPLAYER:	//プレイヤーの体のコライダとの衝突判定
 		//コライダのmとoが衝突しているか判定しているか判定
 		if (CCollider::Collision(m, o, &ax, &ay))
 		{
-			//プレイヤーとの衝突判定を実行(めり込まない処理)
-			//SetX(GetX() + ax);
+			if (isAttack == false)
+			{
+				//プレイヤーとの衝突判定を実行(めり込まない処理)
+				//SetX(GetX() + ax);
 
-			//調整中
-			//SetY(GetY() + ay);
+				//調整中
+				//SetY(GetY() + ay);
 
-			mState = EState::EATTACK;
-			isAttack = true;
+				if (mVx < 0 && ax > 0 || mVx > 0 && ax < 0)
+				{
+					//状態を攻撃に変更
+					mState = EState::EATTACK;
+					isAttack = true;
+					isCollider = false;
+				}
+			}
 		}
 		break;
-	case CCollider::EColliderType::EPATTACK1:
+	case CCollider::EColliderType::EPATTACK1:	//プレイヤーの攻撃1のコライダとの衝突判定
 		//コライダのmとoが衝突しているか判定しているか判定
 		if (CCollider::Collision(m, o, &ax, &ay))
 		{
-			//ノックバック処理
-			if (ax < 0)
+			if (mInvincible == 0)
 			{
-				SetX(GetX() - KNOCKBACK);
+				//ノックバック処理
+				if (ax < 0)
+				{
+					SetX(GetX() - KNOCKBACK);
+				}
+				else
+				{
+					SetX(GetX() + KNOCKBACK);
+				}
+				mHp -= DAMAGE1;
+				mInvincible = INVINCIBLE;
+
+				std::cout << "攻撃1により敵の残りHPは" <<mHp << "です\n";
 			}
-			else
-			{
-				SetX(GetX() + KNOCKBACK);
-			}
-			mHp -= DAMAGE;
 		}
 		break;
-	case CCollider::EColliderType::EPATTACK2:
+	case CCollider::EColliderType::EPATTACK2:	//プレイヤーの攻撃2のコライダとの衝突判定
 		//コライダのmとoが衝突しているか判定しているか判定
 		if (CCollider::Collision(m, o, &ax, &ay))
 		{
-			//ノックバック処理
-			if (ax < 0)
+			if (mInvincible == 0)
 			{
-				SetX(GetX() - KNOCKBACK);
+				//ノックバック処理
+				if (ax < 0)
+				{
+					SetX(GetX() - KNOCKBACK);
+				}
+				else
+				{
+					SetX(GetX() + KNOCKBACK);
+				}
+
+				mHp -= DAMAGE2;
+				mInvincible = INVINCIBLE;
+
+				std::cout << "攻撃2により敵の残りHPは" << mHp << "です\n";
 			}
-			else
-			{
-				SetX(GetX() + KNOCKBACK);
-			}
-			
-			mHp -= DAMAGE;
 		}
 		break;
-	case CCollider::EColliderType::EPATTACK3:
+	case CCollider::EColliderType::EPATTACK3:	//プレイヤーの攻撃3のコライダとの衝突判定
 		//コライダのmとoが衝突しているか判定しているか判定
 		if (CCollider::Collision(m, o, &ax, &ay))
 		{
-			//ノックバック処理
-			if (ax < 0)
+			if (mInvincible == 0)
 			{
-				SetX(GetX() - KNOCKBACK);
+				//ノックバック処理
+				if (ax < 0)
+				{
+					SetX(GetX() - KNOCKBACK);
+				}
+				else
+				{
+					SetX(GetX() + KNOCKBACK);
+				}
+				mHp -= DAMAGE3;
+				mInvincible = INVINCIBLE;
+
+				std::cout << "攻撃3により敵の残りHPは" << mHp << "です\n";
 			}
-			else
-			{
-				SetX(GetX() + KNOCKBACK);
-			}
-			mHp -= DAMAGE;
 		}
 		break;
 	}

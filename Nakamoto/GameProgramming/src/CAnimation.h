@@ -45,7 +45,17 @@ public:
 	/// <returns>アニメーション番号</returns>
 	void JumpAnimation(int y, float jump, int limit);
 
+	/// <summary>
+	/// 攻撃アニメーション
+	/// </summary>
+	/// <param name="limit">アニメーション番号</param>
 	void AttackAnimation(int limit);
+
+	/// <summary>
+	/// やられモーション
+	/// </summary>
+	/// <param name="limit">アニメーション番号</param>
+	void DeathAnimation(int limit);
 
 protected:
 	//アニメーション番号

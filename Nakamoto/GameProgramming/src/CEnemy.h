@@ -72,6 +72,11 @@ private:
 	int RandomY;
 	int RandomTiming;
 
+	bool isCollider;
+
+	//–³“GƒJƒEƒ“ƒg
+	int mInvincible;
+
 	//static•Ï”‚ÌéŒ¾
 	static CTexture mTextureSlime;
 

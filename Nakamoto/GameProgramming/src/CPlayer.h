@@ -71,6 +71,10 @@ private:
 	CCollider mCollider;
 	//コライダが出ているか
 	bool isCollider;
+
+	//無敵カウント
+	int mInvincible;
+
 	//攻撃の番号
 	int mAttackNumber;
 

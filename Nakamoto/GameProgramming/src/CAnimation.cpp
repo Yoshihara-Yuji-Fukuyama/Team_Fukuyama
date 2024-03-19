@@ -303,3 +303,16 @@ void CAnimation::AttackAnimation(int limit)
 	}
 	return;
 }
+
+//やられアニメーション
+void CAnimation::DeathAnimation(int limit)
+{
+	//画像を切り替える速度
+	const int PITCH = 12;
+	int frame = mFrame++;
+
+	if (frame % PITCH < PITCH / limit)
+	{
+		mAnimationNum = CAnimationNumber::Move1;
+	}
+}
