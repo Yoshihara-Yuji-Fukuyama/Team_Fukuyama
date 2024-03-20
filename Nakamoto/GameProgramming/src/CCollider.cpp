@@ -5,6 +5,8 @@
 #include "CEnemy.h"
 #include <stdio.h>	//Šm”F—p íœ—\’è
 
+#define HANI 60
+
 CCollider::CCollider()
 	:mpParent(nullptr)
 {
@@ -70,8 +72,6 @@ CCollider::EColliderType CCollider::GetCType()
 {
 	return mColliderType;
 }
-
-#define HANI 50
 
 //Õ“Ë”»’è
 bool CCollider::Collision(CCollider* m, CCollider* o, float *ax, float *ay)

@@ -1,7 +1,8 @@
 #pragma once
 #include "CCharacter.h"
-#include "CAnimation.h"
 #include "CCollider.h"
+#include "CAnimation.h"
+#include "CShadow.h"
 #include "CAttack.h"
 
 class CEnemy :public CCharacter, public CAnimation
@@ -39,6 +40,7 @@ public:
 	//アニメーションを設定
 	void SetAnimation();
 
+	//攻撃処理
 	void Attack();
 
 	//死亡処理
@@ -59,22 +61,28 @@ public:
 
 	static CTexture* GetTextureOni();
 
+	//敵の数を取得
+	static int GetEnemyCount();
+	//敵の数を１加算
+	static void PlusEnemyCount();
+	//敵の数をゼロにする
+	static void ZeroEnemyCount();
+
 private:
+	//影
+	CShadow* mpShadow;
 	//敵の種類
 	EEnemyType mEnemyType;
 	//コライダ
 	CCollider mCollider;
-
 	//フレームカウンタ
 	int mFrame;
 	//ランダム
 	int RandomX;
 	int RandomY;
 	int RandomTiming;
-
+	//コライダの生成フラグ
 	bool isCollider;
-	bool is;
-
 	//無敵カウント
 	int mInvincible;
 
@@ -82,4 +90,6 @@ private:
 	static CTexture mTextureSlime;
 
 	static CTexture mTextureOni;
+
+	static int mEnemyCount;
 };

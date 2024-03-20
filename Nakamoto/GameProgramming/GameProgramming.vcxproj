@@ -25,9 +25,11 @@
     <ClCompile Include="src\CInput.cpp" />
     <ClCompile Include="src\CPlayer.cpp" />
     <ClCompile Include="src\CRectangle.cpp" />
+    <ClCompile Include="src\CShadow.cpp" />
     <ClCompile Include="src\CSound.cpp" />
     <ClCompile Include="src\CTaskManager.cpp" />
     <ClCompile Include="src\CTexture.cpp" />
+    <ClCompile Include="src\CTitle.cpp" />
     <ClCompile Include="src\CUiFont.cpp" />
     <ClCompile Include="src\CUiTexture.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -47,10 +49,12 @@
     <ClInclude Include="src\CInput.h" />
     <ClInclude Include="src\CPlayer.h" />
     <ClInclude Include="src\CRectangle.h" />
+    <ClInclude Include="src\CShadow.h" />
     <ClInclude Include="src\CSound.h" />
     <ClInclude Include="src\CTask.h" />
     <ClInclude Include="src\CTaskManager.h" />
     <ClInclude Include="src\CTexture.h" />
+    <ClInclude Include="src\CTitle.h" />
     <ClInclude Include="src\CUiFont.h" />
     <ClInclude Include="src\CUiTexture.h" />
     <ClInclude Include="src\main.h" />

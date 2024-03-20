@@ -7,6 +7,7 @@
 class CTaskManager
 {
 public:
+
 	/// <summary>
 	/// タスクをリストに追加
 	/// </summary>
@@ -32,12 +33,13 @@ public:
 	void Update();
 	//描画
 	void Render();
-
 protected:
 	CTask mHead;//先頭タスク
 	CTask mTail;//最終タスク
 	CTask mHeadObj;//オブジェの先頭タスク
-	CTask mTailObj;//最終タスク
+	CTask mTailObj;//オブジェの最終タスク
+	CTask mHeadBackground;//背景の先頭タスク
+	CTask mTailBackground;//背景の最終タスク
 
 	//デフォルトコンストラクタ
 	CTaskManager();

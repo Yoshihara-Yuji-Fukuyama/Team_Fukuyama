@@ -1,6 +1,8 @@
 #include "CCharacter.h"
 #include "CTaskManager.h"
 
+#define VELOCITY_PLAYER 6.0f	            //プレイヤーの移動速度
+
 //テクスチャの設定
 void CCharacter::Texture(CTexture* pTexture, int left, int right, int bottom, int top)
 {
@@ -41,7 +43,9 @@ CCharacter::CCharacter(int priority)
 	: mpTexture(nullptr)
 	, mLeft(0.0f), mRight(0.0f), mBottom(0.0f), mTop(0.0f)
 {
+	//優先順位の設定
 	mPriority = priority;
+	//タスクマネージャーへ追加
 	CTaskManager::GetInstance()->Add(this);
 }
 
@@ -96,6 +100,16 @@ float CCharacter::GetUnderPosY()
 	return mUnderPosY;
 }
 
+//影の座標を取得
+float CCharacter::GetShadowPosY()
+{
+	if (mState != EState::EJUMP)
+	{
+		mShadowPosY = GetY() - mShadow;
+	}
+	return mShadowPosY;
+}
+
 //HPを取得
 int CCharacter::GetHp()
 {
@@ -106,7 +120,7 @@ void CCharacter::SetHp(int hp)
 {
 	mHp = hp;
 }
-
+//?
 CCharacter::ETag CCharacter::GetTag()
 {
 	return mTag;

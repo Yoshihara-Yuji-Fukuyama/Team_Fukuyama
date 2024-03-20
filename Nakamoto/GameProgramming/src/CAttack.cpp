@@ -32,7 +32,7 @@
 
 
 CAttack::CAttack(CCharacter* parent, float* x, float* y, float* z, float mvx, int attackNumber)
-	:CCharacter(*z)
+	:CCharacter()
 	,mLife(LIFE)
 {
 	mZ = *z;

@@ -1,6 +1,5 @@
 #include "CPlayer.h"
 #include "CApplication.h"
-#include "CCollisionManager.h"
 
 //左、右
 //左向き
@@ -37,10 +36,23 @@
 #define PLAYER_STARTSET 100.0f,300.0f,300.0f,300.0f//x,y,w,h プレイヤーの初期位置
 
 #define PLAYER_HP 100                       //プレイヤーのHP
-#define VELOCITY_PLAYER 3.0f	            //プレイヤーの移動速度
+#define VELOCITY_PLAYER 6.0f	            //プレイヤーの移動速度
 #define JUMPV0 (30 / 1.4f)		            //ジャンプの初速度
 #define GRAVITY (30 / 30)		            //重力加速度
+
 #define PLAYER_BOTTOM 270                   //プレイヤー足元計算用
+
+#define PLAYER_SHADOW_WAIT 240               //プレイヤー待機中の影計算用dwsdwwwwww
+#define PLAYER_SHADOW_JUMP 240               //プレイヤージャンプ中の影計算用
+#define PLAYER_SHADOW_MOVE 220               //プレイヤー移動中の影計算用
+#define PLAYER_SHADOW_ATTACK 240             //プレイヤー攻撃中の影計算用
+
+#define PLAYER_SHADOW_SIZE_WAIT 250,100      //待機中の影の大きさ
+#define PLAYER_SHADOW_SIZE_JUMP 250,100      //ジャンプ中の影の大きさ
+#define PLAYER_SHADOW_SIZE_MOVE 350,100      //移動中の影の大きさ
+#define PLAYER_SHADOW_SIZE_ATTACK 350,100    //攻撃中の影の大きさ
+
+#define PLAYER_SHADOW_POSX 20                //影のX座標減算用
 
 //static変数の定義
 CTexture CPlayer::mTexture;
@@ -63,6 +75,16 @@ CPlayer* CPlayer::GetInstance()
 	return mpInstance;
 }
 
+//インスタンスの削除
+void CPlayer::DeleteInstance()
+{
+	if (mpInstance != nullptr)
+	{
+		delete mpInstance;
+		mpInstance = nullptr;
+	}
+}
+
 CPlayer::CPlayer()
 	:CCharacter((int)CTaskPriority::Object)
 	, mCollider(this, &mX, &mY, &mZ, 100, 200, CCollider::EColliderType::EPLAYER)
@@ -78,6 +100,7 @@ CPlayer::CPlayer()
 	AttackNum = 6;//攻撃1アニメーション数+1
 	AttackNum2 = 6;//攻撃2アニメーション数+1
 	AttackNum3 = 5;//攻撃3アニメーション数+1
+	HitNum = 2;//敵の攻撃を受けた時のアニメーション数+1
 }
 
 CPlayer::CPlayer(float x, float y, float w, float h,int hp)
@@ -96,6 +119,8 @@ CPlayer::CPlayer(float x, float y, float w, float h,int hp)
 	SetZ(GetY() - mLeg);
 
 	mAttackPhase = EAttackPhase::Attack0;
+	//プレイヤーの影
+	mpShadow = new CShadow(GetX() - PLAYER_SHADOW_POSX, GetShadowPosY(), PLAYER_SHADOW_SIZE_WAIT);
 }
 
 CPlayer::~CPlayer()
@@ -109,24 +134,33 @@ void CPlayer::Update()
 	switch (mState)
 	{
 	case EState::EWAIT:
+		//影の高さ計算用
+		mShadow = PLAYER_SHADOW_WAIT;
+		//影の大きさ
+		mpShadow->SetShadow(GetX() - PLAYER_SHADOW_POSX, GetShadowPosY(), PLAYER_SHADOW_SIZE_WAIT);
 
 		//処理順番を決定
 		SetSortOrder(GetY() - mLeg);
 
 		//移動入力
 		Move();
+
 		//待機アニメーション
 		WaitAnimation(WaitNum);
 		//アニメーションを設定
 		SetAnimation();
 
-		if (isMove == true)
+		if (isMove == true && mState != EState::EATTACK)
 		{
 			mState = EState::EMOVE;
 		}
 
 		break;
 	case EState::EMOVE:
+		//影の高さ計算用
+		mShadow = PLAYER_SHADOW_MOVE;
+		//影の大きさ
+		mpShadow->SetShadow(GetX() - PLAYER_SHADOW_POSX, GetShadowPosY(), PLAYER_SHADOW_SIZE_MOVE);
 
 		//処理順番を決定
 		SetSortOrder(GetY() - mLeg);
@@ -139,13 +173,17 @@ void CPlayer::Update()
 		//アニメーションを設定
 		SetAnimation();
 
-		if (isMove == false)
+		if (isMove == false && mState != EState::EATTACK)
 		{
 			mState = EState::EWAIT;
 		}
 
 		break;
 	case EState::EJUMP://ジャンプ処理
+		//影の高さ計算用
+		mShadow = PLAYER_SHADOW_JUMP;
+		//影の大きさ
+		mpShadow->SetShadow(GetX() - PLAYER_SHADOW_POSX, GetShadowPosY(), PLAYER_SHADOW_SIZE_JUMP);
 
 		//ジャンプ開始時の座標で処理順番を更新
 		SetSortOrder(mJump);
@@ -165,21 +203,53 @@ void CPlayer::Update()
 		//ジャンプ距離以下にY座標がなったら
 		if (GetY() - mLeg < mJump)
 		{
-			//状態を移動に変更
-			mState = EState::EMOVE;
+			//移動しているなら状態を移動に変更
+			if (isMove == true)
+			{
+				mState = EState::EMOVE;
+			}
+			//していないなら状態を待機に変更
+			else
+			{
+				mState = EState::EWAIT;
+			}
 		}
 		//ジャンプ中に画面下より下に行かないようにする
 		if (GetY() - mLeg < 0)
 		{
-			//状態を移動に変更
-			mState = EState::EMOVE;
+			//移動しているなら状態を移動に変更
+			if (isMove == true)
+			{
+				mState = EState::EMOVE;
+			}
+			//していないなら状態を待機に変更
+			else
+			{
+				mState = EState::EWAIT;
+			}
 		}
+
+		//if (isHit == true)
+		//{
+		//	isCollider = false;
+		//	isAttack = false;
+		//	isAttackNext = false;
+		//	isMove = false;
+		//	mState = EState::EHIT;
+		//}
+
 		break;
 
 	case EState::EATTACK:	//攻撃処理
+
+		//影の高さ計算用
+		mShadow = PLAYER_SHADOW_ATTACK;
+		//影の大きさ
+		mpShadow->SetShadow(GetX() - PLAYER_SHADOW_POSX, GetShadowPosY(), PLAYER_SHADOW_SIZE_ATTACK);
+
 		//処理順番を決定
 		SetSortOrder(GetY() - mLeg);
-
+		//移動入力
 		Move();
 
 		if (mAttackPhase == EAttackPhase::Attack1)
@@ -201,14 +271,15 @@ void CPlayer::Update()
 		//アニメーションを設定
 		SetAnimation();
 
-		
+		//攻撃コライダの生成 
 		if (isAttack == true && isCollider == true)
 		{
 			mAttackNumber = 1;
-			//攻撃コライダの生成 
+			
 			Attack();
 
 			isCollider = false;
+
 		}
 		//攻撃が終わったときネクストがtrueなら次の攻撃へ
 		else if (isAttack == false && isAttackNext == true)
@@ -237,6 +308,29 @@ void CPlayer::Update()
 			mAttackPhase = EAttackPhase::Attack0;
 			mState = EState::EWAIT;
 		}
+
+		//if (isHit == true)
+		//{
+		//	isCollider = false;
+		//	isAttack = false;
+		//	isAttackNext = false;
+		//	isMove = false;
+		//mState = EState::EHIT;
+		//}
+		break;
+
+	case EState::EHIT:
+
+		HitAnimation(HitNum);
+
+		//アニメーションを設定
+		SetAnimation();
+
+		//if (isHit == false)
+		//{
+		//	mState = EState::EMOVE;
+		//}
+
 		break;
 	}
 
@@ -296,6 +390,7 @@ void CPlayer::Move()
 		{
 			//ジャンプ距離加算
 			mJump += VELOCITY_PLAYER;
+			mShadowPosY += VELOCITY_PLAYER;
 			SetY(GetY() + VELOCITY_PLAYER);
 		}
 	}
@@ -319,6 +414,7 @@ void CPlayer::Move()
 		{
 			//ジャンプ距離減算
 			mJump -= VELOCITY_PLAYER;
+			mShadowPosY -= VELOCITY_PLAYER;
 			SetY(GetY() - VELOCITY_PLAYER);
 		}
 	}
@@ -329,6 +425,7 @@ void CPlayer::Move()
 		{
 			//ジャンプの開始時のY座標を取得
 			mJump = (GetY() - mLeg);
+			mShadowPosY = (GetY() - mShadow);
 			//ジャンプの初速度を設定
 			mVy = JUMPV0;
 			//状態をジャンプに変更
@@ -374,13 +471,6 @@ void CPlayer::Move()
 	}
 }
 
-//攻撃コライダの生成
-void CPlayer::Attack()
-{
-	CAttack* attack = new CAttack(this, &mX, &mY, &mZ, mVx, mAttackNumber);
-	attack->Update();
-}
-
 void CPlayer::Collision(CCollider* m, CCollider* o)
 {
 	float ax, ay;
@@ -414,6 +504,8 @@ void CPlayer::Collision(CCollider* m, CCollider* o)
 				mHp -= 10;
 				mInvincible = 60;
 			}
+
+			//isHit = true;
 		}
 		break;
 	case CCollider::EColliderType::EONI:	//鬼の体のコライダとの衝突判定
@@ -440,16 +532,36 @@ void CPlayer::Collision(CCollider* m, CCollider* o)
 				mHp -= 20;
 				mInvincible = 60;
 			}
+
+			//isHit = true;
 		}
 		break;
 	}
 }
+
+//攻撃コライダの生成
+void CPlayer::Attack()
+{
+	CAttack* attack = new CAttack(this, &mX, &mY, &mZ, mVx, mAttackNumber);
+	attack->Update();
+}
+
 
 //死亡処理
 void CPlayer::Death()
 {
 	//タスクリストから削除
 	SetEnabled(false);
+}
+
+bool CPlayer::GetMoveX()
+{
+	return isMoveX;
+}
+
+float CPlayer::GetmVx()
+{
+	return mVx;
 }
 
 //アニメーションを設定
@@ -589,5 +701,22 @@ void CPlayer::SetAnimation()
 				}
 			}
 		}
+		break;
+	case EState::EHIT:	//攻撃を受けた時のアニメーション
+		if (isHit == true)
+		{
+			//左向き
+			if (mVx < 0.0f)
+			{
+				if (mAnimationNum == CAnimationNumber::Move1)	      Texture(GetTexture(), TEX_LEFT2, TEX_MOTION);
+				else isHit = false;
+			}
+			else
+			{
+				if (mAnimationNum == CAnimationNumber::Move1)		  Texture(GetTexture(), TEX_RIGHT2, TEX_MOTION);
+				else isHit = false;
+			}
+		}
+		break;
 	}
 }

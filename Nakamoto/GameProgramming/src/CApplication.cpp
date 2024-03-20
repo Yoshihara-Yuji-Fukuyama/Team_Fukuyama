@@ -7,10 +7,7 @@ void CApplication::Start()
 }
 
 
-
 void CApplication::Update()
 {
 	mpGame->Update();
-
-	
 }

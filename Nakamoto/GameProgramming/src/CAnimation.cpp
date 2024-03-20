@@ -10,7 +10,7 @@ CAnimation::CAnimation()
 void CAnimation::MoveAnimation(int x, int y, bool moveX, bool moveY, float direction, int limit)
 {
 	//画像を切り替える速度
-	const int PITCH = 96;
+	const int PITCH = 196;
 	//座標を保存
 	int Pos = x;
 	//Y座標だけ移動しているならY座標を入れる
@@ -305,14 +305,18 @@ void CAnimation::AttackAnimation(int limit)
 }
 
 //やられアニメーション
-void CAnimation::DeathAnimation(int limit)
+void CAnimation::HitAnimation(int limit)
 {
 	//画像を切り替える速度
-	const int PITCH = 12;
+	const int PITCH = 100;
 	int frame = mFrame++;
 
 	if (frame % PITCH < PITCH / limit)
 	{
 		mAnimationNum = CAnimationNumber::Move1;
+	}
+	else
+	{
+		mAnimationNum = CAnimationNumber::Move2;
 	}
 }

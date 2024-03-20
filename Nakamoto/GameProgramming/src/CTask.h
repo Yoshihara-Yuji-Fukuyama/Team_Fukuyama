@@ -5,11 +5,12 @@ class CCollisionManager;
 
 enum class CTaskPriority
 {
-	SPACE,
-	UI,
-	Object,
-	Field,
-	Collider,
+	Title,    //タイトル
+	UI,      //UI
+	Object,  //オブジェクト
+	Shadow,  //影
+	Field,   //背景
+	Collider,//当たり判定
 };
 
 class CTask
@@ -40,6 +41,6 @@ private:
 	CTask* mpPrev;//前のポインタ
 	CTask* mpNextObj;//オブジェの次のポインタ
 	CTask* mpPrevObj;//オブジェの前のポインタ
-	CTask* mpNextCollider;//コライダの次のポインタ
-	CTask* mpPrevCollider;//コライダの前のポインタ
+	CTask* mpNextBackground;//背景の次のポインタ
+	CTask* mpPrevBackground;//背景の前のポインタ
 };

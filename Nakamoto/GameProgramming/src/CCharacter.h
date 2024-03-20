@@ -22,7 +22,8 @@ public:
 		EWAIT,    //待機
 		EMOVE,    //移動
 		EJUMP,    //ジャンプ
-		EATTACK	  //攻撃
+		EATTACK,  //攻撃
+		EHIT,      //敵の攻撃が当たった
 	};
 	//デフォルトコンストラクタ
 	CCharacter();
@@ -83,6 +84,8 @@ public:
 
 	//足元の座標を取得
 	float GetUnderPosY();
+	//影の座標を首都kう
+	float GetShadowPosY();
 
 	//HPを取得
 	int GetHp();
@@ -94,17 +97,25 @@ public:
 
 protected:
 	ETag mTag;			//識別子の格納
+
 	EState mState;      //状態
 	bool isMove;        //移動しているか
 	bool isMoveX;       //X軸移動しているか
 	bool isMoveY;       //Y軸移動しているか
 	bool isAttack;      //攻撃しているか
+	bool isHit;			//攻撃を受けているか
 	bool isAttackNext;  //次も攻撃するか
 	bool isGeneration;	//コライダが生成されているか
+
 	//足元計算用
 	float mLeg;
+	//影計算用
+	float mShadow;
 	//足元の座標
 	float mUnderPosY;
+	//影の座標
+	float mShadowPosX;
+	float mShadowPosY;
 	//ジャンプ距離
 	float mJump;
 	//HP
@@ -119,6 +130,7 @@ protected:
 	int HitNum;
 
 	float mVx, mVy;		//速度
+	float mVxPlayer;
 private:
 	CTexture* mpTexture;//テクスチャ
 

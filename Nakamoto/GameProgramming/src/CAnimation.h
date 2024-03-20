@@ -55,7 +55,7 @@ public:
 	/// やられモーション
 	/// </summary>
 	/// <param name="limit">アニメーション番号</param>
-	void DeathAnimation(int limit);
+	void HitAnimation(int limit);
 
 protected:
 	//アニメーション番号
