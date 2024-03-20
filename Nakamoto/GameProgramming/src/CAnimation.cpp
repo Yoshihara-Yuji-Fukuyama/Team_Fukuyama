@@ -308,7 +308,23 @@ void CAnimation::AttackAnimation(int limit)
 void CAnimation::HitAnimation(int limit)
 {
 	//‰æ‘œ‚ğØ‚è‘Ö‚¦‚é‘¬“x
-	const int PITCH = 100;
+	const int PITCH = 45;
+	int frame = mFrame++;
+
+	if (frame % PITCH < PITCH / limit)
+	{
+		mAnimationNum = CAnimationNumber::Move1;
+	}
+	else
+	{
+		mAnimationNum = CAnimationNumber::Move2;
+	}
+}
+
+void CAnimation::GuardAnimation(int limit)
+{
+	//‰æ‘œ‚ğØ‚è‘Ö‚¦‚é‘¬“x
+	const int PITCH = 45;
 	int frame = mFrame++;
 
 	if (frame % PITCH < PITCH / limit)

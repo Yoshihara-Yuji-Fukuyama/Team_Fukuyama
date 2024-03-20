@@ -30,7 +30,7 @@
 //攻撃を受けたとき
 #define TEX_HIT 2400,1800
 
-#define KNOCKBACK 10	//ノックバック
+#define KNOCKBACK 50	//ノックバック
 #define DAMAGE1 20		//受けるダメージ量
 #define DAMAGE2 30		//受けるダメージ量
 #define DAMAGE3 50		//受けるダメージ量
@@ -106,6 +106,7 @@ CEnemy::CEnemy()
 	, isCollider(false)
 {
 	isAttack = false;
+	isHit = false;
 }
 
 //敵のコンストラクタ
@@ -143,6 +144,9 @@ CEnemy::CEnemy(float x, float y, float w, float h, int hp,EEnemyType enemyType)
 		SetZ(GetY() - mLeg);
 		//スライムのコライダの生成
 		mCollider.SetCollider(this, &mX, &mY, &mZ, 140, 90, CCollider::EColliderType::ESLIME);
+
+		printf("スライムのコライダー生成\n");//確認用 削除予定
+
 		//スライムの影
 		mpShadow = new CShadow(GetX(), GetShadowPosY(), SLIME_SHADOW_SIZE_WAIT);
 	}
@@ -166,6 +170,9 @@ CEnemy::CEnemy(float x, float y, float w, float h, int hp,EEnemyType enemyType)
 		SetZ(GetY() - mLeg);
 		//鬼のコライダの生成
 		mCollider.SetCollider(this, &mX, &mY, &mZ, 80, 200, CCollider::EColliderType::EONI);
+
+		printf("鬼のコライダー生成\n");//確認用 削除予定
+
 		//鬼の影
 		mpShadow = new CShadow(GetX(), GetShadowPosY(), ONI_SHADOW_SIZE_WAIT);
 	}
@@ -207,6 +214,11 @@ void CEnemy::Update()
 		//アニメーションを設定
 		SetAnimation();
 
+		if (isHit == true)
+		{
+			mState = EState::EHIT;
+		}
+
 		break;
 
 	case EState::EMOVE://移動
@@ -232,6 +244,11 @@ void CEnemy::Update()
 		MoveAnimation(GetX(), GetY(), isMoveX, isMoveY, mVx, MoveNum);
 		//アニメーションを設定
 		SetAnimation();
+
+		if (isHit == true)
+		{
+			mState = EState::EHIT;
+		}
 
 		break;
 	case EState::EATTACK: //攻撃
@@ -266,6 +283,14 @@ void CEnemy::Update()
 			mState = EState::EWAIT;
 		}
 
+		if (isHit == true)
+		{
+			mState = EState::EHIT;
+			isAttack = false;
+			isCollider = false;
+		}
+		
+
 		break;
 	case EState::EHIT:
 
@@ -274,11 +299,11 @@ void CEnemy::Update()
 		//アニメーションを設定
 		SetAnimation();
 
-		//if (isHit == false)
-		//{
-		//	mState = EState::EWAIT;
-		//	isCollider = false;
-		//}
+		if (isHit == false)
+		{
+			mState = EState::EWAIT;
+			isCollider = false;
+		}
 
 		break;
 	}
@@ -553,20 +578,25 @@ void CEnemy::Collision(CCollider *m, CCollider *o)
 		//コライダのmとoが衝突しているか判定しているか判定
 		if (CCollider::Collision(m, o, &ax, &ay))
 		{
+			//プレイヤーとの衝突判定を実行(めり込まない処理)
+			SetX(GetX() + ax);
+
+			//調整中
+			SetY(GetY() + ay);
+			SetZ(GetZ() + ay);
+			
+
 			if (isAttack == false)
 			{
-				//プレイヤーとの衝突判定を実行(めり込まない処理)
-				//SetX(GetX() + ax);
-
-				//調整中
-				//SetY(GetY() + ay);
-
 				if (mVx < 0 && ax > 0 || mVx > 0 && ax < 0)
 				{
-					//状態を攻撃に変更
-					mState = EState::EATTACK;
-					isAttack = true;
-					isCollider = true;
+					if (isHit == false)
+					{
+						//状態を攻撃に変更
+						mState = EState::EATTACK;
+						isAttack = true;
+						isCollider = true;
+					}
 				}
 			}
 		}
@@ -591,9 +621,7 @@ void CEnemy::Collision(CCollider *m, CCollider *o)
 
 				std::cout << "攻撃1により敵の残りHPは" <<mHp << "です\n";
 
-				//isHit = true;
-				isAttack = false;
-
+				isHit = true;
 			}
 		}
 		break;
@@ -618,8 +646,7 @@ void CEnemy::Collision(CCollider *m, CCollider *o)
 
 				std::cout << "攻撃2により敵の残りHPは" << mHp << "です\n";
 
-				//isHit = true;
-				isAttack = false;
+				isHit = true;
 			}
 		}
 		break;
@@ -642,6 +669,8 @@ void CEnemy::Collision(CCollider *m, CCollider *o)
 				mInvincible = INVINCIBLE;
 
 				std::cout << "攻撃3により敵の残りHPは" << mHp << "です\n";
+
+				isHit = true;
 			}
 		}
 		break;

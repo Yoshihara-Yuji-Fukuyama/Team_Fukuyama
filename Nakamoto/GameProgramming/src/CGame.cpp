@@ -76,13 +76,6 @@ CGame::CGame()
 	CUiTexture::GetTextureFace()->Load(TEXTURE_PLAYER);
 	//影
 	CShadow::GetTexture()->Load(TEXTURE_SHADOW);
-
-	//プレイヤー生成
-	//CPlayer::GetInstance();
-
-	//new CEnemy(CPlayer::GetInstance()->GetX() + 700, 300, CHARACTER_SIZE, SLIME_HP,CEnemy::EEnemyType::Slime);
-
-	//new CEnemy(CPlayer::GetInstance()->GetX() + 1000, 300, CHARACTER_SIZE, ONI_HP,CEnemy::EEnemyType::Oni);
 }
 
 void CGame::Update()
@@ -172,7 +165,7 @@ void CGame::Update()
 		CTaskManager::GetInstance()->Render();
 
 		//コライダの表示(確認用)
-		//CCollisionManager::GetInstance()->Render();	//確認用
+		CCollisionManager::GetInstance()->Render();	//確認用
 
 		CCamera::End();
 
@@ -258,6 +251,7 @@ void CGame::CreateEnemy()
 		//キャラタイプが偶数ならスライム
 		if (charaType % 2 == 0)
 		{
+			posY = rand() % 125 + 125;//125から250未満の値がランダム
 			new CEnemy(CPlayer::GetInstance()->GetX() + 1000, posY, CHARACTER_SIZE, SLIME_HP, CEnemy::EEnemyType::Slime);
 			//敵の数を１加算
 			CEnemy::PlusEnemyCount();
@@ -265,6 +259,7 @@ void CGame::CreateEnemy()
 		//奇数なら鬼
 		else
 		{
+			posY = rand() % 125 + 365;//365から490未満の値がランダム
 			new CEnemy(CPlayer::GetInstance()->GetX() + 1000, posY, CHARACTER_SIZE, ONI_HP, CEnemy::EEnemyType::Oni);
 			//敵の数を１加算
 			CEnemy::PlusEnemyCount();

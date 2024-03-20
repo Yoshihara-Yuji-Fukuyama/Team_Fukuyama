@@ -2,9 +2,11 @@
 #include "CCollisionManager.h"
 
 //確認用 削除予定
-#include <stdio.h>
+#include <iostream>
 
-#define LIFE 50
+#define ATTACI_PLAYER_LIFE 50 //プレイヤーの攻撃コライダの生存時間
+#define ATTACK_SLIME_LIFE 20  //スライムの攻撃コライダの生存時間
+#define ATTACK_ONI_LIFE 20    //鬼の攻撃コライダの生存時間
 
 #define ATTACK_X_POINT1 130	//攻撃1コライダの生成位置のX座標の加算値
 #define ATTACK_X_POINT2 120	//攻撃2コライダの生成位置のX座標の加算値
@@ -33,7 +35,7 @@
 
 CAttack::CAttack(CCharacter* parent, float* x, float* y, float* z, float mvx, int attackNumber)
 	:CCharacter()
-	,mLife(LIFE)
+	,mLife(ATTACI_PLAYER_LIFE)
 {
 	mZ = *z;
 	mVx = mvx;
@@ -71,6 +73,7 @@ CAttack::CAttack(CCharacter* parent, float* x, float* y, float* z, float mvx, in
 			mCollider.SetCollider(this, &mX, &mY, &mZ, ATTACK_WIDTH_S, ATTACK_HEIGHT_S, CCollider::EColliderType::ESATTACK);
 			mX = *x - ATTACK_X_POINT_S;
 			mY = *y + ATTACK_Y_POINT_S;
+			mLife = ATTACK_SLIME_LIFE;
 		}
 		//鬼の攻撃
 		else if (attackNumber == 5)
@@ -78,6 +81,7 @@ CAttack::CAttack(CCharacter* parent, float* x, float* y, float* z, float mvx, in
 			mCollider.SetCollider(this, &mX, &mY, &mZ, ATTACK_WIDTH_O, ATTACK_HEIGHT_O, CCollider::EColliderType::EOATTACK);
 			mX = *x - ATTACK_X_POINT_O;
 			mY = *y;
+			mLife = ATTACK_ONI_LIFE;
 		}
 	}
 	else
@@ -113,6 +117,7 @@ CAttack::CAttack(CCharacter* parent, float* x, float* y, float* z, float mvx, in
 			mCollider.SetCollider(this, &mX, &mY, &mZ, ATTACK_WIDTH_S, ATTACK_HEIGHT_S, CCollider::EColliderType::ESATTACK);
 			mX = *x + ATTACK_X_POINT_S;
 			mY = *y + ATTACK_Y_POINT_S;
+			mLife = ATTACK_SLIME_LIFE;
 		}
 		//鬼の攻撃
 		else if (attackNumber == 5)
@@ -120,6 +125,7 @@ CAttack::CAttack(CCharacter* parent, float* x, float* y, float* z, float mvx, in
 			mCollider.SetCollider(this, &mX, &mY, &mZ, ATTACK_WIDTH_O, ATTACK_HEIGHT_O, CCollider::EColliderType::EOATTACK);
 			mX = *x + ATTACK_X_POINT_O;
 			mY = *y;
+			mLife = ATTACK_ONI_LIFE;
 		}
 	}	
 }

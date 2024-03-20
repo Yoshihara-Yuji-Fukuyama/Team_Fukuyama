@@ -1,6 +1,9 @@
 #include "CPlayer.h"
 #include "CApplication.h"
 
+//確認用 削除予定
+#include <iostream>
+
 //左、右
 //左向き
 #define TEX_LEFT1 600,0
@@ -30,8 +33,15 @@
 #define TEX_ATTACK2 1200,600
 //攻撃3
 #define TEX_ATTACK3 1800,1200
-//やられ、防御
+//防御、やられ
 #define TEX_MOTION 4200,3600
+
+//スライムから受けるダメージ量
+#define SLIME_TAKE_DAMAGE 10
+//鬼から受けるダメージ量
+#define ONI_TAKE_DAMAGE 20
+//無敵時間
+#define INVINCIBLE 100
 
 #define PLAYER_STARTSET 100.0f,300.0f,300.0f,300.0f//x,y,w,h プレイヤーの初期位置
 
@@ -42,7 +52,7 @@
 
 #define PLAYER_BOTTOM 270                   //プレイヤー足元計算用
 
-#define PLAYER_SHADOW_WAIT 240               //プレイヤー待機中の影計算用dwsdwwwwww
+#define PLAYER_SHADOW_WAIT 240               //プレイヤー待機中の影計算用
 #define PLAYER_SHADOW_JUMP 240               //プレイヤージャンプ中の影計算用
 #define PLAYER_SHADOW_MOVE 220               //プレイヤー移動中の影計算用
 #define PLAYER_SHADOW_ATTACK 240             //プレイヤー攻撃中の影計算用
@@ -93,6 +103,7 @@ CPlayer::CPlayer()
 {
 	isAttack = false;
 	isAttackNext = false;
+	isHit = false;
 	mState = EState::EWAIT;
 	WaitNum = 4;//待機アニメーション数
 	MoveNum = 6;//移動アニメーション数
@@ -101,6 +112,7 @@ CPlayer::CPlayer()
 	AttackNum2 = 6;//攻撃2アニメーション数+1
 	AttackNum3 = 5;//攻撃3アニメーション数+1
 	HitNum = 2;//敵の攻撃を受けた時のアニメーション数+1
+	GuardNum = 2;//防御アニメーション数+1
 }
 
 CPlayer::CPlayer(float x, float y, float w, float h,int hp)
@@ -155,6 +167,19 @@ void CPlayer::Update()
 			mState = EState::EMOVE;
 		}
 
+		
+		if (isHit == true && isMove == false)
+		{
+			mState = EState::EHIT;
+		}
+
+		//防御
+		if (mInput.Key(VK_RBUTTON))
+		{
+			mState = EState::GUARD;
+			isGuard = true;
+		}
+
 		break;
 	case EState::EMOVE:
 		//影の高さ計算用
@@ -176,6 +201,17 @@ void CPlayer::Update()
 		if (isMove == false && mState != EState::EATTACK)
 		{
 			mState = EState::EWAIT;
+		}
+		else if (isHit == true)
+		{
+			mState = EState::EHIT;
+		}
+
+		//防御
+		if (mInput.Key(VK_RBUTTON))
+		{
+			mState = EState::GUARD;
+			isGuard = true;
 		}
 
 		break;
@@ -228,16 +264,6 @@ void CPlayer::Update()
 				mState = EState::EWAIT;
 			}
 		}
-
-		//if (isHit == true)
-		//{
-		//	isCollider = false;
-		//	isAttack = false;
-		//	isAttackNext = false;
-		//	isMove = false;
-		//	mState = EState::EHIT;
-		//}
-
 		break;
 
 	case EState::EATTACK:	//攻撃処理
@@ -309,27 +335,59 @@ void CPlayer::Update()
 			mState = EState::EWAIT;
 		}
 
-		//if (isHit == true)
-		//{
-		//	isCollider = false;
-		//	isAttack = false;
-		//	isAttackNext = false;
-		//	isMove = false;
-		//mState = EState::EHIT;
-		//}
+		if (isHit == true)
+		{
+			mState = EState::EHIT;
+			mAttackPhase = EAttackPhase::Attack0;
+			isAttack = false;
+			isAttackNext = false;
+		}
+
 		break;
 
 	case EState::EHIT:
+		//影の高さ計算用
+		mShadow = PLAYER_SHADOW_WAIT;
+		//影の大きさ
+		mpShadow->SetShadow(GetX() - PLAYER_SHADOW_POSX, GetShadowPosY(), PLAYER_SHADOW_SIZE_WAIT);
+
+		//処理順番を決定
+		SetSortOrder(GetY() - mLeg);
+		
+		//if (mAnimationNum != CAnimationNumber::Move1)
+		//{
+		//	mFrame = 0;
+		//}
 
 		HitAnimation(HitNum);
 
 		//アニメーションを設定
 		SetAnimation();
 
-		//if (isHit == false)
-		//{
-		//	mState = EState::EMOVE;
-		//}
+		if (isHit == false)
+		{
+			mState = EState::EWAIT;
+		}
+
+		break;
+	case EState::GUARD:
+		//影の高さ計算用
+		mShadow = PLAYER_SHADOW_WAIT;
+		//影の大きさ
+		mpShadow->SetShadow(GetX() - PLAYER_SHADOW_POSX, GetShadowPosY(), PLAYER_SHADOW_SIZE_WAIT);
+
+		//処理順番を決定
+		SetSortOrder(GetY() - mLeg);
+
+		GuardAnimation(GuardNum);
+
+		//アニメーションを設定
+		SetAnimation();
+
+		if (isGuard == false)
+		{
+			mState = EState::EWAIT;
+		}
 
 		break;
 	}
@@ -349,8 +407,9 @@ void CPlayer::Move()
 	isMove = false;
 	isMoveX = false;
 	isMoveY = false;
+
 	//左に移動
-	if (mInput.Key('A') && mState != EState::EATTACK)
+	if (mInput.Key('A') && mState != EState::EATTACK && isHit == false)
 	{
 		if (mVx > 0)
 		{
@@ -361,7 +420,7 @@ void CPlayer::Move()
 		isMoveX = true;
 	}
 	//右に移動
-	if (mInput.Key('D') && mState != EState::EATTACK)
+	if (mInput.Key('D') && mState != EState::EATTACK && isHit == false)
 	{
 		if (mVx <= 0)
 		{
@@ -372,7 +431,7 @@ void CPlayer::Move()
 		isMoveX = true;
 	}
 	//上に移動
-	if (mInput.Key('W') && mState != EState::EATTACK)
+	if (mInput.Key('W') && mState != EState::EATTACK && isHit == false)
 	{
 		//ステータスが移動か待機かつ足元の座標が250未満の時
 		if (mState != EState::EMOVE || mState != EState::EWAIT)
@@ -395,7 +454,7 @@ void CPlayer::Move()
 		}
 	}
 	//下に移動
-	if (mInput.Key('S') && mState != EState::EATTACK)
+	if (mInput.Key('S') && mState != EState::EATTACK && isHit == false)
 	{
 		//ステータスが移動か待機かつ足元の座標が0より大きい時
 		if (mState == EState::EMOVE || mState == EState::EWAIT)
@@ -419,7 +478,7 @@ void CPlayer::Move()
 		}
 	}
 	//ジャンプ
-	if (mInput.Key(VK_SPACE) && mState != EState::EATTACK)
+	if (mInput.Key(VK_SPACE) && mState != EState::EATTACK && isHit == false)
 	{
 		if (mState != EState::EJUMP)
 		{
@@ -433,7 +492,7 @@ void CPlayer::Move()
 		}
 	}
 	//攻撃
-	if (mInput.Key(VK_LBUTTON) && mState != EState::EJUMP)
+	if (mInput.Key(VK_LBUTTON) && mState != EState::EJUMP && isHit == false)
 	{
 		if (isClick == false)
 		{
@@ -501,11 +560,11 @@ void CPlayer::Collision(CCollider* m, CCollider* o)
 				//調整中
 				//SetY(GetY() + ay);
 
-				mHp -= 10;
-				mInvincible = 60;
+				mHp -= SLIME_TAKE_DAMAGE;
+				mInvincible = INVINCIBLE;
+				isHit = true;
 			}
-
-			//isHit = true;
+			
 		}
 		break;
 	case CCollider::EColliderType::EONI:	//鬼の体のコライダとの衝突判定
@@ -513,7 +572,7 @@ void CPlayer::Collision(CCollider* m, CCollider* o)
 		if (CCollider::Collision(m, o, &ax, &ay))
 		{
 			//プレイヤーとの衝突判定を実行(めり込まない処理)
-			//SetX(GetX() + ax);
+			SetX(GetX() + ax);
 			//調整中
 			//SetY(GetY() + ay);
 		}
@@ -529,11 +588,11 @@ void CPlayer::Collision(CCollider* m, CCollider* o)
 				//調整中
 				//SetY(GetY() + ay);
 
-				mHp -= 20;
-				mInvincible = 60;
+				mHp -= ONI_TAKE_DAMAGE;
+				mInvincible = INVINCIBLE;
+				isHit = true;
 			}
-
-			//isHit = true;
+			
 		}
 		break;
 	}
@@ -708,15 +767,30 @@ void CPlayer::SetAnimation()
 			//左向き
 			if (mVx < 0.0f)
 			{
-				if (mAnimationNum == CAnimationNumber::Move1)	      Texture(GetTexture(), TEX_LEFT2, TEX_MOTION);
+				if (mAnimationNum == CAnimationNumber::Move1)Texture(GetTexture(), TEX_LEFT2, TEX_MOTION);
 				else isHit = false;
 			}
 			else
 			{
-				if (mAnimationNum == CAnimationNumber::Move1)		  Texture(GetTexture(), TEX_RIGHT2, TEX_MOTION);
+				if (mAnimationNum == CAnimationNumber::Move1)Texture(GetTexture(), TEX_RIGHT2, TEX_MOTION);
 				else isHit = false;
 			}
 		}
 		break;
+	case EState::GUARD:	//防御アニメーション
+			if (isGuard == true)
+			{
+				//左向き
+				if (mVx < 0.0f)
+				{
+					if (mAnimationNum == CAnimationNumber::Move1)Texture(GetTexture(), TEX_LEFT1, TEX_MOTION);
+					else isGuard = false;
+				}
+				else
+				{
+					if (mAnimationNum == CAnimationNumber::Move1)Texture(GetTexture(), TEX_RIGHT1, TEX_MOTION);
+					else isGuard = false;
+				}
+			}
 	}
 }

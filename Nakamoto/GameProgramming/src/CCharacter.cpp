@@ -125,3 +125,8 @@ CCharacter::ETag CCharacter::GetTag()
 {
 	return mTag;
 }
+
+void CCharacter::SetLeg(float leg)
+{
+	mLeg = leg;
+}

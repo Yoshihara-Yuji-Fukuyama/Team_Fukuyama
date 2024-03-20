@@ -57,6 +57,12 @@ public:
 	/// <param name="limit">アニメーション番号</param>
 	void HitAnimation(int limit);
 
+	/// <summary>
+	/// 防御モーション
+	/// </summary>
+	/// <param name="limit">アニメーション番号</param>
+	void GuardAnimation(int limit);
+
 protected:
 	//アニメーション番号
 	CAnimationNumber mAnimationNum;

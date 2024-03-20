@@ -1,9 +1,10 @@
 #include "CCollider.h"
 #include "CCollisionManager.h"
-
 #include "CCharacter.h"
 #include "CEnemy.h"
-#include <stdio.h>	//確認用 削除予定
+
+//確認用 削除予定
+#include <iostream>
 
 #define HANI 60
 
@@ -25,7 +26,7 @@ CCollider::CCollider(CCharacter* parent,
 	//コリジョンマネージャに追加
 	CCollisionManager::GetInstance()->Add(this);
 
-	printf("コライダー生成\n");//確認用 削除予定
+	printf("プレイヤーのコライダー生成\n");//確認用 削除予定
 
 	//親の設定
 	mpParent = parent;
@@ -44,6 +45,8 @@ void CCollider::SetCollider(CCharacter* parent,
 {
 	//コリジョンマネージャに追加
 	CCollisionManager::GetInstance()->Add(this);
+
+	//printf("コライダー生成\n");//確認用 削除予定
 
 	//親の設定
 	mpParent = parent;
@@ -103,9 +106,10 @@ bool CCollider::Collision(CCollider* m, CCollider* o, float *ax, float *ay)
 	{
 		//Y修正、Xは0
 		*ax = 0.0f;
+		*ay = *o->mLeg - *m->mLeg - HANI;
 		//上の時
-		if (*m->mpY > *o->mpY)
-			*ay = -*ay;
+		if (*m->mLeg > *o->mLeg)
+			*ay = *o->mLeg - *m->mLeg + HANI;
 	}
 	else
 	{

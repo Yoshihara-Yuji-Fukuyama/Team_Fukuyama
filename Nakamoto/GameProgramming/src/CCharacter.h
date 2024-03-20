@@ -23,7 +23,8 @@ public:
 		EMOVE,    //移動
 		EJUMP,    //ジャンプ
 		EATTACK,  //攻撃
-		EHIT,      //敵の攻撃が当たった
+		EHIT,     //敵の攻撃が当たった
+		GUARD	  //防御 
 	};
 	//デフォルトコンストラクタ
 	CCharacter();
@@ -95,6 +96,8 @@ public:
 	//識別子の取得
 	ETag GetTag();
 
+	void SetLeg(float leg);
+
 protected:
 	ETag mTag;			//識別子の格納
 
@@ -105,7 +108,7 @@ protected:
 	bool isAttack;      //攻撃しているか
 	bool isHit;			//攻撃を受けているか
 	bool isAttackNext;  //次も攻撃するか
-	bool isGeneration;	//コライダが生成されているか
+	bool isGuard;		//防御しているか
 
 	//足元計算用
 	float mLeg;
@@ -128,6 +131,7 @@ protected:
 	int WaitNum;
 	int JumpNum;
 	int HitNum;
+	int GuardNum;
 
 	float mVx, mVy;		//速度
 	float mVxPlayer;
