@@ -84,13 +84,13 @@ public:
 
 	//足元の座標を取得
 	float GetUnderPosY();
-	//影の座標を首都kう
+	//影の座標を取得
 	float GetShadowPosY();
 
 	//HPを取得
-	int GetHp();
+	float GetHp();
 	//HPを設定
-	void SetHp(int hp);
+	void SetHp(float hp);
 
 	//識別子の取得
 	ETag GetTag();
@@ -116,7 +116,7 @@ protected:
 	//ジャンプ距離
 	float mJump;	
 	//HP
-	int mHp;
+	float mHp;
 	//アニメーションごとの枚数
 	int MoveNum;
 	int AttackNum;

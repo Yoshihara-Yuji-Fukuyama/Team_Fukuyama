@@ -1,6 +1,7 @@
 #include "CEnemy.h"
 #include "CPlayer.h"
 #include "CUiFont.h"
+#include "CHeal.h"
 
 //確認用 削除予定
 #include <iostream>
@@ -373,6 +374,7 @@ void CEnemy::Move()
 //デストラクタ
 CEnemy::~CEnemy()
 {
+	new CHeal(GetX(), mLeg, CHeal::GetTexture());
 	//影をタスクリストから削除
 	mpShadow->SetEnabled(false);
 	mEnemyCount--;

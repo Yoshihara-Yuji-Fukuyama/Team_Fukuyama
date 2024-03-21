@@ -23,7 +23,7 @@
     <ClCompile Include="src\CFont.cpp" />
     <ClCompile Include="src\CGame.cpp" />
     <ClCompile Include="src\CInput.cpp" />
-    <ClCompile Include="src\CItem.cpp" />
+    <ClCompile Include="src\CHeal.cpp" />
     <ClCompile Include="src\CPlayer.cpp" />
     <ClCompile Include="src\CRectangle.cpp" />
     <ClCompile Include="src\CSound.cpp" />
@@ -48,7 +48,7 @@
     <ClInclude Include="src\CFont.h" />
     <ClInclude Include="src\CGame.h" />
     <ClInclude Include="src\CInput.h" />
-    <ClInclude Include="src\CItem.h" />
+    <ClInclude Include="src\CHeal.h" />
     <ClInclude Include="src\CPlayer.h" />
     <ClInclude Include="src\CRectangle.h" />
     <ClInclude Include="src\CSound.h" />

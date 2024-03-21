@@ -72,7 +72,7 @@ CGame::CGame()
 	//‰e
 	CShadow::GetTexture()->Load(TEXTURE_SHADOW);
 	//ƒAƒCƒeƒ€
-	CItem::GetTexture()->Load(TEXTURE_HEAL);
+	CHeal::GetTexture()->Load(TEXTURE_HEAL);
 }
 
 

@@ -660,3 +660,12 @@ void CPlayer::Collision(CCollider* m, CCollider* o)
 		break;
 	}
 }
+
+void CPlayer::HealHp(float heal)
+{
+	mHp += PLAYER_HP * heal;
+	if (mHp > PLAYER_HP)
+	{
+		mHp = PLAYER_HP;
+	}
+}

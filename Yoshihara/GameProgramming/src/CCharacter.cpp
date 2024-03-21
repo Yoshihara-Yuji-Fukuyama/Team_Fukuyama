@@ -111,12 +111,12 @@ float CCharacter::GetShadowPosY()
 }
 
 //HP‚ğæ“¾
-int CCharacter::GetHp()
+float CCharacter::GetHp()
 {
 	return mHp;
 }
 //HP‚ğİ’è
-void CCharacter::SetHp(int hp)
+void CCharacter::SetHp(float hp)
 {
 	mHp = hp;
 }

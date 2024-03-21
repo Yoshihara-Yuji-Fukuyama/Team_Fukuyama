@@ -59,6 +59,12 @@ public:
 	//mVx‚ğæ“¾
 	float GetmVx();
 
+	/// <summary>
+	/// HP‚ğ‰ñ•œ‚·‚é
+	/// </summary>
+	/// <param name="heal">‰ñ•œŠ„‡</param>
+	void HealHp(float heal);
+
 	//staticƒƒ\ƒbƒh‚ÌéŒ¾
 	static CPlayer* GetInstance();
 
