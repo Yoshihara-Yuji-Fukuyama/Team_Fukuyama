@@ -39,22 +39,52 @@ void CRectangle::Set(float x, float y, float w, float h)
 	mH = h;
 }
 
-float CRectangle::X()
+float CRectangle::GetX()
 {
 	return mX;
 }
 
-float CRectangle::Y()
+float CRectangle::GetY()
 {
 	return mY;
 }
 
-float CRectangle::W()
+float CRectangle::GetZ()
+{
+	return mZ;
+}
+
+float CRectangle::GetW()
 {
 	return mW;
 }
 
-float CRectangle::H()
+float CRectangle::GetH()
 {
 	return mH;
+}
+
+void CRectangle::SetY(float y)
+{
+	mY = y;
+}
+
+void CRectangle::SetX(float x)
+{
+	mX = x;
+}
+
+void CRectangle::SetZ(float z)
+{
+	mZ = z;
+}
+
+void CRectangle::SetW(float w)
+{
+	mW = w;
+}
+
+void CRectangle::SetH(float h)
+{
+	mH = h;
 }

@@ -11,16 +11,57 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\CAnimation.cpp" />
     <ClCompile Include="src\CApplication.cpp" />
+    <ClCompile Include="src\CAttack.cpp" />
+    <ClCompile Include="src\CBackground.cpp" />
+    <ClCompile Include="src\CCamera.cpp" />
+    <ClCompile Include="src\CCharacter.cpp" />
+    <ClCompile Include="src\CCollider.cpp" />
+    <ClCompile Include="src\CCollisionManager.cpp" />
+    <ClCompile Include="src\CEnemy.cpp" />
+    <ClCompile Include="src\CFont.cpp" />
+    <ClCompile Include="src\CGame.cpp" />
+    <ClCompile Include="src\CInput.cpp" />
+    <ClCompile Include="src\CHeal.cpp" />
+    <ClCompile Include="src\CPlayer.cpp" />
+    <ClCompile Include="src\CRectangle.cpp" />
     <ClCompile Include="src\CSound.cpp" />
+    <ClCompile Include="src\CTaskManager.cpp" />
     <ClCompile Include="src\CTexture.cpp" />
+    <ClCompile Include="src\CUiFont.cpp" />
+    <ClCompile Include="src\CUiPowerUp.cpp" />
+    <ClCompile Include="src\CUiTexture.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\CShadow.cpp" />
+    <ClCompile Include="src\CTitle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\CAnimation.h" />
     <ClInclude Include="src\CApplication.h" />
+    <ClInclude Include="src\CAttack.h" />
+    <ClInclude Include="src\CBackground.h" />
+    <ClInclude Include="src\CCamera.h" />
+    <ClInclude Include="src\CCharacter.h" />
+    <ClInclude Include="src\CCollider.h" />
+    <ClInclude Include="src\CCollisionManager.h" />
+    <ClInclude Include="src\CEnemy.h" />
+    <ClInclude Include="src\CFont.h" />
+    <ClInclude Include="src\CGame.h" />
+    <ClInclude Include="src\CInput.h" />
+    <ClInclude Include="src\CHeal.h" />
+    <ClInclude Include="src\CPlayer.h" />
+    <ClInclude Include="src\CRectangle.h" />
     <ClInclude Include="src\CSound.h" />
+    <ClInclude Include="src\CTask.h" />
+    <ClInclude Include="src\CTaskManager.h" />
     <ClInclude Include="src\CTexture.h" />
+    <ClInclude Include="src\CUiFont.h" />
+    <ClInclude Include="src\CUiPowerUp.h" />
+    <ClInclude Include="src\CUiTexture.h" />
     <ClInclude Include="src\main.h" />
+    <ClInclude Include="src\CShadow.h" />
+    <ClInclude Include="src\CTitle.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8802AF2F-2920-4700-89F2-CA6778727283}</ProjectGuid>
