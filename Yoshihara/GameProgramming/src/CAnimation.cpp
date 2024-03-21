@@ -1,4 +1,5 @@
 #include "CAnimation.h"
+#include "CPlayer.h"
 
 
 CAnimation::CAnimation()
@@ -243,7 +244,7 @@ void CAnimation::WaitAnimation(int limit)
 void CAnimation::JumpAnimation(int y, float jump, int limit)
 {
 	//画像を切り替える速度
-	const int PITCH = 270;
+	const int PITCH = 270 * (CPlayer::GetInstance()->GetJumpPower() * 2);
 	//ジャンプ前とジャンプ中の座標の差を求める
 	int JumpPos = y - jump;
 
@@ -306,14 +307,35 @@ void CAnimation::AttackAnimation(int limit)
 }
 
 //やられアニメーション
-void CAnimation::DeathAnimation(int limit)
+void CAnimation::HitAnimation(int limit)
 {
 	//画像を切り替える速度
-	const int PITCH = 12;
+	const int PITCH = 45;
 	int frame = mFrame++;
 
 	if (frame % PITCH < PITCH / limit)
 	{
 		mAnimationNum = CAnimationNumber::Move1;
+	}
+	else
+	{
+		mAnimationNum = CAnimationNumber::Move2;
+	}
+}
+
+//防御アニメーション
+void CAnimation::GuardAnimation(int limit)
+{
+	//画像を切り替える速度
+	const int PITCH = 45;
+	int frame = mFrame++;
+
+	if (frame % PITCH < PITCH / limit)
+	{
+		mAnimationNum = CAnimationNumber::Move1;
+	}
+	else
+	{
+		mAnimationNum = CAnimationNumber::Move2;
 	}
 }

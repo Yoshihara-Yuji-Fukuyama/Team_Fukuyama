@@ -4,6 +4,7 @@
 #include "CPlayer.h"
 #include "CUiFont.h"
 #include "CUiTexture.h"
+#include "CUiPowerUp.h"
 #include "CShadow.h"
 #include "CInput.h"
 #include "CTitle.h"
@@ -25,6 +26,7 @@ public:
 		GameTitle,
 		GameStart,
 		Game,
+		PowerUp,
 		GameResult,
 		GameEnd,
 	};
@@ -47,6 +49,7 @@ private:
 	void SetCamera();//カメラを設定
 
 	clock_t start;//ゲーム始まりの時間を保存
+	clock_t pouse;//ゲーム中断の始まりの時間を保存
 
 	int mFrame;//フレームカウンタ
 
@@ -57,6 +60,10 @@ private:
 	bool isStartTime;//始まりの時間を保存しているか
 
 	bool isEnter;//エンターを押して離すまでをセットに
+
+	bool isPowerUpGet;//強化を獲得したか
+
+	int mPowerUpX;//強化の回数
 
 	EGameScene mScene;//ゲームのシーン
 };

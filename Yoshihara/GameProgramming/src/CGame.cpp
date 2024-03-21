@@ -27,7 +27,10 @@
 #define TEXTURE_SHADOW "Shadow.png"          //影の画像
 
 #define TEXTURE_HEAL "Heal.png"              //回復の画像
+#define TEXTURE_POWER_UP "PowerUp.png"       //強化アイテム画像
 
+#define POWER_UP_DISTANCE 10000               //強化の間隔
+ 
 #define TITLE_NAME_SET 960.0f,540.0f,359.0f,254.5f
 #define BACKGROUND_SET1 960.0f,540.0f,960.0f,540.0f//x,y,w,h　背景1の初期位置
 #define BACKGROUND_SET2 2880.0f,540.0f,960.0f,540.0f//x,y,w,h 背景2の初期位置
@@ -46,6 +49,7 @@ CGame::CGame()
 	:mScene(EGameScene::GameTitle)
 	, isTitleCreate(false)
 	, isEnter(false)
+	, isPowerUpGet(false)
 {		
 	//テクスチャをロード
 	//タイトル
@@ -69,6 +73,7 @@ CGame::CGame()
 	CUiTexture::GetTextureHpBar()->Load(TEXTURE_HP_BAR);
 	CUiTexture::GetTextureFrame()->Load(TEXTURE_FRAME);
 	CUiTexture::GetTextureFace()->Load(TEXTURE_PLAYER);
+	CUiPowerUp::GetTexture()->Load(TEXTURE_POWER_UP);
 	//影
 	CShadow::GetTexture()->Load(TEXTURE_SHADOW);
 	//アイテム
@@ -124,11 +129,18 @@ void CGame::Update()
 		new CUiTexture(HP_SIZE_YELLOW, CUiTexture::EUiType::HpYellow);
 		new CUiTexture(HP_SIZE_RED, CUiTexture::EUiType::HpRed);
 
+		//ItemNumをゼロに設定
+		CUiTexture::SetItemNum();
+		//強化リセット
+		CUiPowerUp::SetMaxDefault();
+		CUiPowerUp::DeleteInstance();
 		//敵の数をゼロにする
 		CEnemy::ZeroEnemyCount();
 		mFrame = 0;//フレームカウンタをゼロに
 		mCount = 1;//秒数カウンタを1に
 		start = clock();//始まりの時間を保存
+		mPowerUpX = 1;//強化回数を1に
+		isPowerUpGet = false;//強化を獲得したか
 
 		mScene = EGameScene::Game;//ゲームへ変移
 
@@ -175,6 +187,47 @@ void CGame::Update()
 		{
 			mScene = EGameScene::GameResult;
 		}
+		//スコアがPOWER_UP_DISTANCEの倍数になるたび強化
+		if (CUiFont::GetInstance()->GetScore() >= POWER_UP_DISTANCE * mPowerUpX)
+		{
+				new CUiPowerUp(CPlayer::GetInstance()->GetX(), 2);
+				pouse = clock();//中断開始時間
+				mScene = EGameScene::PowerUp;
+		}
+
+		break;
+
+	case EGameScene::PowerUp://パワーアップ
+
+		//カメラを設定
+		SetCamera();
+
+		//描画
+		CTaskManager::GetInstance()->Render();
+
+		CCamera::End();
+
+		//テキスト系UI描画
+		CUiFont::GetInstance()->Render();
+
+		if (mInput.Key('1') || mInput.Key('2') || mInput.Key('3'))
+		{
+			CUiPowerUp::GetInstance1()->PowerUp();
+			isPowerUpGet = true;
+		}
+
+		//強化を選択したらゲームに戻る
+		if (isPowerUpGet == true)
+		{
+			CPlayer::GetInstance()->SetmVx();//プレイヤーの移動速度の値を更新
+			mPowerUpX++;//強化回数
+			isPowerUpGet = false;
+			CUiPowerUp::DeleteInstance();
+			//ゲームが止まっていた時間分スタートの数値に加算
+			clock_t end = clock();
+			start = start + (end - pouse);
+			mScene = EGameScene::Game;
+		}
 
 		break;
 
@@ -201,15 +254,20 @@ void CGame::Update()
 		break;
 
 	case EGameScene::GameEnd://ゲーム終了
+		//プレイヤー削除
 		CPlayer::DeleteInstance();
+		//テキスト系UIを削除
 		CUiFont::DeleteInstance();
+		//タスクリストから全削除
 		CTaskManager::GetInstance()->AllDelete();
+		//強化リセット
+		CUiPowerUp::SetMaxDefault();
+		CUiPowerUp::DeleteInstance();
+		//タイトルへ移動
 		mScene = EGameScene::GameTitle;
 		break;
 
 	}
-
-
 }
 
 

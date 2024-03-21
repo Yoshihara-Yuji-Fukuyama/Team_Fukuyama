@@ -30,6 +30,7 @@
     <ClCompile Include="src\CTaskManager.cpp" />
     <ClCompile Include="src\CTexture.cpp" />
     <ClCompile Include="src\CUiFont.cpp" />
+    <ClCompile Include="src\CUiPowerUp.cpp" />
     <ClCompile Include="src\CUiTexture.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\CShadow.cpp" />
@@ -56,6 +57,7 @@
     <ClInclude Include="src\CTaskManager.h" />
     <ClInclude Include="src\CTexture.h" />
     <ClInclude Include="src\CUiFont.h" />
+    <ClInclude Include="src\CUiPowerUp.h" />
     <ClInclude Include="src\CUiTexture.h" />
     <ClInclude Include="src\main.h" />
     <ClInclude Include="src\CShadow.h" />

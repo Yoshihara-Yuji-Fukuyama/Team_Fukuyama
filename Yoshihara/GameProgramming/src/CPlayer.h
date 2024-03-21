@@ -58,12 +58,24 @@ public:
 	bool GetMoveX();
 	//mVxを取得
 	float GetmVx();
+	//mVxを設定
+	void SetmVx();
 
 	/// <summary>
 	/// HPを回復する
 	/// </summary>
 	/// <param name="heal">回復割合</param>
 	void HealHp(float heal);
+	//ジャンプアップ量を得る
+	float GetJumpPower();
+	//攻撃力アップ量を得る
+	int GetAttackPower();
+	//強化の値を上昇
+	void SetJumpPower();
+	void SetDeffensePower();
+	void SetAttackPower();
+	void SetAttackNumPower();
+	void SetSpeedPower();
 
 	//staticメソッドの宣言
 	static CPlayer* GetInstance();
@@ -72,7 +84,16 @@ public:
 
 	static void DeleteInstance();
 
+
+
 private:
+	//強化系の効果
+	float mJumpPower;
+	int mDeffensePower;
+	int mAttackPower;
+	int mAttackNumPower;
+	float mSpeedPower;
+
 	CInput mInput;
 	CShadow* mpShadow;
 

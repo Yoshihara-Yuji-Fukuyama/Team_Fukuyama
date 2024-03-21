@@ -15,7 +15,7 @@ public:
 	{
 		EPLAYER,	//プレイヤー
 		ESLIME,		//スライム
-		EONI			//鬼
+		EONI,			//鬼
 	};
 
 	enum class EState//状態
@@ -23,7 +23,9 @@ public:
 		EWAIT,    //待機
 		EMOVE,    //移動
 		EJUMP,    //ジャンプ
-		EATTACK	  //攻撃
+		EATTACK,	  //攻撃
+		EHIT,     //敵の攻撃が当たった
+		GUARD,	  //防御 
 	};
 	//デフォルトコンストラクタ
 	CCharacter();
@@ -95,6 +97,8 @@ public:
 	//識別子の取得
 	ETag GetTag();
 
+	void SetLeg(float leg);
+
 protected:
 	ETag mTag;			//識別子の格納
 	EState mState;      //状態
@@ -103,6 +107,8 @@ protected:
 	bool isMoveY;       //Y軸移動しているか
 	bool isAttack;      //攻撃しているか
 	bool isAttackNext;  //次も攻撃するか
+	bool isHit;			//攻撃を受けているか
+	bool isGuard;		//防御しているか
 	bool isGeneration;	//コライダが生成されているか
 	//足元計算用
 	float mLeg;
@@ -125,6 +131,7 @@ protected:
 	int WaitNum;
 	int JumpNum;
 	int HitNum;
+	int GuardNum;
 
 	float mVx, mVy;		//速度
 private:

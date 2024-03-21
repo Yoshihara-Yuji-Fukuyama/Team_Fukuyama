@@ -15,6 +15,7 @@ public:
 
 	//ƒXƒRƒA
 	void SetScore(int score);
+	int GetScore();
 
 	//•¶š‚Ì•`‰æ
 	void Render();

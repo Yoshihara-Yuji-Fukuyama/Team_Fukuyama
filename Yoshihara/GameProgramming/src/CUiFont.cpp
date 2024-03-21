@@ -55,6 +55,11 @@ void CUiFont::SetScore(int score)
 	mScore = mScore + score;
 }
 
+int CUiFont::GetScore()
+{
+	return mScore;
+}
+
 void CUiFont::Render()
 {
 	char str[16];

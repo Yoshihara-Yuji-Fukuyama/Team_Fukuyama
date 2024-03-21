@@ -28,16 +28,16 @@
 #define TEX_WAIT 1800,1200
 //攻撃
 #define TEX_ATTACK 600,0
-//死亡
-#define TEX_DEATH 2400,1800
+//攻撃を受けたとき
+#define TEX_HIT 2400,1800
 
-#define KNOCKBACK 10	//ノックバック
+#define KNOCKBACK 50	//ノックバック
 #define DAMAGE1 20		//受けるダメージ量
 #define DAMAGE2 30		//受けるダメージ量
 #define DAMAGE3 50		//受けるダメージ量
 #define INVINCIBLE 55	//無敵カウント
 
-#define SLIME_BOTTOM 140                    //スライム足元計算用
+#define SLIME_BOTTOM 60                    //スライム足元計算用
 #define ONI_BOTTOM 240                      //鬼足元計算用 
 
 #define SLIME_SHADOW_WAIT 20               //スライムの待機中の影高さ計算用
@@ -101,12 +101,13 @@ CEnemy::CEnemy()
 	, mInvincible(0)
 	//敵がプレイヤーに近づける距離
 	, RandomX(rand() % 50 + 10)//10から60未満まででランダム
-	, RandomY(rand() % 50 + 10)//10から60未満まででランダム
+	, RandomY(rand() % 30 + 30)//30から60未満まででランダム
 	//行動の間隔
 	, RandomTiming(rand() % 100 + 150)//250から500未満まででランダム
 	, isCollider(false)
 {
 	isAttack = false;
+	isHit = false;
 }
 
 //敵のコンストラクタ
@@ -138,11 +139,16 @@ CEnemy::CEnemy(float x, float y, float w, float h, int hp, EEnemyType enemyType)
 		MoveNum = 4;
 		//待機アニメーション数
 		WaitNum = 4;
+		//攻撃を受けた時のアニメーション数+1
+		HitNum = 2;
 
 		//足元設定
 		SetZ(GetY() - mLeg);
 		//スライムのコライダの生成
 		mCollider.SetCollider(this, &mX, &mY, &mZ, 140, 90, CCollider::EColliderType::ESLIME);
+
+		printf("スライムのコライダー生成\n");//確認用 削除予定
+
 		//スライムの影
 		mpShadow = new CShadow(GetX(), GetShadowPosY(), SLIME_SHADOW_SIZE_WAIT);
 	}
@@ -160,11 +166,16 @@ CEnemy::CEnemy(float x, float y, float w, float h, int hp, EEnemyType enemyType)
 		MoveNum = 5;
 		//待機アニメーション数
 		WaitNum = 4;
+		//攻撃を受けた時のアニメーション数+1
+		HitNum = 2;
 
 		//足元設定
 		SetZ(GetY() - mLeg);
 		//鬼のコライダの生成
 		mCollider.SetCollider(this, &mX, &mY, &mZ, 80, 200, CCollider::EColliderType::EONI);
+
+		printf("鬼のコライダー生成\n");//確認用 削除予定
+
 		//鬼の影
 		mpShadow = new CShadow(GetX(), GetShadowPosY(), ONI_SHADOW_SIZE_WAIT);
 	}
@@ -207,6 +218,11 @@ void CEnemy::Update()
 		//アニメーションを設定
 		SetAnimation();
 
+		if (isHit == true)
+		{
+			mState = EState::EHIT;
+		}
+
 		break;
 		
 	case EState::EMOVE://移動
@@ -233,6 +249,12 @@ void CEnemy::Update()
 		MoveAnimation(GetX(), GetY(), isMoveX, isMoveY, mVx, MoveNum);
 		//アニメーションを設定
 		SetAnimation();
+
+		if (isHit == true)
+		{
+			mState = EState::EHIT;
+		}
+
 
 		break;
 
@@ -269,6 +291,33 @@ void CEnemy::Update()
 		{
 			mState = EState::EWAIT;
 		}
+
+		if (isHit == true)
+		{
+			mState = EState::EHIT;
+			isAttack = false;
+			isCollider = false;
+		}
+
+		break;
+
+	case EState::EHIT:
+
+		HitAnimation(HitNum);
+		//アニメーションを設定
+		SetAnimation();
+
+		//if (isHit == false)
+		//{
+		//	mState = EState::EWAIT;
+		//	isCollider = false;
+		//}
+		if (isHit == false)
+		{
+			mState = EState::EWAIT;
+			isCollider = false;
+		}
+
 		break;
 	}
 
@@ -283,6 +332,12 @@ void CEnemy::Update()
 	if (mHp <= 0)
 	{
 		Death();
+	}
+
+	//奥行が同じになったら少しずらす
+	if (CPlayer::GetInstance()->GetZ() == GetZ())
+	{
+		SetY(GetY() + 2);
 	}
 
 }
@@ -511,6 +566,22 @@ void CEnemy::SetAnimation()
 			}
 			break;
 		}
+	case EState::EHIT:	//攻撃を受けた時のアニメーション
+		if (isHit == true)
+		{
+			//右向き
+			if (mVx > 0.0f)
+			{
+				if (mAnimationNum == CAnimationNumber::Move1)	      Texture(GetTexture(), TEX_RIGHT1, TEX_HIT);
+				else isHit = false;
+			}
+			else
+			{
+				if (mAnimationNum == CAnimationNumber::Move1)		  Texture(GetTexture(), TEX_LEFT1, TEX_HIT);
+				else isHit = false;
+			}
+		}
+		break;
 	}
 }
 
@@ -530,20 +601,24 @@ void CEnemy::Collision(CCollider* m, CCollider* o)
 		//コライダのmとoが衝突しているか判定しているか判定
 		if (CCollider::Collision(m, o, &ax, &ay))
 		{
+			//プレイヤーとの衝突判定を実行(めり込まない処理)
+			SetX(GetX() + ax);
+
+			//調整中
+			SetY(GetY() + ay);
+			SetZ(GetZ() + ay);
+
 			if (isAttack == false)
 			{
-				//プレイヤーとの衝突判定を実行(めり込まない処理)
-				//SetX(GetX() + ax);
-
-				//調整中
-				//SetY(GetY() + ay);
-
 				if (mVx < 0 && ax > 0 || mVx > 0 && ax < 0)
 				{
-					//状態を攻撃に変更
-					mState = EState::EATTACK;
-					isAttack = true;
-					isCollider = true;
+					if (isHit == false)
+					{
+						//状態を攻撃に変更
+						mState = EState::EATTACK;
+						isAttack = true;
+						isCollider = true;
+					}
 				}
 			}
 		}
@@ -563,10 +638,12 @@ void CEnemy::Collision(CCollider* m, CCollider* o)
 				{
 					SetX(GetX() + KNOCKBACK);
 				}
-				mHp -= DAMAGE1;
+				mHp -= DAMAGE1 + CPlayer::GetInstance()->GetAttackPower();
 				mInvincible = INVINCIBLE;
 
 				std::cout << "攻撃1により敵の残りHPは" << mHp << "です\n";
+
+				isHit = true;
 			}
 		}
 		break;
@@ -586,10 +663,12 @@ void CEnemy::Collision(CCollider* m, CCollider* o)
 					SetX(GetX() + KNOCKBACK);
 				}
 
-				mHp -= DAMAGE2;
+				mHp -= DAMAGE2 + CPlayer::GetInstance()->GetAttackPower();
 				mInvincible = INVINCIBLE;
 
 				std::cout << "攻撃2により敵の残りHPは" << mHp << "です\n";
+
+				isHit = true;
 			}
 		}
 		break;
@@ -608,10 +687,12 @@ void CEnemy::Collision(CCollider* m, CCollider* o)
 				{
 					SetX(GetX() + KNOCKBACK);
 				}
-				mHp -= DAMAGE3;
+				mHp -= DAMAGE3 + CPlayer::GetInstance()->GetAttackPower();
 				mInvincible = INVINCIBLE;
 
 				std::cout << "攻撃3により敵の残りHPは" << mHp << "です\n";
+
+				isHit = true;
 			}
 		}
 		break;
