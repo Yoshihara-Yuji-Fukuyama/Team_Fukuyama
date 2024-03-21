@@ -136,6 +136,7 @@ void CGame::Update()
 		CUiPowerUp::DeleteInstance();
 		//敵の数をゼロにする
 		CEnemy::ZeroEnemyCount();
+		mPop = 1;//距離による敵出現
 		mFrame = 0;//フレームカウンタをゼロに
 		mCount = 1;//秒数カウンタを1に
 		start = clock();//始まりの時間を保存
@@ -300,6 +301,7 @@ void CGame::SetCamera()
 void CGame::CreateEnemy()
 {
 	const int CREATE_TIME = 500;//生成間隔計算用
+	const int Pop_Range = 1000;//距離による生成
 	int frame = mFrame++;//フレーム計算
 
 	int charaType = rand();//偶数か奇数がランダム
@@ -327,5 +329,25 @@ void CGame::CreateEnemy()
 				//敵の数を１加算
 				CEnemy::PlusEnemyCount();
 			}
+	}
+	if (CPlayer::GetInstance()->GetX() > Pop_Range * mPop && CEnemy::GetEnemyCount() < ENEMY_MAX)
+	{
+		//キャラタイプが偶数ならスライム
+		if (charaType % 2 == 0)
+		{
+			posY = rand() % 125 + 125;//125から250未満の値がランダム
+			new CEnemy(CPlayer::GetInstance()->GetX() + 1000, posY, CHARACTER_SIZE, SLIME_HP, CEnemy::EEnemyType::Slime);
+			//敵の数を１加算
+			CEnemy::PlusEnemyCount();
+		}
+		//奇数なら鬼
+		else
+		{
+			posY = rand() % 125 + 365;//365から490未満の値がランダム
+			new CEnemy(CPlayer::GetInstance()->GetX() + 1000, posY, CHARACTER_SIZE, ONI_HP, CEnemy::EEnemyType::Oni);
+			//敵の数を１加算
+			CEnemy::PlusEnemyCount();
+		}
+		mPop++;
 	}
 }

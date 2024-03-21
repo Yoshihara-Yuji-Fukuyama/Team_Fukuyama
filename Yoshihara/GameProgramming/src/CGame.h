@@ -46,6 +46,8 @@ public:
 private:
 	CInput mInput;
 
+	int mPop;
+
 	void SetCamera();//ƒJƒƒ‰‚ğİ’è
 
 	clock_t start;//ƒQ[ƒ€n‚Ü‚è‚ÌŠÔ‚ğ•Û‘¶

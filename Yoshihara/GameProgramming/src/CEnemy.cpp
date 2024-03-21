@@ -429,7 +429,12 @@ void CEnemy::Move()
 //デストラクタ
 CEnemy::~CEnemy()
 {
-	new CHeal(GetX(), mLeg, CHeal::GetTexture());
+	int healPop = rand();
+	//偶数なら回復を落とす
+	if (healPop % 2 == 0)
+	{	
+		new CHeal(GetX(), mLeg, CHeal::GetTexture());
+	}
 	//影をタスクリストから削除
 	mpShadow->SetEnabled(false);
 	mEnemyCount--;
