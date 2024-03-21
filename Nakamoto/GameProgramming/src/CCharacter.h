@@ -96,6 +96,8 @@ public:
 	//Ž¯•ÊŽq‚ÌŽæ“¾
 	ETag GetTag();
 
+	EState GetState();
+
 	void SetLeg(float leg);
 
 protected:

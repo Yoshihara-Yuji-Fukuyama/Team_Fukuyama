@@ -40,6 +40,7 @@
 #define SLIME_TAKE_DAMAGE 10
 //鬼から受けるダメージ量
 #define ONI_TAKE_DAMAGE 20
+
 //無敵時間
 #define INVINCIBLE 100
 
@@ -104,6 +105,7 @@ CPlayer::CPlayer()
 	isAttack = false;
 	isAttackNext = false;
 	isHit = false;
+	isGuard = false;
 	mState = EState::EWAIT;
 	WaitNum = 4;//待機アニメーション数
 	MoveNum = 6;//移動アニメーション数
@@ -165,19 +167,21 @@ void CPlayer::Update()
 		if (isMove == true && mState != EState::EATTACK)
 		{
 			mState = EState::EMOVE;
+			mFrame = 0;
 		}
 
 		
 		if (isHit == true && isMove == false)
 		{
 			mState = EState::EHIT;
+			mFrame = 0;
 		}
 
 		//防御
-		if (mInput.Key(VK_RBUTTON))
+		if (isGuard == true)
 		{
 			mState = EState::GUARD;
-			isGuard = true;
+			mFrame = 0;
 		}
 
 		break;
@@ -195,6 +199,7 @@ void CPlayer::Update()
 
 		//移動アニメーション
 		MoveAnimation(GetX(), GetY(), isMoveX, isMoveY, mVx, MoveNum);
+
 		//アニメーションを設定
 		SetAnimation();
 
@@ -205,13 +210,14 @@ void CPlayer::Update()
 		else if (isHit == true)
 		{
 			mState = EState::EHIT;
+			mFrame = 0;
 		}
 
 		//防御
-		if (mInput.Key(VK_RBUTTON))
+		if (isGuard == true)
 		{
 			mState = EState::GUARD;
-			isGuard = true;
+			mFrame = 0;
 		}
 
 		break;
@@ -298,17 +304,37 @@ void CPlayer::Update()
 		SetAnimation();
 
 		//攻撃コライダの生成 
-		if (isAttack == true && isCollider == true)
+		if (isAttack == true && isCollider == true && mAnimationNum == CAnimationNumber::Move3)
 		{
 			mAttackNumber = 1;
-			
+			//攻撃1段目のコライダの生成 
 			Attack();
-
+			
 			isCollider = false;
-
 		}
+		else if (isAttack == true && isCollider1 == true && mAnimationNum == CAnimationNumber::Move3)
+		{
+			if (mAttackNumber == 2)
+			{
+				//攻撃2段目のコライダの生成 
+				Attack();
+
+				isCollider1 = false;
+			}
+		}
+		else if (isAttack == true && isCollider2 == true && mAnimationNum == CAnimationNumber::Move3)
+		{
+			if (mAttackNumber == 3)
+			{
+				//攻撃3段目のコライダの生成 
+				Attack();
+
+				isCollider2 = false;
+			}
+		}
+
 		//攻撃が終わったときネクストがtrueなら次の攻撃へ
-		else if (isAttack == false && isAttackNext == true)
+		if (isAttack == false && isAttackNext == true)
 		{
 			if (mAttackPhase == EAttackPhase::Attack1)
 			{
@@ -320,7 +346,7 @@ void CPlayer::Update()
 			}
 
 			//攻撃コライダの生成 
-			Attack();
+			//Attack();
 
 			mFrame = 0;
 			isAttack = true;
@@ -341,6 +367,7 @@ void CPlayer::Update()
 			mAttackPhase = EAttackPhase::Attack0;
 			isAttack = false;
 			isAttackNext = false;
+			mFrame = 0;
 		}
 
 		break;
@@ -354,11 +381,6 @@ void CPlayer::Update()
 		//処理順番を決定
 		SetSortOrder(GetY() - mLeg);
 		
-		//if (mAnimationNum != CAnimationNumber::Move1)
-		//{
-		//	mFrame = 0;
-		//}
-
 		HitAnimation(HitNum);
 
 		//アニメーションを設定
@@ -378,6 +400,9 @@ void CPlayer::Update()
 
 		//処理順番を決定
 		SetSortOrder(GetY() - mLeg);
+
+		//移動入力
+		Move();
 
 		GuardAnimation(GuardNum);
 
@@ -409,7 +434,7 @@ void CPlayer::Move()
 	isMoveY = false;
 
 	//左に移動
-	if (mInput.Key('A') && mState != EState::EATTACK && isHit == false)
+	if (mInput.Key('A') && mState != EState::EATTACK && isHit == false && mState != EState::GUARD)
 	{
 		if (mVx > 0)
 		{
@@ -420,7 +445,7 @@ void CPlayer::Move()
 		isMoveX = true;
 	}
 	//右に移動
-	if (mInput.Key('D') && mState != EState::EATTACK && isHit == false)
+	if (mInput.Key('D') && mState != EState::EATTACK && isHit == false && mState != EState::GUARD)
 	{
 		if (mVx <= 0)
 		{
@@ -431,7 +456,7 @@ void CPlayer::Move()
 		isMoveX = true;
 	}
 	//上に移動
-	if (mInput.Key('W') && mState != EState::EATTACK && isHit == false)
+	if (mInput.Key('W') && mState != EState::EATTACK && isHit == false && mState != EState::GUARD)
 	{
 		//ステータスが移動か待機かつ足元の座標が250未満の時
 		if (mState != EState::EMOVE || mState != EState::EWAIT)
@@ -454,7 +479,7 @@ void CPlayer::Move()
 		}
 	}
 	//下に移動
-	if (mInput.Key('S') && mState != EState::EATTACK && isHit == false)
+	if (mInput.Key('S') && mState != EState::EATTACK && isHit == false && mState != EState::GUARD)
 	{
 		//ステータスが移動か待機かつ足元の座標が0より大きい時
 		if (mState == EState::EMOVE || mState == EState::EWAIT)
@@ -478,7 +503,7 @@ void CPlayer::Move()
 		}
 	}
 	//ジャンプ
-	if (mInput.Key(VK_SPACE) && mState != EState::EATTACK && isHit == false)
+	if (mInput.Key(VK_SPACE) && mState != EState::EATTACK && isHit == false && mState != EState::GUARD)
 	{
 		if (mState != EState::EJUMP)
 		{
@@ -492,7 +517,7 @@ void CPlayer::Move()
 		}
 	}
 	//攻撃
-	if (mInput.Key(VK_LBUTTON) && mState != EState::EJUMP && isHit == false)
+	if (mInput.Key(VK_LBUTTON) && mState != EState::EJUMP && isHit == false && mState != EState::GUARD)
 	{
 		if (isClick == false)
 		{
@@ -504,6 +529,8 @@ void CPlayer::Move()
 				isCollider = true;
 
 				isAttack = true;
+
+				mFrame = 0;
 			}
 			else if (isAttackNext == false && mAttackPhase != EAttackPhase::Attack3)
 			{
@@ -511,13 +538,14 @@ void CPlayer::Move()
 				if (mAttackPhase == EAttackPhase::Attack1)
 				{
 					mAttackPhaseNext = EAttackPhase::Attack2;
+					isCollider1 = true;
 				}
 				else if (mAttackPhase == EAttackPhase::Attack2)
 				{
 					mAttackPhaseNext = EAttackPhase::Attack3;
+					isCollider2 = true;
 				}
 				isAttackNext = true;
-
 			}
 			//攻撃に移行
 			mState = EState::EATTACK;
@@ -527,6 +555,20 @@ void CPlayer::Move()
 	else
 	{
 		isClick = false;
+	}
+
+	//防御
+	if (mInput.Key(VK_RBUTTON) && mState != EState::EATTACK)
+	{
+		if (isClick == false)
+		{
+			isGuard = true;
+			mFrame = 0;
+		}
+	}
+	else
+	{
+		isGuard = false;
 	}
 }
 
@@ -542,29 +584,33 @@ void CPlayer::Collision(CCollider* m, CCollider* o)
 		if (CCollider::Collision(m, o, &ax, &ay))
 		{
 			//プレイヤーとの衝突判定を実行(めり込まない処理)
-			//SetX(GetX() + ax);
+			//SetX(GetX()+ax);
 			//調整中
-			//SetY(GetY() + ay);
-
-
+			//SetY(GetY()+ay);
 		}
 		break;
 	case CCollider::EColliderType::ESATTACK:	//スライムの攻撃コライダとの衝突判定
 		//コライダのmとoが衝突しているか判定しているか判定
 		if (CCollider::Collision(m, o, &ax, &ay))
 		{
-			if (mInvincible == 0)
+			if (mState != EState::GUARD)
 			{
-				//プレイヤーとの衝突判定を実行(めり込まない処理)
-				//SetX(GetX() + 20);
-				//調整中
-				//SetY(GetY() + ay);
+				if (mInvincible == 0)
+				{
+					//プレイヤーとの衝突判定を実行(めり込まない処理)
+					//SetX(GetX() + 20);
+					//調整中
+					//SetY(GetY() + ay);
 
-				mHp -= SLIME_TAKE_DAMAGE;
-				mInvincible = INVINCIBLE;
-				isHit = true;
+					mHp -= SLIME_TAKE_DAMAGE;
+					mInvincible = INVINCIBLE;
+					isHit = true;
+				}
 			}
-			
+			else if (mState == EState::GUARD)
+			{
+				mAttackPhase = EAttackPhase::Attack1;
+			}
 		}
 		break;
 	case CCollider::EColliderType::EONI:	//鬼の体のコライダとの衝突判定
@@ -572,7 +618,7 @@ void CPlayer::Collision(CCollider* m, CCollider* o)
 		if (CCollider::Collision(m, o, &ax, &ay))
 		{
 			//プレイヤーとの衝突判定を実行(めり込まない処理)
-			SetX(GetX() + ax);
+			//SetX(GetX() + ax);
 			//調整中
 			//SetY(GetY() + ay);
 		}
@@ -581,18 +627,25 @@ void CPlayer::Collision(CCollider* m, CCollider* o)
 		//コライダのmとoが衝突しているか判定しているか判定
 		if (CCollider::Collision(m, o, &ax, &ay))
 		{
-			if (mInvincible == 0)
+			if (mState != EState::GUARD)
 			{
-				//プレイヤーとの衝突判定を実行(めり込まない処理)
-				//SetX(GetX() + 20);
-				//調整中
-				//SetY(GetY() + ay);
+				if (mInvincible == 0)
+				{
+					//プレイヤーとの衝突判定を実行(めり込まない処理)
+					//SetX(GetX() + 20);
+					//調整中
+					//SetY(GetY() + ay);
 
-				mHp -= ONI_TAKE_DAMAGE;
-				mInvincible = INVINCIBLE;
-				isHit = true;
+					mHp -= ONI_TAKE_DAMAGE;
+					mInvincible = INVINCIBLE;
+					isHit = true;
+					
+				}
 			}
-			
+			else if (mState == EState::GUARD)
+			{
+				mAttackPhase = EAttackPhase::Attack1;
+			}
 		}
 		break;
 	}
@@ -784,12 +837,10 @@ void CPlayer::SetAnimation()
 				if (mVx < 0.0f)
 				{
 					if (mAnimationNum == CAnimationNumber::Move1)Texture(GetTexture(), TEX_LEFT1, TEX_MOTION);
-					else isGuard = false;
 				}
 				else
 				{
 					if (mAnimationNum == CAnimationNumber::Move1)Texture(GetTexture(), TEX_RIGHT1, TEX_MOTION);
-					else isGuard = false;
 				}
 			}
 	}

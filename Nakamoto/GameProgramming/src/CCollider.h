@@ -70,6 +70,8 @@ public:
 	/// <returns>true(衝突している) false(衝突していない)</returns>
 	static bool Collision(CCollider* m, CCollider* o,float *ax,float *ay);
 
+	float GetmpY();
+
 protected:
 	CCharacter* mpParent;	//親
 	//コライダのタイプ

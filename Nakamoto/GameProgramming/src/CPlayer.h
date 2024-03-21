@@ -80,6 +80,9 @@ private:
 	CCollider mCollider;
 	//コライダが出ているか
 	bool isCollider;
+	bool isCollider1;
+	bool isCollider2;
+	bool isCollider3;
 
 	//無敵カウント
 	int mInvincible;

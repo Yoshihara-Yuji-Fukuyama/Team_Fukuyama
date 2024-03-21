@@ -86,6 +86,8 @@ private:
 	//–³“GƒJƒEƒ“ƒg
 	int mInvincible;
 
+	float mPlayerY;
+
 	//static•Ï”‚ÌéŒ¾
 	static CTexture mTextureSlime;
 

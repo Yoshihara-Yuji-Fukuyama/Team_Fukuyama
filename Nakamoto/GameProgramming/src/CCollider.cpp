@@ -121,3 +121,8 @@ bool CCollider::Collision(CCollider* m, CCollider* o, float *ax, float *ay)
 	}
 	return true;
 }
+
+float CCollider::GetmpY()
+{
+	return *mpY;
+}

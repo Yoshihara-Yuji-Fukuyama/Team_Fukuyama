@@ -214,9 +214,17 @@ void CEnemy::Update()
 		//アニメーションを設定
 		SetAnimation();
 
+		if (isAttack == true)
+		{
+			//状態を攻撃に変更
+			mState = EState::EATTACK;
+			mFrame = 0;
+		}
+
 		if (isHit == true)
 		{
 			mState = EState::EHIT;
+			mFrame = 0;
 		}
 
 		break;
@@ -245,9 +253,17 @@ void CEnemy::Update()
 		//アニメーションを設定
 		SetAnimation();
 
+		if (isAttack == true)
+		{
+			//状態を攻撃に変更
+			mState = EState::EATTACK;
+			mFrame = 0;
+		}
+
 		if (isHit == true)
 		{
 			mState = EState::EHIT;
+			mFrame = 0;
 		}
 
 		break;
@@ -273,26 +289,56 @@ void CEnemy::Update()
 		//アニメーションを設定
 		SetAnimation();
 
-		if (isAttack == true && isCollider == true && mAnimationNum == CAnimationNumber::Move4)
+		if (mEnemyType == EEnemyType::Slime)
 		{
-			Attack();
-			isCollider = false;
+			if (isAttack == true && isCollider == true && mAnimationNum == CAnimationNumber::Move4)
+			{
+				Attack();
+				isCollider = false;
+			}
+			
 		}
-		else if (isAttack == false)
+		else if (mEnemyType == EEnemyType::Oni)
+		{
+			if (isAttack == true && isCollider == true && mAnimationNum == CAnimationNumber::Move3)
+			{
+				Attack();
+				isCollider = false;
+			}
+		}
+
+		if (isAttack == false)
 		{
 			mState = EState::EWAIT;
+			mFrame = 0;
 		}
+		
 
 		if (isHit == true)
 		{
 			mState = EState::EHIT;
 			isAttack = false;
 			isCollider = false;
+			mFrame = 0;
 		}
 		
 
 		break;
 	case EState::EHIT:
+		if (mEnemyType == EEnemyType::Slime)
+		{
+			//影の高さ
+			mShadow = SLIME_SHADOW_ATTACK;
+			//影の大きさ
+			mpShadow->SetShadow(GetX(), GetShadowPosY(), SLIME_SHADOW_SIZE_ATTACK);
+		}
+		else
+		{
+			//影の高さ
+			mShadow = ONI_SHADOW_ATTACK;
+			//影の大きさ
+			mpShadow->SetShadow(GetX(), GetShadowPosY(), ONI_SHADOW_SIZE_ATTACK);
+		}
 
 		HitAnimation(HitNum);
 
@@ -579,21 +625,30 @@ void CEnemy::Collision(CCollider *m, CCollider *o)
 		if (CCollider::Collision(m, o, &ax, &ay))
 		{
 			//プレイヤーとの衝突判定を実行(めり込まない処理)
-			SetX(GetX() + ax);
+			//SetX(GetX());
 
 			//調整中
-			SetY(GetY() + ay);
-			SetZ(GetZ() + ay);
-			
-
+			//SetY(GetY());
+			//SetZ(GetZ());
+			if (CPlayer::GetInstance()->GetState() == EState::EJUMP)
+			{
+				if (m->GetCType() == CCollider::EColliderType::ESLIME)
+				{
+					//プレイヤーが落下中なら
+ 					if (mPlayerY >= o->GetmpY())
+					{
+						mEnabled = false;
+					}
+				}
+				mPlayerY = o->GetmpY();
+			}
+ 			
 			if (isAttack == false)
 			{
 				if (mVx < 0 && ax > 0 || mVx > 0 && ax < 0)
 				{
 					if (isHit == false)
 					{
-						//状態を攻撃に変更
-						mState = EState::EATTACK;
 						isAttack = true;
 						isCollider = true;
 					}

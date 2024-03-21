@@ -4,9 +4,9 @@
 //確認用 削除予定
 #include <iostream>
 
-#define ATTACI_PLAYER_LIFE 50 //プレイヤーの攻撃コライダの生存時間
+#define ATTACI_PLAYER_LIFE 20 //プレイヤーの攻撃コライダの生存時間
 #define ATTACK_SLIME_LIFE 20  //スライムの攻撃コライダの生存時間
-#define ATTACK_ONI_LIFE 20    //鬼の攻撃コライダの生存時間
+#define ATTACK_ONI_LIFE 15    //鬼の攻撃コライダの生存時間
 
 #define ATTACK_X_POINT1 130	//攻撃1コライダの生成位置のX座標の加算値
 #define ATTACK_X_POINT2 120	//攻撃2コライダの生成位置のX座標の加算値

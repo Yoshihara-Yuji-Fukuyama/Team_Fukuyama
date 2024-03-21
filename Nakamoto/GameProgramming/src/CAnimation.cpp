@@ -331,8 +331,4 @@ void CAnimation::GuardAnimation(int limit)
 	{
 		mAnimationNum = CAnimationNumber::Move1;
 	}
-	else
-	{
-		mAnimationNum = CAnimationNumber::Move2;
-	}
 }

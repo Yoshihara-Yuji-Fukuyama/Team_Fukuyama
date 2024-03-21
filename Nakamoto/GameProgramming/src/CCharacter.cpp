@@ -126,6 +126,13 @@ CCharacter::ETag CCharacter::GetTag()
 	return mTag;
 }
 
+//ó‘Ô‚Ìæ“¾
+CCharacter::EState CCharacter::GetState()
+{
+	return mState;
+}
+
+
 void CCharacter::SetLeg(float leg)
 {
 	mLeg = leg;
